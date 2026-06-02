@@ -2,7 +2,7 @@ add_executable(main
   main.cpp
 )
 
-target_link_libraries(main PUBLIC lib_core pugixml sfml-graphics)
+target_link_libraries(main PUBLIC lib_core sfml-graphics)
 
 add_custom_target(copy-resources ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/resources)
 file(GLOB RESOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/resources/*.*)
