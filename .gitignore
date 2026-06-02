@@ -34,3 +34,5 @@
 #IDE
 *.clang-format
 .vscode/
+
+build/
