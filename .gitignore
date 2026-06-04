@@ -34,3 +34,7 @@
 #IDE
 *.clang-format
 .vscode/
+.idea/
+
+# Build
+build/
