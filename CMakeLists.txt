@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
 include(FetchContent)
-project(CorrigeAnalyseFichierXML VERSION 1.0.0 LANGUAGES CXX)
+project(Cyrano_seul_contre_tous VERSION 1.0.0 LANGUAGES CXX)
 
 if(WIN32)
   # SonarLint support for CMake requires the following flag to be set on.
@@ -21,14 +21,7 @@ FetchContent_MakeAvailable(sfml)
 set(CMAKE_CXX_STANDARD 23)
 
 cmake_policy(SET CMP0135 NEW) # This cmake_policy avoids warning by cmake when we fetch contents based on URL
-FetchContent_Declare(
-    pugixml
-    URL https://github.com/zeux/pugixml/releases/download/v1.15/pugixml-1.15.tar.gz
-)
 
-
-
-FetchContent_MakeAvailable(pugixml)
 
 add_subdirectory(src/core)
 add_subdirectory(src/main)

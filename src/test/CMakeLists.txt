@@ -7,13 +7,13 @@
 add_executable(unitTests
   unitTests.cpp
 )
-target_link_libraries(unitTests GTest::gtest_main lib_core pugixml)
+target_link_libraries(unitTests GTest::gtest_main lib_core sfml-graphics)
 
 # The next two lines enable CMake’s test runner to discover the tests included in the binary,
 # using the GoogleTest CMake module.
 include(GoogleTest)
 gtest_discover_tests(unitTests)
-target_link_libraries(unitTests lib_core pugixml sfml-graphics)
+target_link_libraries(unitTests lib_core sfml-graphics)
 
 add_custom_target(copy-resources-for-test ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/resources)
 file(GLOB RESOURCES_FOR_TEST CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/resources/*.*)
