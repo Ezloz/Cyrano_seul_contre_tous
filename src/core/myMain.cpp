@@ -14,9 +14,9 @@ int myMain() {
 
   sf::RenderWindow window{sf::VideoMode({800, 600}), "SFML works!"};
   tmx::Map map;
-  // map.load("res/demo.tmx");
+  map.load("resources/little_test_20.tmx");
   //
-  // MapLayer layerZero(map, 0);
+  MapLayer layerZero(map, 0);
   // MapLayer layerOne(map, 1);
   // MapLayer layerTwo(map, 2);
 
@@ -65,12 +65,12 @@ int myMain() {
     {
           newOffset = sf::Vector2f(std::cos(wiggleClock.getElapsedTime().asSeconds()) * 100.f, 0.f);
     }
-    // layerZero.setOffset(newOffset);
+    layerZero.setOffset(newOffset);
     // layerOne.setOffset(newOffset);
     // layerTwo.setOffset(newOffset);
 
     window.clear(sf::Color::Black);
-    // window.draw(layerZero);
+    window.draw(layerZero);
     // window.draw(layerOne);
     // window.draw(layerTwo);
     window.display();
