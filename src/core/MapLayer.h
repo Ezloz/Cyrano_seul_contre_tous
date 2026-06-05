@@ -1,3 +1,33 @@
+
+#ifndef SFML_ORTHO_HPP_
+#define SFML_ORTHO_HPP_
+
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
+#include <stdexcept>
+#include <tmxlite/Map.hpp>
+#include <tmxlite/TileLayer.hpp>
+#include <tmxlite/detail/Log.hpp>
+
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <memory>
+#include <vector>
+#include <array>
+#include <map>
+#include <string>
+#include <limits>
+#include <iostream>
+#include <cmath>
+
+
 class MapLayer final : public sf::Drawable {
 public:
   MapLayer(const tmx::Map& map, std::size_t idx)
@@ -294,3 +324,5 @@ private:
   std::vector<sf::Vertex> m_vertices;
   void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
+
+#endif //SFML_ORTHO_HPP_

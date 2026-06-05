@@ -8,6 +8,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+#include "MapLayer.h"
+
 
 using namespace std;
 int myMain() {

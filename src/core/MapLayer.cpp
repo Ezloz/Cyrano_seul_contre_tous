@@ -36,33 +36,7 @@ This is an example of drawing with SFML - not all features
 are implemented.
 */
 
-#ifndef SFML_ORTHO_HPP_
-#define SFML_ORTHO_HPP_
-
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
-#include <stdexcept>
-#include <tmxlite/Map.hpp>
-#include <tmxlite/TileLayer.hpp>
-#include <tmxlite/detail/Log.hpp>
-
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Transformable.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Vector2.hpp>
-
-#include <memory>
-#include <vector>
-#include <array>
-#include <map>
-#include <string>
-#include <limits>
-#include <iostream>
-#include <cmath>
+#include "MapLayer.h"
 
 
 void MapLayer::update(sf::Time elapsed) 
@@ -393,5 +367,3 @@ void ChunkArray::draw(sf::RenderTarget& rt, sf::RenderStates states) const overr
   states.texture = &m_texture;
   rt.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Triangles, states);
 }
-
-#endif //SFML_ORTHO_HPP_
