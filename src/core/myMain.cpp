@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <SFML/Graphics.hpp>
+ #include <SFML/Graphics.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -24,10 +24,12 @@ int myMain() {
 
   sf::Clock globalClock;
   sf::Clock wiggleClock;
+  bool doWiggle = false;
+  
   window.setFramerateLimit(30);
-
-  sf::RectangleShape white_rectangle{sf::Vector2f(800,800)};
-  white_rectangle.setFillColor(sf::Color(255,255,255));
+  
+//  sf::RectangleShape white_rectangle{sf::Vector2f(800,800)};
+//  white_rectangle.setFillColor(sf::Color(255,255,255));
   
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
