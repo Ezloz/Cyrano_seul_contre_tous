@@ -1,5 +1,7 @@
 add_library(lib_core
-	myMain.cpp myMain.h
+	myMain.h myMain.cpp
+	MapLayer.h MapLayer.cpp
+	Character.h
 )
 
 target_include_directories(lib_core PUBLIC ./)
