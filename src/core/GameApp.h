@@ -28,7 +28,7 @@ class GameApp {
 private:
     GameApp() {LoadOptions();};
 
-    static GameApp* gameapp_;
+    static GameApp* singleton_;
 
     void LoadOptions();
 
@@ -52,19 +52,12 @@ public:
      * into the static field. On subsequent runs, it returns the client existing
      * object stored in the static field.
      */
+    static GameApp *GetInstance();
 
-    static GameApp *GetInstance(const std::string& value);
-    /**
-     * Finally, any singleton should define some business logic, which can be
-     * executed on its instance.
-     */
+    std::vector<Input> GetInputs() const {return this->inputs;};
+    sf::Time GetDeltaTime() const {return deltaTime;};
 
-    auto GetInputs() {return this->inputs};
-
-    void SomeBusinessLogic()
-    {
-        // ...
-    }
+//    void SomeBusinessLogic()
 
 };
 
