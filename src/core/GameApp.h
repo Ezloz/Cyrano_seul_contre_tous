@@ -1,9 +1,15 @@
 #pragma once
 
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Clock.hpp>
 
+#include <set>
 #include <string>
 #include <vector>
+
+#include "Camera.h"
+#include "Map.h"
+#include "UIManager.h"
 
 
 enum class Input{
@@ -17,6 +23,14 @@ enum class Input{
     NB_INPUTS
 };
 
+enum class GameState{
+    IN_GAME,
+    IN_MENU,
+    IN_ANIMATION,
+    IN_CINEMATIC
+};
+
+
 
 // Singleton format taken from refactoring.guru 
 class GameApp {
@@ -26,15 +40,23 @@ class GameApp {
      * construction calls with the `new` operator.
      */
 private:
-    GameApp() {LoadOptions();};
+    GameApp() {
+        globalClock.
+        LoadOptions();
+    };
 
     static GameApp* singleton_;
 
     void LoadOptions();
 
-    std::vector<Input> inputs;
-
+    std::set<Input> inputs;
+    GameState state;
+    sf::Clock globalClock;
     sf::Time deltaTime;
+    Map activeMap;
+    Camera activeCamera;
+    UIManager GUI;
+
 
 public:
 
@@ -52,10 +74,21 @@ public:
      * into the static field. On subsequent runs, it returns the client existing
      * object stored in the static field.
      */
-    static GameApp *GetInstance();
+    static GameApp* GetInstance();
 
-    std::vector<Input> GetInputs() const {return this->inputs;};
-    sf::Time GetDeltaTime() const {return deltaTime;};
+    std::vector<Input> GetInputs() const {return this->inputs;}
+    sf::Time GetDeltaTime() const {return deltaTime;}
+    GameState GetGameState() const {return state;}
+    void SetGameState(GameState state);
+    
+    void update(){
+        deltaTime = globalClock.restart();
+//        .update();
+//        .update();
+//        .update();
+//        .update();
+
+    }
 
 //    void SomeBusinessLogic()
 

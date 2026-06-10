@@ -9,7 +9,7 @@
 #include <SFML/Window/Keyboard.hpp>
 
 #include "MapLayer.h"
-
+#include "GameApp.h"
 
 using namespace std;
 int myMain() {
@@ -22,7 +22,7 @@ int myMain() {
   // MapLayer layerOne(map, 1);
   // MapLayer layerTwo(map, 2);
 
-  sf::Clock globalClock;
+
   sf::Clock wiggleClock;
   bool doWiggle = false;
   
@@ -30,7 +30,8 @@ int myMain() {
   
 //  sf::RectangleShape white_rectangle{sf::Vector2f(800,800)};
 //  white_rectangle.setFillColor(sf::Color(255,255,255));
-  
+  GameApp* gameInstance = GameApp::GetInstance();
+
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
     // iteration of the loop

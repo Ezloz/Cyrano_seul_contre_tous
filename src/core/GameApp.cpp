@@ -17,3 +17,6 @@ GameApp* GameApp::GetInstance()
     return singleton_;
 }
 
+void GameApp::SetGameState(GameState s){
+    this->state = s;
+}
