@@ -1,7 +1,10 @@
 add_library(lib_core
 	myMain.h myMain.cpp
+	GameApp.h GameApp.cpp
 	MapLayer.h MapLayer.cpp
 	Character.h
+	UIManager.h
+	TurnQueue.h
 )
 
 target_include_directories(lib_core PUBLIC ./)

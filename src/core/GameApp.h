@@ -1,17 +1,20 @@
 #pragma once
 
+#include <SFML/System/Time.hpp>
+
 #include <string>
 #include <vector>
 
 
-enum Input{
+enum class Input{
     UP,
     DOWN,
     LEFT,
     RIGHT,
     CONFIRM,
     CANCEL,
-    MENU,    
+    MENU,
+    NB_INPUTS
 };
 
 
@@ -31,7 +34,7 @@ private:
 
     std::vector<Input> inputs;
 
-    deltatime;
+    sf::Time deltaTime;
 
 public:
 
