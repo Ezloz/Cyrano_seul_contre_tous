@@ -1,3 +1,5 @@
+#include "mapLayer.h"
+
 sf::Vector2f Camera::processNewOffset(std::set<Input> inputs,
                                       std::set<Input> releaseInputs,
                                       sf::Time lastMove = 0) {
@@ -109,15 +111,15 @@ sf::Vector2f Camera::processNewOffset(std::set<Input> inputs,
     }
   }
 
-  if (delayedMove && lastMove <= rateDelay) {
+  if (delayedMove && lastMove >= rateDelay) {
     sf::Vector2f newOffset =
-        sf::Vector2f(cursorX.to_pixel(), cursorY.to_pixel())
+        sf::Vector2f(cursorX * tileSize, cursorY * tileSize)
   } else {
     sf::Vector2f newOffset = sf::Vector2f(
-        (cursorX - previousCursorX).to_pixel() * lastMove / rateDelay +
-            previousCursorX.to_pixel(),
-        (cursorY - previousCursorY).to_pixel() * lastMove / rateDelay +
-            previousCursorY.to_pixel())
+        (cursorX - previousCursorX) * tileSize * lastMove / rateDelay +
+            previousCursorX * tileSize,
+        (cursorY - previousCursorY) * tileSize * lastMove / rateDelay +
+            previousCursorY * tileSize)
   }
   return newOffset;
 }
