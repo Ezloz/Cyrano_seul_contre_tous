@@ -62,6 +62,7 @@ int myMain() {
       }
     }
 
+    gameInstance->ProcessInputs();
     gameInstance->Update();
     // layerZero.update(duration);
 
