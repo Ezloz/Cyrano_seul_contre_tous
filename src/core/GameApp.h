@@ -62,7 +62,7 @@ class GameApp {
     GameState state;
     sf::Clock globalClock;
     sf::Time deltaTime;
-    Map activeMap;
+    std::unique_ptr<Map> activeMap;
 //    Camera activeCamera;
     UIManager gui;
 
@@ -90,7 +90,7 @@ public:
     void SetGameState(GameState state);
     std::set<Input> GetInputs() const {return inputs;}
     std::set<Input> GetReleasedInputs() const {return releasedInputs;}
-    Map GetActiveMap() const {return activeMap;}
+    Map* GetActiveMap() const {return activeMap.get();}
 
     void HandleRawInput(RawInput rinput);
 

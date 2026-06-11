@@ -11,7 +11,8 @@ void GameApp::SaveOptions(){
 }
 
 void GameApp::LoadOptions(){
-    this->state = GameState::IN_MENU;
+    this->state = GameState::IN_GAME;
+    this->activeMap = std::make_unique<Map>("resources/little_test_20.tmx");
     
     std::ifstream is("resources/options.txt");
     std::ofstream os("resources/options.txt");

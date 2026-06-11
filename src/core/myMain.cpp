@@ -15,10 +15,7 @@ using namespace std;
 int myMain() {
 
   sf::RenderWindow window{sf::VideoMode({800, 600}), "SFML works!"};
-  tmx::Map map;
-  map.load("resources/little_test_20.tmx");
   //
-  MapLayer layerZero(map, 0);
   // MapLayer layerOne(map, 1);
   // MapLayer layerTwo(map, 2);
 
@@ -31,6 +28,7 @@ int myMain() {
 //  sf::RectangleShape white_rectangle{sf::Vector2f(800,800)};
 //  white_rectangle.setFillColor(sf::Color(255,255,255));
   GameApp* gameInstance = GameApp::GetInstance();
+  MapLayer layerZero(*(gameInstance->GetActiveMap()->GetTMXMap()), 0);
 
   while (window.isOpen()) {
     // check all the window's events that were triggered since the last
