@@ -5,6 +5,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+
 #include <set>
 #include <map>
 #include <string>
@@ -34,7 +35,8 @@ enum class GameState{
     IN_CINEMATIC
 };
 
-using RawInput = std::variant<sf::Event::KeyPressed, sf::Event::JoystickButtonPressed>;
+using RawInput = std::variant<const sf::Event::KeyPressed*, const sf::Event::KeyReleased*,
+                              const sf::Event::JoystickButtonPressed*>;
 
 // Singleton format taken from refactoring.guru 
 class GameApp {
@@ -53,9 +55,10 @@ class GameApp {
     void SaveOptions();    
     void LoadOptions();
 
-    std::map<RawInput, Input> rawToInput;
+    std::map<sf::Keyboard::Key, Input> keyboardToInput;
 
     std::set<Input> inputs;
+    std::set<Input> releasedInputs;
     GameState state;
     sf::Clock globalClock;
     sf::Time deltaTime;
@@ -86,6 +89,7 @@ public:
     GameState GetGameState() const {return state;}
     void SetGameState(GameState state);
     std::set<Input> GetInputs() const {return inputs;}
+    std::set<Input> GetReleasedInputs() const {return releasedInputs;}
     Map GetActiveMap() const {return activeMap;}
 
     void HandleRawInput(RawInput rinput);
@@ -93,7 +97,15 @@ public:
     void ProcessInputs(){
         switch (this->state){
             case (GameState::IN_GAME):
-//                activeCamera.move(this->inputs);
+//                activeCamera.move();
+                break;
+            case (GameState::IN_MENU):
+                break;
+            case (GameState::IN_GAMEMENU):
+                break;
+            case (GameState::IN_ANIMATION):
+                break;
+            case (GameState::IN_CINEMATIC):
                 break;
         }
     }

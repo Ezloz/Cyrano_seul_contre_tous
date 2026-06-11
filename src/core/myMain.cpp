@@ -52,16 +52,16 @@ int myMain() {
         window.setView(sf::View(visibleArea));
       }
 
-      else if(const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
+      else if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
       {
-          switch(keyPressed->code)
-          {
-              case sf::Keyboard::Key::W:
-                  doWiggle = !doWiggle;
-              break;
-          }
+        gameInstance->HandleRawInput(keyPressed);
+      }
+      else if(const auto* keyUnpressed = event->getIf<sf::Event::KeyReleased>())
+      {
+        gameInstance->HandleRawInput(keyUnpressed);
       }
     }
+
     gameInstance->Update();
     // layerZero.update(duration);
 
