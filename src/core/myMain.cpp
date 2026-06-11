@@ -15,18 +15,9 @@ using namespace std;
 int myMain() {
 
   sf::RenderWindow window{sf::VideoMode({800, 600}), "SFML works!"};
-  //
-  // MapLayer layerOne(map, 1);
-  // MapLayer layerTwo(map, 2);
-
-
-  sf::Clock wiggleClock;
-  bool doWiggle = false;
   
   window.setFramerateLimit(30);
   
-//  sf::RectangleShape white_rectangle{sf::Vector2f(800,800)};
-//  white_rectangle.setFillColor(sf::Color(255,255,255));
   GameApp* gameInstance = GameApp::GetInstance();
   MapLayer layerZero(*(gameInstance->GetActiveMap()->GetTMXMap()), 0);
 
@@ -64,19 +55,9 @@ int myMain() {
     gameInstance->Update();
     // layerZero.update(duration);
 
-    sf::Vector2f newOffset = sf::Vector2f(0.f, 0.f);
-    if (doWiggle)
-    {
-          newOffset = sf::Vector2f(std::cos(wiggleClock.getElapsedTime().asSeconds()) * 100.f, 0.f);
-    }
-    layerZero.setOffset(newOffset);
-    // layerOne.setOffset(newOffset);
-    // layerTwo.setOffset(newOffset);
 
     window.clear(sf::Color::Black);
     window.draw(layerZero);
-    // window.draw(layerOne);
-    // window.draw(layerTwo);
     window.display();
   }
 

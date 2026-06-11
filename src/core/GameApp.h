@@ -63,7 +63,6 @@ class GameApp {
     sf::Clock globalClock;
     sf::Time deltaTime;
     std::unique_ptr<Map> activeMap;
-//    Camera activeCamera;
     UIManager gui;
 
 
@@ -97,7 +96,7 @@ public:
     void ProcessInputs(){
         switch (this->state){
             case (GameState::IN_GAME):
-//                activeCamera.move();
+//                Map.move();
                 break;
             case (GameState::IN_MENU):
                 break;
