@@ -1,7 +1,25 @@
-#include <GameApp.h>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
+
+#include "GameApp.h"
+
+
+void GameApp::SaveOptions(){
+    
+}
+
+void GameApp::LoadOptions(){
+    
+    std::ifstream is("resources/options.txt");
+    std::ofstream os("resources/options.txt");
+    std::string ligne;
+    
+    
+}
 
 GameApp* GameApp::singleton_= nullptr;;
-
 /**
  * Static methods should be defined outside the class.
  */
@@ -19,4 +37,22 @@ GameApp* GameApp::GetInstance()
 
 void GameApp::SetGameState(GameState s){
     this->state = s;
+}
+
+void HandleRawInput(RawInput rinput){
+    
+}
+
+void GameApp::SaveGame(){
+
+}
+
+void GameApp::LoadGame(){
+
+}
+
+
+    
+void GameApp::Quit(){
+    this->SaveOptions();
 }

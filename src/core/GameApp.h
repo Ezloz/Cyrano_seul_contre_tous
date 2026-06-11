@@ -2,12 +2,15 @@
 
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 #include <set>
+#include <map>
 #include <string>
 #include <vector>
+#include <variant>
 
-#include "Camera.h"
 #include "Map.h"
 #include "UIManager.h"
 
@@ -25,37 +28,40 @@ enum class Input{
 
 enum class GameState{
     IN_GAME,
+    IN_GAMEMENU,
     IN_MENU,
     IN_ANIMATION,
     IN_CINEMATIC
 };
 
-
+using RawInput = std::variant<sf::Event::KeyPressed, sf::Event::JoystickButtonPressed>;
 
 // Singleton format taken from refactoring.guru 
 class GameApp {
-
+    
     /**
      * The Singleton's constructor should always be private to prevent direct
      * construction calls with the `new` operator.
      */
-private:
+    private:
     GameApp() {
-        globalClock.
         LoadOptions();
     };
-
+    
     static GameApp* singleton_;
-
+    
+    void SaveOptions();    
     void LoadOptions();
+
+    std::map<RawInput, Input> rawToInput;
 
     std::set<Input> inputs;
     GameState state;
     sf::Clock globalClock;
     sf::Time deltaTime;
     Map activeMap;
-    Camera activeCamera;
-    UIManager GUI;
+//    Camera activeCamera;
+    UIManager gui;
 
 
 public:
@@ -76,12 +82,27 @@ public:
      */
     static GameApp* GetInstance();
 
-    std::vector<Input> GetInputs() const {return this->inputs;}
     sf::Time GetDeltaTime() const {return deltaTime;}
     GameState GetGameState() const {return state;}
     void SetGameState(GameState state);
+    std::set<Input> GetInputs() const {return inputs;}
+    Map GetActiveMap() const {return activeMap;}
+
+    void HandleRawInput(RawInput rinput);
+
+    void ProcessInputs(){
+        switch (this->state){
+            case (GameState::IN_GAME):
+//                activeCamera.move(this->inputs);
+                break;
+        }
+    }
     
-    void update(){
+    void SaveGame();
+    void LoadGame();
+
+
+    void Update(){
         deltaTime = globalClock.restart();
 //        .update();
 //        .update();
@@ -92,5 +113,6 @@ public:
 
 //    void SomeBusinessLogic()
 
+    void Quit();
 };
 

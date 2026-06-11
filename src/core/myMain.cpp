@@ -39,7 +39,8 @@ int myMain() {
       // "close requested" event: we close the window
         if (event->is<sf::Event::Closed>())
         {
-            window.close();
+          gameInstance->Quit();
+          window.close();
         }
       
       // Catch the resize events
@@ -60,9 +61,8 @@ int myMain() {
               break;
           }
       }
-
     }
-    sf::Time duration = globalClock.restart();
+    gameInstance->Update();
     // layerZero.update(duration);
 
     sf::Vector2f newOffset = sf::Vector2f(0.f, 0.f);
