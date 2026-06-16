@@ -42,7 +42,7 @@ GameApp *GameApp::GetInstance() {
 
 void GameApp::SetGameState(GameState s) { this->state = s; }
 
-void GameApp::HandleRawInput(RawInput rinput) {
+void GameApp::transformRawInputToInput(RawInput rinput) {
   if (std::holds_alternative<const sf::Event::KeyPressed *>(rinput)) {
     auto input = this->keyboardToInput.find(
         std::get<const sf::Event::KeyPressed *>(rinput)->code);

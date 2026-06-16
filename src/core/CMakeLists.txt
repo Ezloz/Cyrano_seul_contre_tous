@@ -1,4 +1,5 @@
 add_library(lib_core
+	GameTypes.h
 	myMain.h myMain.cpp
 	GameApp.h GameApp.cpp
 	Map.h Map.cpp

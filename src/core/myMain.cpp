@@ -31,9 +31,9 @@ int myMain() {
         sf::FloatRect visibleArea({0.f, 0.f}, sf::Vector2f(resized->size));
         window.setView(sf::View(visibleArea));
       } else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-        gameInstance->HandleRawInput(keyPressed);
+        gameInstance->transformRawInputToInput(keyPressed);
       } else if (const auto *keyUnpressed = event->getIf<sf::Event::KeyReleased>()) {
-        gameInstance->HandleRawInput(keyUnpressed);
+        gameInstance->transformRawInputToInput(keyUnpressed);
       }
     }
 

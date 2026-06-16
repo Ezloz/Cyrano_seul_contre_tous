@@ -10,23 +10,14 @@
 #include <string>
 #include <variant>
 #include <vector>
-
-enum class Input { UP, DOWN, LEFT, RIGHT, CONFIRM, CANCEL, MENU, NB_INPUTS };
-
-enum class GameState {
-  IN_GAME,
-  IN_GAMEMENU,
-  IN_MENU,
-  IN_ANIMATION,
-  IN_CINEMATIC
-};
+#include "GameTypes.h"
+#include "Map.h"
+#include "UIManager.h"
 
 using RawInput =
     std::variant<const sf::Event::KeyPressed *, const sf::Event::KeyReleased *,
                  const sf::Event::JoystickButtonPressed *>;
 
-#include "Map.h"
-#include "UIManager.h"
 
 // Singleton format taken from refactoring.guru
 class GameApp {
@@ -80,7 +71,7 @@ public:
 
   Map *GetActiveMap() const { return activeMap.get(); }
 
-  void HandleRawInput(RawInput rinput);
+  void transformRawInputToInput(RawInput rinput);
 
   void ProcessInputs() {
     switch (this->state) {
