@@ -1,8 +1,9 @@
 add_library(lib_core
 	myMain.h myMain.cpp
 	GameApp.h GameApp.cpp
-	Map.h
+	Map.h Map.cpp
 	MapLayer.h MapLayer.cpp
+  Camera.h Camera.cpp
 	Character.h
 	UIManager.h
 	TurnQueue.h
