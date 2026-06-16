@@ -24,6 +24,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(pugixml)
 
+FetchContent_Declare(
+        TGUI
+        URL https://github.com/texus/TGUI/archive/refs/tags/v1.12.1.tar.gz
+)
+set(TGUI_BACKEND "SFML_GRAPHICS" CACHE STRING "TGUI backend" FORCE)
+FetchContent_MakeAvailable(TGUI)
+
 set(CMAKE_CXX_STANDARD 23)
 
 #

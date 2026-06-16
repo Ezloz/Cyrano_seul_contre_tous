@@ -5,6 +5,9 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+#include <TGUI/TGUI.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
+
 #include <map>
 #include <set>
 #include <string>
@@ -12,7 +15,8 @@
 #include <vector>
 #include "GameTypes.h"
 #include "Map.h"
-#include "UIManager.h"
+//#include "UIManager.h"
+
 
 using RawInput =
     std::variant<const sf::Event::KeyPressed *, const sf::Event::KeyReleased *,
@@ -42,7 +46,7 @@ private:
   sf::Clock globalClock;
   sf::Time deltaTime;
   std::unique_ptr<Map> activeMap;
-  UIManager gui;
+  tgui::Gui gui;
 
 public:
   /**
@@ -75,16 +79,16 @@ public:
 
   void ProcessInputs() {
     switch (this->state) {
-    case (GameState::IN_GAME):
+    case GameState::IN_GAME :
       //                Map.move();
       break;
-    case (GameState::IN_MENU):
+    case  GameState::IN_MENU      :
       break;
-    case (GameState::IN_GAMEMENU):
+    case  GameState::IN_GAMEMENU  :
       break;
-    case (GameState::IN_ANIMATION):
+    case  GameState::IN_ANIMATION :
       break;
-    case (GameState::IN_CINEMATIC):
+    case  GameState::IN_CINEMATIC :
       break;
     }
   }
