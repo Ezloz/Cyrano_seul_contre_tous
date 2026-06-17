@@ -43,6 +43,9 @@ private:
 public:
   bool isPressed[static_cast<int>(Input::NB_INPUTS)];
   bool delayedMove;
+  bool freshPress;
+  std::int32_t dx;
+  std::int32_t dy;
 
   Camera(std::int32_t initialCursorX, std::int32_t initialCursorY,
          std::int32_t edgeOffsetX, std::int32_t edgeOffsetY,
@@ -65,7 +68,10 @@ public:
     repeatRate = sf::milliseconds(85);
     repeatDelay = sf::milliseconds(250);
     std::fill(isPressed, isPressed + static_cast<int>(Input::NB_INPUTS), false);
-    delayedMove = true;
+    delayedMove = false;
+    freshPress = false;
+    dx = 0;
+    dy = 0;
   }
   sf::Vector2f getCursorOffset() { return cursorOffset; }
   sf::Vector2f getMapOffset() { return mapOffset; }

@@ -10,7 +10,6 @@ void Camera::processNewOffset(std::set<Input> inputs,
   const int LEFT = static_cast<int>(Input::LEFT);
   const int RIGHT = static_cast<int>(Input::RIGHT);
 
-  bool freshPress = false;
   for (const auto &input : inputs) {
     if (input == Input::UP || input == Input::DOWN || input == Input::LEFT ||
         input == Input::RIGHT) {
@@ -22,18 +21,19 @@ void Camera::processNewOffset(std::set<Input> inputs,
     }
   }
 
-  std::int32_t dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
-  std::int32_t dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
-
   this->lastMove += deltaTime;
-
   bool doStep = false;
+
+  if (dx == 0 && dy == 0 && freshPress) {
+    dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
+    dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
+    doStep = true;
+    delayedMove = true;
+    this->lastMove = sf::Time::Zero;
+  }
+
   if (dx != 0 || dy != 0) {
-    if (freshPress) {
-      doStep = true;
-      delayedMove = true;
-      this->lastMove = sf::Time::Zero;
-    } else if (delayedMove && this->lastMove >= repeatDelay) {
+    if (delayedMove && this->lastMove >= repeatDelay) {
       doStep = true;
       delayedMove = false;
       this->lastMove %= repeatDelay;
@@ -48,9 +48,11 @@ void Camera::processNewOffset(std::set<Input> inputs,
     previousCursorY = cursorY;
     previousMapCornerX = mapCornerX;
     previousMapCornerY = mapCornerY;
+    dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
+    dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
 
-    cursorX = std::clamp(cursorX + dx, 0, mapSizeX - 1);
-    cursorY = std::clamp(cursorY + dy, 0, mapSizeY - 1);
+    cursorX = std::clamp(previousCursorX + dx, 0, mapSizeX - 1);
+    cursorY = std::clamp(previousCursorY + dy, 0, mapSizeY - 1);
 
     const std::int32_t maxCornerX = std::max(0, mapSizeX - viewSizeX);
     const std::int32_t maxCornerY = std::max(0, mapSizeY - viewSizeY);
@@ -74,12 +76,14 @@ void Camera::processNewOffset(std::set<Input> inputs,
     isPressed[static_cast<int>(release)] = false;
   }
 
-  if (this->lastMove >= repeatRate) {
-    previousCursorX = cursorX;
-    previousCursorY = cursorY;
-    previousMapCornerX = mapCornerX;
-    previousMapCornerY = mapCornerY;
-  }
+  // if (this->lastMove >= repeatRate) {
+  //   previousCursorX = cursorX;
+  //   previousCursorY = cursorY;
+  //   previousMapCornerX = mapCornerX;
+  //   previousMapCornerY = mapCornerY;
+  //   dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
+  //   dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
+  // }
 
   float ratio =
       std::min(1.f, this->lastMove.asSeconds() / repeatRate.asSeconds());
