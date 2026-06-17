@@ -21,23 +21,34 @@ void Camera::processNewOffset(std::set<Input> inputs,
     }
   }
 
+  for (const auto &release : releaseInputs) {
+    isPressed[static_cast<int>(release)] = false;
+    freshPress = true;
+    dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
+    dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
+  }
+
   this->lastMove += deltaTime;
   bool doStep = false;
 
-  if (dx == 0 && dy == 0 && freshPress) {
-    dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
-    dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
-    doStep = true;
-    delayedMove = true;
+  if (freshPress) {
     this->lastMove = sf::Time::Zero;
-  }
-
-  if (dx != 0 || dy != 0) {
+    doStep = true;
+    dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0) - dx;
+    dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0) - dy;
+    printf("%d, %d\n", dx, dy);
+    delayedMove = true;
+    freshPress = false;
+  } else {
     if (delayedMove && this->lastMove >= repeatDelay) {
+      dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
+      dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
       doStep = true;
       delayedMove = false;
       this->lastMove %= repeatDelay;
     } else if (!delayedMove && this->lastMove >= repeatRate) {
+      dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
+      dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
       doStep = true;
       this->lastMove %= repeatRate;
     }
@@ -48,8 +59,6 @@ void Camera::processNewOffset(std::set<Input> inputs,
     previousCursorY = cursorY;
     previousMapCornerX = mapCornerX;
     previousMapCornerY = mapCornerY;
-    dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
-    dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
 
     cursorX = std::clamp(previousCursorX + dx, 0, mapSizeX - 1);
     cursorY = std::clamp(previousCursorY + dy, 0, mapSizeY - 1);
@@ -70,10 +79,6 @@ void Camera::processNewOffset(std::set<Input> inputs,
       mapCornerY = cursorY - (viewSizeY - 1 - edgeOffsetY);
     }
     mapCornerY = std::clamp(mapCornerY, 0, maxCornerY);
-  }
-
-  for (const auto &release : releaseInputs) {
-    isPressed[static_cast<int>(release)] = false;
   }
 
   // if (this->lastMove >= repeatRate) {
