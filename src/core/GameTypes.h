@@ -1,4 +1,5 @@
 
+#pragma once
 
 enum class Input { UP, DOWN, LEFT, RIGHT, CONFIRM, CANCEL, MENU, NB_INPUTS };
 

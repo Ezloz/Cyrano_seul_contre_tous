@@ -1,7 +1,7 @@
 #pragma once
-#include "GameApp.h"
-#include "MapLayer.h"
+#include "GameTypes.h"
 #include <algorithm>
+#include <tmxlite/Map.hpp>
 
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/System/Clock.hpp>
@@ -20,12 +20,20 @@ private:
   std::int32_t cursorY;
   std::int32_t previousCursorX;
   std::int32_t previousCursorY;
+  sf::Vector2f cursorOffset;
+
+  std::int32_t mapCornerX;
+  std::int32_t mapCornerY;
+  std::int32_t previousMapCornerX;
+  std::int32_t previousMapCornerY;
+  sf::Vector2f mapOffset;
   std::int32_t edgeOffsetX;
   std::int32_t edgeOffsetY;
-  std::int32_t cameraSizeX;
-  std::int32_t cameraSizeY;
+
   std::int32_t mapSizeX;
   std::int32_t mapSizeY;
+  std::int32_t viewSizeX;
+  std::int32_t viewSizeY;
   tmx::Vector2u tileSize;
 
   sf::Time repeatRate;
@@ -37,15 +45,20 @@ public:
   bool delayedMove;
 
   Camera(std::int32_t initialCursorX, std::int32_t initialCursorY,
-         std::int32_t edgeOffsetX, std::int32_t edgeOffsetY, tmx::Map &map) {
+         std::int32_t edgeOffsetX, std::int32_t edgeOffsetY,
+         std::int32_t viewSizeX, std::int32_t viewSizeY, tmx::Map &map) {
     cursorX = initialCursorX;
     cursorY = initialCursorY;
     previousCursorX = initialCursorX;
     previousCursorY = initialCursorY;
+    mapCornerX = 0;
+    mapCornerY = 0;
+    previousMapCornerX = 0;
+    previousMapCornerY = 0;
     this->edgeOffsetX = edgeOffsetX;
     this->edgeOffsetY = edgeOffsetY;
-    cameraSizeX = 10;
-    cameraSizeY = 10;
+    this->viewSizeX = viewSizeX;
+    this->viewSizeY = viewSizeY;
     tileSize = map.getTileSize();
     mapSizeX = map.getTileCount().x;
     mapSizeY = map.getTileCount().y;
@@ -54,6 +67,8 @@ public:
     std::fill(isPressed, isPressed + static_cast<int>(Input::NB_INPUTS), false);
     delayedMove = true;
   }
-  sf::Vector2f processNewOffset(std::set<Input> inputs,
-                                std::set<Input> releaseInputs);
+  sf::Vector2f getCursorOffset() { return cursorOffset; }
+  sf::Vector2f getMapOffset() { return mapOffset; }
+  void processNewOffset(std::set<Input> inputs, std::set<Input> releaseInputs,
+                        sf::Time deltaTime);
 };

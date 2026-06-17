@@ -2,8 +2,9 @@
 #include <algorithm>
 #include <set>
 
-sf::Vector2f Camera::processNewOffset(std::set<Input> inputs,
-                                      std::set<Input> releaseInputs) {
+void Camera::processNewOffset(std::set<Input> inputs,
+                              std::set<Input> releaseInputs,
+                              sf::Time deltaTime) {
   const int UP = static_cast<int>(Input::UP);
   const int DOWN = static_cast<int>(Input::DOWN);
   const int LEFT = static_cast<int>(Input::LEFT);
@@ -24,7 +25,7 @@ sf::Vector2f Camera::processNewOffset(std::set<Input> inputs,
   std::int32_t dx = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0);
   std::int32_t dy = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0);
 
-  this->lastMove += GameApp::GetInstance()->GetDeltaTime();
+  this->lastMove += deltaTime;
 
   bool doStep = false;
   if (dx != 0 || dy != 0) {
@@ -45,27 +46,55 @@ sf::Vector2f Camera::processNewOffset(std::set<Input> inputs,
   if (doStep) {
     previousCursorX = cursorX;
     previousCursorY = cursorY;
-    cursorX = std::clamp(cursorX + dx, 0, mapSizeX);
-    cursorY = std::clamp(cursorY + dy, 0, mapSizeY);
+    previousMapCornerX = mapCornerX;
+    previousMapCornerY = mapCornerY;
+
+    cursorX = std::clamp(cursorX + dx, 0, mapSizeX - 1);
+    cursorY = std::clamp(cursorY + dy, 0, mapSizeY - 1);
+
+    const std::int32_t maxCornerX = std::max(0, mapSizeX - viewSizeX);
+    const std::int32_t maxCornerY = std::max(0, mapSizeY - viewSizeY);
+
+    if (cursorX - mapCornerX < edgeOffsetX) {
+      mapCornerX = cursorX - edgeOffsetX;
+    } else if (cursorX - mapCornerX > viewSizeX - 1 - edgeOffsetX) {
+      mapCornerX = cursorX - (viewSizeX - 1 - edgeOffsetX);
+    }
+    mapCornerX = std::clamp(mapCornerX, 0, maxCornerX);
+
+    if (cursorY - mapCornerY < edgeOffsetY) {
+      mapCornerY = cursorY - edgeOffsetY;
+    } else if (cursorY - mapCornerY > viewSizeY - 1 - edgeOffsetY) {
+      mapCornerY = cursorY - (viewSizeY - 1 - edgeOffsetY);
+    }
+    mapCornerY = std::clamp(mapCornerY, 0, maxCornerY);
   }
 
   for (const auto &release : releaseInputs) {
     isPressed[static_cast<int>(release)] = false;
   }
 
-  // Once the current step's animation has run its course the cursor is settled,
-  // so pin the previous tile to the current one (this also covers the idle
-  // case, where lastMove keeps growing past repeatRate).
   if (this->lastMove >= repeatRate) {
     previousCursorX = cursorX;
     previousCursorY = cursorY;
+    previousMapCornerX = mapCornerX;
+    previousMapCornerY = mapCornerY;
   }
 
   float ratio =
       std::min(1.f, this->lastMove.asSeconds() / repeatRate.asSeconds());
-  float offsetX = (previousCursorX + (cursorX - previousCursorX) * ratio) *
-                  (float)tileSize.x;
-  float offsetY = (previousCursorY + (cursorY - previousCursorY) * ratio) *
-                  (float)tileSize.y;
-  return sf::Vector2f(offsetX, offsetY);
+
+  float cursorTileX = previousCursorX + (cursorX - previousCursorX) * ratio;
+  float cursorTileY = previousCursorY + (cursorY - previousCursorY) * ratio;
+  float cornerTileX =
+      previousMapCornerX + (mapCornerX - previousMapCornerX) * ratio;
+  float cornerTileY =
+      previousMapCornerY + (mapCornerY - previousMapCornerY) * ratio;
+
+  mapOffset =
+      sf::Vector2f(-cornerTileX * tileSize.x, -cornerTileY * tileSize.y);
+
+  cursorOffset = sf::Vector2f((cursorTileX - cornerTileX) * tileSize.x,
+                              (cursorTileY - cornerTileY) * tileSize.y) -
+                 sf::Vector2f(3.0f, 3.0f);
 }
