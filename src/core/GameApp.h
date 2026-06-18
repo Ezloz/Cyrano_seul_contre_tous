@@ -15,7 +15,6 @@
 #include <vector>
 #include "GameTypes.h"
 #include "Map.h"
-//#include "UIManager.h"
 
 
 using RawInput =
@@ -31,10 +30,6 @@ class GameApp {
    * construction calls with the `new` operator.
    */
 private:
-  GameApp() { LoadOptions(); };
-
-  static GameApp *singleton_;
-
   void SaveOptions();
   void LoadOptions();
 
@@ -49,21 +44,7 @@ private:
   tgui::Gui gui;
 
 public:
-  /**
-   * Singletons should not be cloneable.
-   */
-  GameApp(GameApp &other) = delete;
-  /**
-   * Singletons should not be assignable.
-   */
-  void operator=(const GameApp &) = delete;
-  /**
-   * This is the static method that controls the access to the singleton
-   * instance. On the first run, it creates a singleton object and places it
-   * into the static field. On subsequent runs, it returns the client existing
-   * object stored in the static field.
-   */
-  static GameApp *GetInstance();
+  explicit GameApp(sf::RenderWindow* window) : gui{*window} { LoadOptions(); };
 
   sf::Time GetDeltaTime() const { return deltaTime; }
   GameState GetGameState() const { return state; }
@@ -72,29 +53,31 @@ public:
   std::set<Input> GetInputs() const { return inputs; }
   std::set<Input> GetReleasedInputs() const { return releasedInputs; }
   void ClearReleasedInputs() { releasedInputs.clear(); }
-
+  
   Map *GetActiveMap() const { return activeMap.get(); }
-
+  
   void transformRawInputToInput(RawInput rinput);
-
+  
   void ProcessInputs() {
     switch (this->state) {
-    case GameState::IN_GAME :
+      case GameState::IN_GAME :
       //                Map.move();
       break;
-    case  GameState::IN_MENU      :
+      case  GameState::IN_MENU      :
       break;
-    case  GameState::IN_GAMEMENU  :
+      case  GameState::IN_GAMEMENU  :
       break;
-    case  GameState::IN_ANIMATION :
+      case  GameState::IN_ANIMATION :
       break;
-    case  GameState::IN_CINEMATIC :
+      case  GameState::IN_CINEMATIC :
       break;
     }
   }
-
+  
   void SaveGame();
   void LoadGame();
+  
+  bool LoadGUI(std::string name);
 
   void Update() {
     deltaTime = globalClock.restart();
@@ -104,6 +87,16 @@ public:
     //        .update();
     //        .update();
   }
+
+  void Draw(const sf::RenderTarget& window) {
+//    this->activeMap.draw(window)
+    this->gui.draw();
+    //        .update();
+    //        .update();
+    //        .update();
+    //        .update();
+  }
+
 
   //    void SomeBusinessLogic()
 
