@@ -11,6 +11,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <tmxlite/ObjectGroup.hpp>
 #include <vector>
 
 class Camera;
@@ -21,15 +22,15 @@ private:
   std::unique_ptr<Camera> activeCamera;
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
-  // Terrain tile size, captured before tmxMap is reloaded with the cursor.
   tmx::Vector2u tileSize;
-  // Number of tiles shown on screen (the viewport size, in tiles).
   std::int32_t viewSizeX = 15;
   std::int32_t viewSizeY = 10;
-  // Margin (in tiles) kept between the cursor and a screen edge before the
-  // map starts scrolling. Must stay below half the viewport on each axis.
   std::int32_t edgeOffsetX = 3;
   std::int32_t edgeOffsetY = 2;
+
+  std::mutex charactersMutex;
+  std::vector<std::unique_ptr<Character>> ennemies;
+  std::vector<std::unique_ptr<Character>> allies;
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
     for (const auto &layer : layers) {

@@ -30,4 +30,11 @@ void Map::update(sf::Time elapsed) {
   if (cursorLayer) {
     cursorLayer->update(elapsed);
   }
-}
+
+  // Character Map::getCharacter(std::string id) {
+  //   for (const auto &character : characters.getObjects()) {
+  //     if (character->id == id) {
+  //       return character;
+  //     }
+  //   }
+};
