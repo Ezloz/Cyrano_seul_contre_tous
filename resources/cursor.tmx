@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="1" height="1" tilewidth="22" tileheight="22" infinite="0" nextlayerid="2" nextobjectid="1">
- <tileset firstgid="1" source="./cursor.tsx"/>
- <layer id="1" name="Calque de Tuiles 1" width="1" height="1">
-  <data>
-   <tile gid="1"/>
-  </data>
- </layer>
-</map>
