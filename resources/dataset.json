@@ -1,0 +1,6 @@
+{
+  "texture": {
+    "soldier": "resources/sprites/soldier.json",
+    "cyrano": "resources/sprites/cyrano.json",
+  }
+}
