@@ -25,6 +25,15 @@ int myMain() {
 
   gameInstance.LoadGUI(" ");
 
+  // Intro: pan the view out to a corner, then back to the original offset,
+  // and only then reveal the cursor and hand control to the player.
+  const Coord originCorner = {0, 0};
+  const Coord introCorner = {5, 3};
+  const sf::Time cinematicDuration = sf::seconds(1.f);
+  // 0: panning out, 1: panning back, 2: gameplay.
+  int introPhase = 0;
+  map.startCinematic(originCorner, introCorner, cinematicDuration);
+
   while (window.isOpen()) {
     gameInstance.Update();
 
@@ -49,9 +58,23 @@ int myMain() {
     }
 
     gameInstance.ProcessInputs();
-    map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
-             gameInstance.GetDeltaTime());
+    // Ignore player movement until the intro cinematics are done.
+    if (introPhase >= 2) {
+      map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
+               gameInstance.GetDeltaTime());
+    }
     map.update(gameInstance.GetDeltaTime());
+
+    // Chain the intro legs: when one finishes, start the next one (or end the
+    // intro) before drawing, so the cursor never flashes between legs.
+    if (introPhase < 2 && !map.isCinematicActive()) {
+      if (introPhase == 0) {
+        map.startCinematic(introCorner, originCorner, cinematicDuration);
+        introPhase = 1;
+      } else {
+        introPhase = 2;
+      }
+    }
 
     window.clear(sf::Color::Black);
     window.draw(map);

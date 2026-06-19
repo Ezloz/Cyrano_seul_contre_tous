@@ -23,7 +23,20 @@ void Map::move(std::set<Input> inputs, std::set<Input> inputsRelease,
   }
 }
 
+void Map::startCinematic(Coord from, Coord to, sf::Time duration) {
+  activeCamera->generateCinematic(from, to, duration);
+}
+
+bool Map::isCinematicActive() const { return activeCamera->isCinematicActive(); }
+
 void Map::update(sf::Time elapsed) {
+  if (activeCamera->isCinematicActive()) {
+    activeCamera->updateCinematic(elapsed);
+    for (auto &layer : layers) {
+      layer->setOffset(activeCamera->getMapOffset());
+    }
+  }
+
   for (auto &layer : layers) {
     layer->update(elapsed);
   }

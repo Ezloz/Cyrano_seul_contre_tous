@@ -33,6 +33,15 @@ private:
   sf::Time repeatDelay;
   sf::Time lastMove;
 
+  // Cinematic state: slides the map view from one corner to another while the
+  // player has no control and the cursor is hidden.
+  bool cinematicActive = false;
+  bool cursorVisible = true;
+  Coord cinematicFrom;
+  Coord cinematicTo;
+  sf::Time cinematicElapsed;
+  sf::Time cinematicDuration;
+
 public:
   bool isPressed[static_cast<int>(Input::NB_INPUTS)];
   bool delayedMove;
@@ -60,4 +69,10 @@ public:
   sf::Vector2f getMapOffset() { return mapOffset; }
   void processNewOffset(std::set<Input> inputs, std::set<Input> releaseInputs,
                         sf::Time deltaTime);
+
+  void generateCinematic(Coord from, Coord to, sf::Time duration);
+  void updateCinematic(sf::Time deltaTime);
+
+  bool isCinematicActive() const { return cinematicActive; }
+  bool isCursorVisible() const { return cursorVisible; }
 };

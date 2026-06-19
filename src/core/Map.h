@@ -34,7 +34,7 @@ private:
     for (const auto &layer : layers) {
       target.draw(*layer, states);
     }
-    if (cursorLayer) {
+    if (cursorLayer && activeCamera->isCursorVisible()) {
       target.draw(*cursorLayer, states);
     }
   }
@@ -51,6 +51,13 @@ public:
 
   void move(std::set<Input> inputs, std::set<Input> inputsRelease,
             sf::Time deltaTime);
+
+  // Slides the map view from corner `from` to corner `to` (tile coordinates)
+  // over `duration`, hiding the cursor for the duration of the cinematic.
+  void startCinematic(Coord from, Coord to, sf::Time duration);
+
+  // True while a cinematic is playing (cursor hidden, player input ignored).
+  bool isCinematicActive() const;
 
   void update(sf::Time elapsed);
 };

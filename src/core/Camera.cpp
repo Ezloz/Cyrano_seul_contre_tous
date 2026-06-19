@@ -61,22 +61,22 @@ void Camera::processNewOffset(std::set<Input> inputs,
     cursor.x = std::clamp(previousCursor.x + delta.x, 0, mapSize.x - 1);
     cursor.y = std::clamp(previousCursor.y + delta.y, 0, mapSize.y - 1);
 
-    const std::int32_t maxCornerX = std::max(0, mapSize.x - viewSize.x);
-    const std::int32_t maxCornerY = std::max(0, mapSize.y - viewSize.y);
+    const Coord maxCorner = {std::max(0, mapSize.x - viewSize.x),
+                             std::max(0, mapSize.y - viewSize.y)};
 
     if (cursor.x - mapCorner.x < edgeOffset.x) {
       mapCorner.x = cursor.x - edgeOffset.x;
     } else if (cursor.x - mapCorner.x > viewSize.x - 1 - edgeOffset.x) {
       mapCorner.x = cursor.x - (viewSize.x - 1 - edgeOffset.x);
     }
-    mapCorner.x = std::clamp(mapCorner.x, 0, maxCornerX);
+    mapCorner.x = std::clamp(mapCorner.x, 0, maxCorner.x);
 
     if (cursor.y - mapCorner.y < edgeOffset.y) {
       mapCorner.y = cursor.y - edgeOffset.y;
     } else if (cursor.y - mapCorner.y > viewSize.y - 1 - edgeOffset.y) {
       mapCorner.y = cursor.y - (viewSize.y - 1 - edgeOffset.y);
     }
-    mapCorner.y = std::clamp(mapCorner.y, 0, maxCornerY);
+    mapCorner.y = std::clamp(mapCorner.y, 0, maxCorner.y);
   }
 
   // if (this->lastMove >= repeatRate) {
@@ -102,4 +102,52 @@ void Camera::processNewOffset(std::set<Input> inputs,
   cursorOffset = sf::Vector2f((cursorTileX - cornerTileX) * tileSize.x,
                               (cursorTileY - cornerTileY) * tileSize.y) -
                  sf::Vector2f(3.0f, 3.0f);
+}
+
+void Camera::generateCinematic(Coord from, Coord to, sf::Time duration) {
+  const Coord maxCorner = {std::max(0, mapSize.x - viewSize.x),
+                           std::max(0, mapSize.y - viewSize.y)};
+
+  cinematicFrom.x = std::clamp(from.x, 0, maxCorner.x);
+  cinematicFrom.y = std::clamp(from.y, 0, maxCorner.y);
+  cinematicTo.x = std::clamp(to.x, 0, maxCorner.x);
+  cinematicTo.y = std::clamp(to.y, 0, maxCorner.y);
+
+  // Téléportation si duration négative (voir update)
+  cinematicDuration =
+      duration > sf::Time::Zero ? duration : sf::milliseconds(1);
+  cinematicElapsed = sf::Time::Zero;
+  cinematicActive = true;
+  cursorVisible = false;
+
+  mapCorner = cinematicFrom;
+  previousMapCorner = cinematicFrom;
+  mapOffset = sf::Vector2f(-cinematicFrom.x * tileSize.x,
+                           -cinematicFrom.y * tileSize.y);
+}
+
+void Camera::updateCinematic(sf::Time deltaTime) {
+  if (!cinematicActive) {
+    return;
+  }
+
+  cinematicElapsed += deltaTime;
+
+  float ratio = std::clamp(
+      cinematicElapsed.asSeconds() / cinematicDuration.asSeconds(), 0.f, 1.f);
+  // Unique polynome de plus bas degré de dérivé nulle en 0 et 1 valant 0 en 0
+  // et 1 en 1
+  float eased = ratio * ratio * (3.f - 2.f * ratio);
+
+  float cornerX = cinematicFrom.x + (cinematicTo.x - cinematicFrom.x) * eased;
+  float cornerY = cinematicFrom.y + (cinematicTo.y - cinematicFrom.y) * eased;
+
+  mapOffset = sf::Vector2f(-cornerX * tileSize.x, -cornerY * tileSize.y);
+
+  if (ratio >= 1.f) {
+    cinematicActive = false;
+    cursorVisible = true;
+    mapCorner = cinematicTo;
+    previousMapCorner = cinematicTo;
+  }
 }
