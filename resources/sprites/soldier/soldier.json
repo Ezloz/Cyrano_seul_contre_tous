@@ -1,0 +1,46 @@
+{
+  "texture": "soldier",
+  "defaultState": "idle",
+  "states": {
+    "idle": {
+      "defaultFrameDuration": 0.15,
+      "defaultFrameSize": { "w": 24, "h": 24 },
+      "frames": [
+        { "x": 0,  "y": 0 },
+        { "x": 24, "y": 0 }
+        { "x": 48, "y": 0 }
+        { "x": 72, "y": 0 }
+      ]
+    },
+    "walkUp": {
+      "defaultFrameDuration": 0.15,
+      "defaultFrameSize": { "w": 24, "h": 24 },
+      "frames": [
+        { "x": 0,  "y": 24 },
+        { "x": 24, "y": 24 },
+        { "x": 48, "y": 24 },
+        { "x": 72, "y": 24 }
+      ]
+    },
+    "walkDown": {
+      "defaultFrameDuration": 0.15,
+      "defaultFrameSize": { "w": 24, "h": 24 },
+      "frames": [
+        { "x": 0,  "y": 48 },
+        { "x": 24, "y": 48 },
+        { "x": 48, "y": 48 },
+        { "x": 72, "y": 48 }
+      ]
+    }
+    "walkLeft": {
+      "defaultFrameDuration": 0.15,
+      "defaultFrameSize": { "w": 24, "h": 24 },
+      "frames": [
+        { "x": 0,  "y": 72 },
+        { "x": 24, "y": 72 },
+        { "x": 48, "y": 72 },
+        { "x": 72, "y": 72 }
+      ]
+    }
+  }
+}
