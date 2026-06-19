@@ -8,7 +8,7 @@ Map::Map(const std::string &name, int nbLayer) {
   for (int i = 0; i < nbLayer; i++) {
     layers.push_back(std::make_unique<MapLayer>(tmxMap, i));
   }
-  tmxMap.load("resources/cursor.tmx");
+  tmxMap.load("resources/cursor/cursor.tmx");
   cursorLayer = std::make_unique<MapLayer>(tmxMap, 0);
 }
 
@@ -27,7 +27,9 @@ void Map::startCinematic(Coord from, Coord to, sf::Time duration) {
   activeCamera->generateCinematic(from, to, duration);
 }
 
-bool Map::isCinematicActive() const { return activeCamera->isCinematicActive(); }
+bool Map::isCinematicActive() const {
+  return activeCamera->isCinematicActive();
+}
 
 void Map::update(sf::Time elapsed) {
   if (activeCamera->isCinematicActive()) {
