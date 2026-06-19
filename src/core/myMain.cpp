@@ -17,8 +17,9 @@ int myMain() {
   Map map("resources/little_test_20.tmx", 1);
 
   const tmx::Vector2u tileSize = map.GetTileSize();
-  const sf::Vector2f viewSize(map.GetViewSizeX() * tileSize.x,
-                              map.GetViewSizeY() * tileSize.y);
+  const Coord viewTiles = map.GetViewSize();
+  const sf::Vector2f viewSize(viewTiles.x * tileSize.x,
+                              viewTiles.y * tileSize.y);
   sf::View view(viewSize / 2.f, viewSize);
   window.setView(view);
 

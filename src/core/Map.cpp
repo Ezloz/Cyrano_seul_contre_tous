@@ -3,8 +3,8 @@
 Map::Map(const std::string &name, int nbLayer) {
   tmxMap.load(name);
   tileSize = tmxMap.getTileSize();
-  activeCamera = std::make_unique<Camera>(0, 0, edgeOffsetX, edgeOffsetY,
-                                          viewSizeX, viewSizeY, tmxMap);
+  activeCamera =
+      std::make_unique<Camera>(Coord{0, 0}, edgeOffset, viewSize, tmxMap);
   for (int i = 0; i < nbLayer; i++) {
     layers.push_back(std::make_unique<MapLayer>(tmxMap, i));
   }

@@ -23,10 +23,8 @@ private:
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
   tmx::Vector2u tileSize;
-  std::int32_t viewSizeX = 15;
-  std::int32_t viewSizeY = 10;
-  std::int32_t edgeOffsetX = 3;
-  std::int32_t edgeOffsetY = 2;
+  Coord viewSize = {15, 10};
+  Coord edgeOffset = {3, 2};
 
   std::mutex charactersMutex;
   std::vector<std::unique_ptr<Character>> ennemies;
@@ -49,8 +47,7 @@ public:
 
   tmx::Vector2u GetTileSize() const { return tileSize; };
 
-  std::int32_t GetViewSizeX() const { return viewSizeX; };
-  std::int32_t GetViewSizeY() const { return viewSizeY; };
+  Coord GetViewSize() const { return viewSize; };
 
   void move(std::set<Input> inputs, std::set<Input> inputsRelease,
             sf::Time deltaTime);
