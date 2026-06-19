@@ -7,7 +7,7 @@ add_library(lib_core
   Camera.h Camera.cpp
 	Character.h
 	UIManager.h
-	TurnQueue.h
+	TurnQueue.h TurnQueue.cpp
 )
 
 target_include_directories(lib_core PUBLIC ./)

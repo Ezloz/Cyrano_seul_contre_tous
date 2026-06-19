@@ -31,6 +31,11 @@ public:
   };
 
 private:
+  int id;
+  static int nextId() {
+      static int counter{0};
+      return ++counter;
+  }
   const AnimationTemplate *animTemplate;
   std::shared_ptr<sf::Texture> texture;
   sf::Sprite sprite;
@@ -54,9 +59,13 @@ public:
             const AnimationTemplate *tmpl, std::shared_ptr<sf::Texture> texture)
       : animTemplate(tmpl), texture(std::move(texture)), sprite(*this->texture),
         coordX(x), coordY(y), specialAttackName(specialAttackName) {
+    id = nextId();
     state = animTemplate->defaultState();
   }
   virtual ~Character() = default;
+
+  bool operator==(const Character& other) const {return id == other.id;}
+
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
 
