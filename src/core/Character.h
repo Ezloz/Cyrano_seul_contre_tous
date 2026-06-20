@@ -22,10 +22,10 @@
 #include <unordered_map>
 #include <vector>
 
-struct Object {};
-struct Weapon {};
-struct Armor {};
-struct Accessory {};
+// struct Object {};
+// struct Weapon {};
+// struct Armor {};
+// struct Accessory {};
 
 class Character {
 public:
@@ -36,8 +36,8 @@ public:
 private:
   int id;
   static int nextId() {
-      static int counter{0};
-      return ++counter;
+    static int counter{0};
+    return ++counter;
   }
   const AnimationTemplate *animTemplate;
   std::shared_ptr<sf::Texture> texture;
@@ -50,11 +50,11 @@ protected:
   Coord coord;
   std::string specialAttackName;
   Statistic stats;
-  std::vector<Object> inventory;
-  std::optional<Weapon> weapon;
-  std::optional<Armor> armor;
-  std::optional<Accessory> firstAccessory;
-  std::optional<Accessory> secondAccessory;
+  // std::vector<Object> inventory;
+  // std::optional<Weapon> weapon;
+  // std::optional<Armor> armor;
+  // std::optional<Accessory> firstAccessory;
+  // std::optional<Accessory> secondAccessory;
 
 public:
   Character(Coord coord, std::string specialAttackName,
@@ -66,7 +66,7 @@ public:
   }
   virtual ~Character() = default;
 
-  bool operator==(const Character& other) const {return id == other.id;}
+  bool operator==(const Character &other) const { return id == other.id; }
 
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;

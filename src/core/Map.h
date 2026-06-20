@@ -8,11 +8,15 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+
 #include <memory>
 #include <set>
 #include <string>
 #include <tmxlite/ObjectGroup.hpp>
 #include <vector>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 class Camera;
 
@@ -27,8 +31,7 @@ private:
   Coord edgeOffset = {3, 2};
 
   std::mutex charactersMutex;
-  std::vector<std::unique_ptr<Character>> ennemies;
-  std::vector<std::unique_ptr<Character>> allies;
+  std::vector<std::unique_ptr<Character>> characters;
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
     for (const auto &layer : layers) {
@@ -52,12 +55,25 @@ public:
   void move(std::set<Input> inputs, std::set<Input> inputsRelease,
             sf::Time deltaTime);
 
-  // Slides the map view from corner `from` to corner `to` (tile coordinates)
-  // over `duration`, hiding the cursor for the duration of the cinematic.
   void startCinematic(Coord from, Coord to, sf::Time duration);
-
-  // True while a cinematic is playing (cursor hidden, player input ignored).
   bool isCinematicActive() const;
 
   void update(sf::Time elapsed);
+
+  static Map loadMap(std::string save) {
+    printf("%s\n", save.c_str());
+    json saveJson = openJson(save.c_str());
+    if (saveJson.contains("map")) {
+      std::string mapId = saveJson["map"].get<std::string>();
+      printf("%s\n", mapId.c_str());
+      json data = openJson(DATASET);
+      std::string tmxMap = data["maps"][mapId].get<std::string>();
+      printf("%s\n", tmxMap.c_str());
+      return Map(tmxMap, 1);
+    }
+    // for (auto it = data.at("map").begin();
+    //      it != data.at(std::string("entryPoint") + slot).end(); ++it) {
+    //   // textureDataset[it.key()] = it.value();
+    // }
+  };
 };

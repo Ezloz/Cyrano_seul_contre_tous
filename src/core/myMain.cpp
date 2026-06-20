@@ -14,7 +14,15 @@ int myMain() {
   window.setFramerateLimit(30);
 
   GameApp gameInstance{&window};
-  Map map("resources/little_test_20.tmx", 1);
+  json data = openJson(DATASET);
+  printf("%s\n", DATASET);
+  std::string save =
+      data["entryPointSlot1"] // A remplacer lors du choix du joueur
+          .get<std::string>();
+  printf("%s\n", save.c_str());
+  Map map = Map::loadMap(save);
+  // tmxMap;
+  // Map map(tmxMap, 1);
 
   const tmx::Vector2u tileSize = map.GetTileSize();
   const Coord viewTiles = map.GetViewSize();
@@ -25,12 +33,9 @@ int myMain() {
 
   gameInstance.LoadGUI(" ");
 
-  // Intro: pan the view out to a corner, then back to the original offset,
-  // and only then reveal the cursor and hand control to the player.
   const Coord originCorner = {0, 0};
   const Coord introCorner = {5, 3};
   const sf::Time cinematicDuration = sf::seconds(1.f);
-  // 0: panning out, 1: panning back, 2: gameplay.
   int introPhase = 0;
   map.startCinematic(originCorner, introCorner, cinematicDuration);
 
@@ -58,15 +63,12 @@ int myMain() {
     }
 
     gameInstance.ProcessInputs();
-    // Ignore player movement until the intro cinematics are done.
     if (introPhase >= 2) {
       map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
                gameInstance.GetDeltaTime());
     }
     map.update(gameInstance.GetDeltaTime());
 
-    // Chain the intro legs: when one finishes, start the next one (or end the
-    // intro) before drawing, so the cursor never flashes between legs.
     if (introPhase < 2 && !map.isCinematicActive()) {
       if (introPhase == 0) {
         map.startCinematic(introCorner, originCorner, cinematicDuration);

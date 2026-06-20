@@ -1,6 +1,5 @@
 {
-  "texture": "soldier",
-  "defaultState": "idle",
+  "texture": "soldier", "defaultState": "idle",
   "states": {
     "idle": {
       "defaultFrameDuration": 0.15,
