@@ -1,0 +1,19 @@
+{
+  "inventory": [],
+  "map": "castleBlue",
+  "playerCharacters": {
+    "Cyrano": {
+      "type": "Cyrano",
+      "statistics": [
+        { "life": 0 },
+        { "speed": 0 },
+        { "charisma": 0 },
+        { "power": 0 },
+        { "luck": 0 },
+        { "range": 0 }
+      ],
+      "effects": [],
+      "equipped": []
+    }
+  }
+}

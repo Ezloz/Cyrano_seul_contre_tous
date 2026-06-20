@@ -10,18 +10,15 @@
 #include <unordered_map>
 #include <vector>
 
+#include "GameTypes.h"
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
-inline constexpr const char *DATASET = "resources/dataset.json";
+using json = nlohmann::json;
 inline std::unordered_map<std::string, std::string> textureDataset;
 
 inline void parseTextureDataset() {
-  std::ifstream f(DATASET);
-  if (!f)
-    throw std::runtime_error(std::string("Cannot open dataset: ") + DATASET);
-  json data = json::parse(f);
-  for (auto it = data.at("texture").begin(); it != data.at("texture").end();
+  json data = openJson(DATASET);
+  for (auto it = data.at("textures").begin(); it != data.at("textures").end();
        ++it) {
     textureDataset[it.key()] = it.value();
   }

@@ -3,12 +3,15 @@
 #pragma once
 
 #include "Animation.h"
+#include "GameTypes.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
+
+#include <tmxlite/Types.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -19,10 +22,10 @@
 #include <unordered_map>
 #include <vector>
 
-struct Object {};
-struct Weapon {};
-struct Armor {};
-struct Accessory {};
+// struct Object {};
+// struct Weapon {};
+// struct Armor {};
+// struct Accessory {};
 
 class Character {
 public:
@@ -33,8 +36,8 @@ public:
 private:
   int id;
   static int nextId() {
-      static int counter{0};
-      return ++counter;
+    static int counter{0};
+    return ++counter;
   }
   const AnimationTemplate *animTemplate;
   std::shared_ptr<sf::Texture> texture;
@@ -44,27 +47,26 @@ private:
   sf::Time elapsed = sf::Time::Zero;
 
 protected:
-  std::int32_t coordX = 0;
-  std::int32_t coordY = 0;
+  Coord coord;
   std::string specialAttackName;
   Statistic stats;
-  std::vector<Object> inventory;
-  std::optional<Weapon> weapon;
-  std::optional<Armor> armor;
-  std::optional<Accessory> firstAccessory;
-  std::optional<Accessory> secondAccessory;
+  // std::vector<Object> inventory;
+  // std::optional<Weapon> weapon;
+  // std::optional<Armor> armor;
+  // std::optional<Accessory> firstAccessory;
+  // std::optional<Accessory> secondAccessory;
 
 public:
-  Character(std::int32_t x, std::int32_t y, std::string specialAttackName,
+  Character(Coord coord, std::string specialAttackName,
             const AnimationTemplate *tmpl, std::shared_ptr<sf::Texture> texture)
       : animTemplate(tmpl), texture(std::move(texture)), sprite(*this->texture),
-        coordX(x), coordY(y), specialAttackName(specialAttackName) {
+        coord(coord), specialAttackName(specialAttackName) {
     id = nextId();
     state = animTemplate->defaultState();
   }
   virtual ~Character() = default;
 
-  bool operator==(const Character& other) const {return id == other.id;}
+  bool operator==(const Character &other) const { return id == other.id; }
 
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
@@ -77,10 +79,8 @@ public:
     frameIndex = 0;
     elapsed = sf::Time::Zero;
   }
-  std::int32_t getCoordX() const { return coordX; }
-  std::int32_t getCoordY() const { return coordY; }
-  void setCoordX(std::int32_t x) { coordX = x; }
-  void setCoordY(std::int32_t y) { coordY = y; }
+  Coord getCoord() const { return coord; }
+  void setCoord(Coord c) { coord = c; }
   const Statistic &getStats() const { return stats; }
   const std::string &getSpecialAttackName() const { return specialAttackName; }
 };

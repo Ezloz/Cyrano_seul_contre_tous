@@ -1,6 +1,13 @@
 {
-  "texture": {
+  "entryPointSlot1": "saves/slot1/save.json",
+  "entryPointSlot2": "saves/slot2/save.json",
+  "entryPointSlot3": "saves/slot3/save.json",
+  "defaultEntryPoint": "resources/Maps/castleBlue/CastleBlue.tmx",
+  "textures": {
     "soldier": "resources/sprites/soldier.json",
-    "cyrano": "resources/sprites/cyrano.json",
+    "cyrano": "resources/sprites/cyrano.json"
+  },
+  "maps": {
+    "castleBlue": "resources/Maps/castleBlue/CastleBlue.tmx"
   }
 }

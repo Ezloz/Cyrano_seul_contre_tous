@@ -5,22 +5,20 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 
+#include "GameTypes.h"
+#include "Map.h"
 #include <map>
 #include <set>
 #include <string>
 #include <variant>
 #include <vector>
-#include "GameTypes.h"
-#include "Map.h"
-
 
 using RawInput =
     std::variant<const sf::Event::KeyPressed *, const sf::Event::KeyReleased *,
                  const sf::Event::JoystickButtonPressed *>;
-
 
 // Singleton format taken from refactoring.guru
 class GameApp {
@@ -44,7 +42,7 @@ private:
   tgui::Gui gui;
 
 public:
-  explicit GameApp(sf::RenderWindow* window) : gui{*window} { LoadOptions(); };
+  explicit GameApp(sf::RenderWindow *window) : gui{*window} { LoadOptions(); };
 
   sf::Time GetDeltaTime() const { return deltaTime; }
   GameState GetGameState() const { return state; }
@@ -53,30 +51,30 @@ public:
   std::set<Input> GetInputs() const { return inputs; }
   std::set<Input> GetReleasedInputs() const { return releasedInputs; }
   void ClearReleasedInputs() { releasedInputs.clear(); }
-  
+
   Map *GetActiveMap() const { return activeMap.get(); }
-  
+
   void transformRawInputToInput(RawInput rinput);
-  
+
   void ProcessInputs() {
     switch (this->state) {
-      case GameState::IN_GAME :
+    case GameState::IN_GAME:
       //                Map.move();
       break;
-      case  GameState::IN_MENU      :
+    case GameState::IN_MENU:
       break;
-      case  GameState::IN_GAMEMENU  :
+    case GameState::IN_GAMEMENU:
       break;
-      case  GameState::IN_ANIMATION :
+    case GameState::IN_ANIMATION:
       break;
-      case  GameState::IN_CINEMATIC :
+    case GameState::IN_CINEMATIC:
       break;
     }
   }
-  
+
   void SaveGame();
   void LoadGame();
-  
+
   bool LoadGUI(std::string name);
 
   void Update() {
@@ -88,15 +86,14 @@ public:
     //        .update();
   }
 
-  void Draw(const sf::RenderTarget& window) {
-//    this->activeMap.draw(window)
+  void Draw(const sf::RenderTarget &window) {
+    //    this->activeMap.draw(window)
     this->gui.draw();
     //        .update();
     //        .update();
     //        .update();
     //        .update();
   }
-
 
   //    void SomeBusinessLogic()
 

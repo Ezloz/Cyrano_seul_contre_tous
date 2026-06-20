@@ -3,12 +3,12 @@
 Map::Map(const std::string &name, int nbLayer) {
   tmxMap.load(name);
   tileSize = tmxMap.getTileSize();
-  activeCamera = std::make_unique<Camera>(0, 0, edgeOffsetX, edgeOffsetY,
-                                          viewSizeX, viewSizeY, tmxMap);
+  activeCamera =
+      std::make_unique<Camera>(Coord{0, 0}, edgeOffset, viewSize, tmxMap);
   for (int i = 0; i < nbLayer; i++) {
     layers.push_back(std::make_unique<MapLayer>(tmxMap, i));
   }
-  tmxMap.load("resources/cursor.tmx");
+  tmxMap.load("resources/cursor/cursor.tmx");
   cursorLayer = std::make_unique<MapLayer>(tmxMap, 0);
 }
 
@@ -23,7 +23,22 @@ void Map::move(std::set<Input> inputs, std::set<Input> inputsRelease,
   }
 }
 
+void Map::startCinematic(Coord from, Coord to, sf::Time duration) {
+  activeCamera->generateCinematic(from, to, duration);
+}
+
+bool Map::isCinematicActive() const {
+  return activeCamera->isCinematicActive();
+}
+
 void Map::update(sf::Time elapsed) {
+  if (activeCamera->isCinematicActive()) {
+    activeCamera->updateCinematic(elapsed);
+    for (auto &layer : layers) {
+      layer->setOffset(activeCamera->getMapOffset());
+    }
+  }
+
   for (auto &layer : layers) {
     layer->update(elapsed);
   }

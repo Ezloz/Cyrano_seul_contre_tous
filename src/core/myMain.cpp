@@ -14,15 +14,30 @@ int myMain() {
   window.setFramerateLimit(30);
 
   GameApp gameInstance{&window};
-  Map map("resources/little_test_20.tmx", 1);
+  json data = openJson(DATASET);
+  printf("%s\n", DATASET);
+  std::string save =
+      data["entryPointSlot1"] // A remplacer lors du choix du joueur
+          .get<std::string>();
+  printf("%s\n", save.c_str());
+  Map map = Map::loadMap(save);
+  // tmxMap;
+  // Map map(tmxMap, 1);
 
   const tmx::Vector2u tileSize = map.GetTileSize();
-  const sf::Vector2f viewSize(map.GetViewSizeX() * tileSize.x,
-                              map.GetViewSizeY() * tileSize.y);
+  const Coord viewTiles = map.GetViewSize();
+  const sf::Vector2f viewSize(viewTiles.x * tileSize.x,
+                              viewTiles.y * tileSize.y);
   sf::View view(viewSize / 2.f, viewSize);
   window.setView(view);
 
   gameInstance.LoadGUI(" ");
+
+  const Coord originCorner = {0, 0};
+  const Coord introCorner = {5, 3};
+  const sf::Time cinematicDuration = sf::seconds(1.f);
+  int introPhase = 0;
+  map.startCinematic(originCorner, introCorner, cinematicDuration);
 
   while (window.isOpen()) {
     gameInstance.Update();
@@ -48,9 +63,20 @@ int myMain() {
     }
 
     gameInstance.ProcessInputs();
-    map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
-             gameInstance.GetDeltaTime());
+    if (introPhase >= 2) {
+      map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
+               gameInstance.GetDeltaTime());
+    }
     map.update(gameInstance.GetDeltaTime());
+
+    if (introPhase < 2 && !map.isCinematicActive()) {
+      if (introPhase == 0) {
+        map.startCinematic(introCorner, originCorner, cinematicDuration);
+        introPhase = 1;
+      } else {
+        introPhase = 2;
+      }
+    }
 
     window.clear(sf::Color::Black);
     window.draw(map);

@@ -20,7 +20,7 @@ void Character::draw(sf::RenderTarget &target,
   sf::Sprite sprite = sprite;
   sprite.setTextureRect({f.x, f.y, f.w, f.h});
   sprite.setPosition(
-      static_cast<float>(coordX * static_cast<std::int32_t>(tileSize.x)),
-      static_cast<float>(coordY * static_cast<std::int32_t>(tileSize.y)));
+      static_cast<float>(coord.x * static_cast<std::int32_t>(tileSize.x)),
+      static_cast<float>(coord.y * static_cast<std::int32_t>(tileSize.y)));
   target.draw(sprite);
 }
