@@ -114,11 +114,13 @@ void Character::draw(sf::RenderTarget &target, const tmx::Vector2u &tileSize,
 
   sf::Sprite frameSprite = sprite;
   frameSprite.setTextureRect(sf::IntRect({f.x, f.y}, {f.w, f.h}));
+  // Center horizontally on the tile; align the sprite's bottom edge with the
+  // tile's bottom edge (feet on the tile).
   const float tileW = static_cast<float>(tileSize.x);
   const float tileH = static_cast<float>(tileSize.y);
   frameSprite.setPosition(
       {tile.x * tileW + (tileW - static_cast<float>(f.w)) / 2.f,
-       tile.y * tileH + (tileH - static_cast<float>(f.h)) / 2.f});
+       tile.y * tileH + (tileH - static_cast<float>(f.h))});
   target.draw(frameSprite, states);
 }
 
