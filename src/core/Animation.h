@@ -1,19 +1,19 @@
 #pragma once
 
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <cstdint>
 #include <fstream>
+#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "GameTypes.h"
-#include <nlohmann/json.hpp>
+#include "Save.h"
 
-using json = nlohmann::json;
 inline std::unordered_map<std::string, std::string> textureDataset;
 
 inline void parseTextureDataset() {
@@ -124,4 +124,52 @@ public:
       throw std::out_of_range("L'état '" + s + "' n'existe pas");
     return it->second;
   }
+
+  bool has(const std::string &s) const {
+    return m_animations.find(s) != m_animations.end();
+  }
 };
+
+inline void ensureTextureDatasetLoaded() {
+  static bool loaded = false;
+  if (!loaded) {
+    parseTextureDataset();
+    loaded = true;
+  }
+}
+
+inline const AnimationTemplate *
+getAnimationTemplate(const std::string &spriteId) {
+  ensureTextureDatasetLoaded();
+  static std::unordered_map<std::string, AnimationTemplate> cache;
+  auto it = cache.find(spriteId);
+  if (it == cache.end()) {
+    it = cache.emplace(spriteId, AnimationTemplate(spriteId)).first;
+  }
+  return &it->second;
+}
+
+inline std::shared_ptr<sf::Texture> getTexture(const std::string &spriteId) {
+  ensureTextureDatasetLoaded();
+  static std::unordered_map<std::string, std::shared_ptr<sf::Texture>> cache;
+  auto it = cache.find(spriteId);
+  if (it != cache.end()) {
+    return it->second;
+  }
+  auto pathIt = textureDataset.find(spriteId);
+  if (pathIt == textureDataset.end()) {
+    throw std::runtime_error("Unknown sprite id: " + spriteId);
+  }
+  std::string path = pathIt->second; // resources/sprites/<dir>/<Name>.json
+  const std::string suffix = ".json";
+  if (path.size() >= suffix.size() &&
+      path.compare(path.size() - suffix.size(), suffix.size(), suffix) == 0) {
+    path.replace(path.size() - suffix.size(), suffix.size(), ".png");
+  }
+  auto tex = std::make_shared<sf::Texture>();
+  if (!tex->loadFromFile(path)) {
+    throw std::runtime_error("Cannot load texture: " + path);
+  }
+  cache.emplace(spriteId, tex);
+  return tex;
+}

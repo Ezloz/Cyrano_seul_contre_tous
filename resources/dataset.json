@@ -4,8 +4,8 @@
   "entryPointSlot3": "saves/slot3/save.json",
   "defaultEntryPoint": "resources/Maps/castleBlue/CastleBlue.tmx",
   "textures": {
-    "soldier": "resources/sprites/soldier/soldier.json",
-    "cyrano": "resources/sprites/cyrano/cyrano.json"
+    "Soldier": "resources/sprites/soldier/Soldier.json",
+    "Cyrano": "resources/sprites/cyrano/Cyrano.json"
   },
   "maps": {
     "castleBlue": "resources/Maps/castleBlue/CastleBlue.tmx"
