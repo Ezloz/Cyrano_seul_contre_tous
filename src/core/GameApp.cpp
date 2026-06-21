@@ -118,20 +118,19 @@ bool GameApp::LoadGUI(std::string name) {
 }
 
 void jsonDefaultMap(std::string savePath) {
-  json defaultJson = {
-    "inventory" : [],
-    "map" : "castleBlue",
-    "playerCharacters" : {
-      "Cyrano" : {
-        "type" : "Cyrano",
-        "statistics" : [
-          {"life" : 0}, {"speed" : 0}, {"charisma" : 0}, {"power" : 0},
-          {"luck" : 0}, {"range" : 0}
-        ],
-        "effects" : [],
-        "equipped" : []
-      }
-    }
-  };
-  writeSave(savePath, saveJson);
+  json defaultJson = {{"inventory", json::array()},
+                      {"map", "castleBlue"},
+                      {"playerCharacters",
+                       {{"Cyrano",
+                         {{"type", "Cyrano"},
+                          {"statistics",
+                           {{{"life", 0}},
+                            {{"speed", 0}},
+                            {{"charisma", 0}},
+                            {{"power", 0}},
+                            {{"luck", 0}},
+                            {{"range", 0}}}},
+                          {"effects", json::array()},
+                          {"equipped", json::array()}}}}}};
+  writeSave(savePath, defaultJson);
 }

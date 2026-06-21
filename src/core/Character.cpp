@@ -114,8 +114,11 @@ void Character::draw(sf::RenderTarget &target, const tmx::Vector2u &tileSize,
 
   sf::Sprite frameSprite = sprite;
   frameSprite.setTextureRect(sf::IntRect({f.x, f.y}, {f.w, f.h}));
-  frameSprite.setPosition({tile.x * static_cast<float>(tileSize.x),
-                           tile.y * static_cast<float>(tileSize.y)});
+  const float tileW = static_cast<float>(tileSize.x);
+  const float tileH = static_cast<float>(tileSize.y);
+  frameSprite.setPosition(
+      {tile.x * tileW + (tileW - static_cast<float>(f.w)) / 2.f,
+       tile.y * tileH + (tileH - static_cast<float>(f.h)) / 2.f});
   target.draw(frameSprite, states);
 }
 
@@ -143,11 +146,31 @@ json Character::toPartyJson() const {
 
 Character::Statistic Character::statisticFromJson(const json &j) {
   Statistic s;
-  s.life = j.value("life", 0);
-  s.speed = j.value("speed", 0);
-  s.charisma = j.value("charisma", 0);
-  s.power = j.value("power", 0);
-  s.luck = j.value("luck", 0);
-  s.range = j.value("range", 0);
+  const auto assign = [&s](const std::string &key, int value) {
+    if (key == "life")
+      s.life = value;
+    else if (key == "speed")
+      s.speed = value;
+    else if (key == "charisma")
+      s.charisma = value;
+    else if (key == "power")
+      s.power = value;
+    else if (key == "luck")
+      s.luck = value;
+    else if (key == "range")
+      s.range = value;
+  };
+
+  if (j.is_array()) {
+    for (const auto &entry : j) {
+      for (const auto &[key, value] : entry.items()) {
+        assign(key, value.get<int>());
+      }
+    }
+  } else if (j.is_object()) {
+    for (const auto &[key, value] : j.items()) {
+      assign(key, value.get<int>());
+    }
+  }
   return s;
 }
