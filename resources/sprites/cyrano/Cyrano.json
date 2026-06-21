@@ -32,7 +32,7 @@
         { "x": 72, "y": 48 }
       ]
     },
-    "walkRight": {
+    "walkLeft": {
       "defaultFrameDuration": 0.15,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
@@ -42,14 +42,14 @@
         { "x": 72, "y": 72 }
       ]
     },
-    "walkLeft": {
+    "walkRight": {
       "defaultFrameDuration": 0.15,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
-        { "x": 0, "y": 72 },
-        { "x": 24, "y": 72 },
-        { "x": 48, "y": 72 },
-        { "x": 72, "y": 72 }
+        { "x": 0, "y": 96 },
+        { "x": 24, "y": 96 },
+        { "x": 48, "y": 96 },
+        { "x": 72, "y": 96 }
       ]
     }
   }
