@@ -14,18 +14,13 @@ int myMain() {
   window.setFramerateLimit(30);
 
   GameApp gameInstance{&window};
-  json data = openJson(DATASET);
-  printf("%s\n", DATASET);
-  std::string save =
-      data["entryPointSlot1"] // A remplacer lors du choix du joueur
-          .get<std::string>();
-  printf("%s\n", save.c_str());
-  Map map = Map::loadMap(save);
-  // tmxMap;
-  // Map map(tmxMap, 1);
+  // A remplacer lors du choix du joueur (slot) et de la map de départ.
+  const int slot = 1;
+  const std::string startMap = "castleBlue";
+  std::unique_ptr<Map> map = Map::loadMap(slot, startMap);
 
-  const tmx::Vector2u tileSize = map.GetTileSize();
-  const Coord viewTiles = map.GetViewSize();
+  const tmx::Vector2u tileSize = map->GetTileSize();
+  const Coord viewTiles = map->GetViewSize();
   const sf::Vector2f viewSize(viewTiles.x * tileSize.x,
                               viewTiles.y * tileSize.y);
   sf::View view(viewSize / 2.f, viewSize);
@@ -37,7 +32,9 @@ int myMain() {
   const Coord introCorner = {5, 3};
   const sf::Time cinematicDuration = sf::seconds(1.f);
   int introPhase = 0;
-  map.startCinematic(originCorner, introCorner, cinematicDuration);
+  map->startCinematic(originCorner, introCorner, cinematicDuration);
+
+  bool moveTestStarted = false;
 
   while (window.isOpen()) {
 
@@ -64,22 +61,28 @@ int myMain() {
     gameInstance.ProcessInputs();
     gameInstance.Update();
     if (introPhase >= 2) {
-      map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
-               gameInstance.GetDeltaTime());
+      map->move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
+                gameInstance.GetDeltaTime());
     }
-    map.update(gameInstance.GetDeltaTime());
+    map->update(gameInstance.GetDeltaTime());
 
-    if (introPhase < 2 && !map.isCinematicActive()) {
+    if (introPhase < 2 && !map->isCinematicActive()) {
       if (introPhase == 0) {
-        map.startCinematic(introCorner, originCorner, cinematicDuration);
+        map->startCinematic(introCorner, originCorner, cinematicDuration);
         introPhase = 1;
       } else {
         introPhase = 2;
       }
     }
 
+    if (introPhase >= 2 && !moveTestStarted) {
+      map->moveCharacterTo("Cyrano", {{3, 3}, {6, 3}, {6, 5}},
+                           sf::seconds(0.5f));
+      moveTestStarted = true;
+    }
+
     window.clear(sf::Color::Black);
-    window.draw(map);
+    window.draw(*map);
     gameInstance.Draw(window);
     window.display();
   }

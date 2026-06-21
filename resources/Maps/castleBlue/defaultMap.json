@@ -1,0 +1,50 @@
+{
+  "entries": [
+    {
+      "spawn": [
+        { "Cyrano": { "coord": { "x": 3, "y": 3 } } },
+        { "Chritian": { "coord": { "x": 4, "y": 3 } } }
+      ]
+    }
+  ],
+  "exits": [
+    {
+      "exit1": {
+        "x": 0,
+        "y": 4,
+        "direction": ["Left"],
+        "mapExit": { "id": "finish", "entry": null }
+      }
+    }
+  ],
+  "characters": {
+    "soldier1": {
+      "type": "Soldier",
+      "coord": { "x": 5, "y": 3 },
+      "statistics": {
+        "life": 0,
+        "speed": 0,
+        "charisma": 0,
+        "power": 0,
+        "luck": 0,
+        "range": 0
+      },
+      "effectIds": [],
+      "equipementIds": []
+    },
+    "soldier2": {
+      "type": "Soldier",
+      "coord": { "x": 6, "y": 3 },
+      "statistics": {
+        "life": 0,
+        "speed": 0,
+        "charisma": 0,
+        "power": 0,
+        "luck": 0,
+        "range": 0
+      },
+      "effectIds": [],
+      "equipementIds": []
+    }
+  }
+}

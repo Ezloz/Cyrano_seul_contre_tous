@@ -46,21 +46,47 @@ private:
   std::size_t frameIndex = 0;
   sf::Time elapsed = sf::Time::Zero;
 
+  std::vector<Coord> movePath;
+  sf::Time moveElapsed = sf::Time::Zero;
+  sf::Time moveTileRate = sf::Time::Zero;
+  sf::Time moveDuration = sf::Time::Zero;
+  bool moving = false;
+
+  // Position du sprite, peut etre entre deux tiles
+  sf::Vector2f currentVisualTile() const;
+
+  // indice actuel dans le movePath et met à jour t (pourcentage du parcours sur
+  // le segment, utiliser pour la position du sprite)
+  std::size_t currentSegment(float &t) const;
+
+  // renvoie la direction associé au mouvement actuel ("idle", "walkUp",
+  // "walkDown", "walkLeft" or "walkRight").
+  std::string movementState() const;
+
 protected:
   Coord coord;
-  std::string specialAttackName;
+  std::optional<std::string> specialAttackName;
   Statistic stats;
-  // std::vector<Object> inventory;
+  std::string nameId;
+  std::string type;
+  std::vector<std::string> effectIds;
+  std::vector<std::string> equipementIds;
   // std::optional<Weapon> weapon;
   // std::optional<Armor> armor;
   // std::optional<Accessory> firstAccessory;
   // std::optional<Accessory> secondAccessory;
 
 public:
-  Character(Coord coord, std::string specialAttackName,
+  Character(std::string nameId, std::string type, Coord coord,
+            std::optional<std::string> specialAttackName, Statistic stats,
+            std::vector<std::string> effectIds,
+            std::vector<std::string> equipementIds,
             const AnimationTemplate *tmpl, std::shared_ptr<sf::Texture> texture)
       : animTemplate(tmpl), texture(std::move(texture)), sprite(*this->texture),
-        coord(coord), specialAttackName(specialAttackName) {
+        coord(coord), specialAttackName(std::move(specialAttackName)),
+        stats(stats), nameId(std::move(nameId)), type(std::move(type)),
+        effectIds(std::move(effectIds)),
+        equipementIds(std::move(equipementIds)) {
     id = nextId();
     state = animTemplate->defaultState();
   }
@@ -71,8 +97,19 @@ public:
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
 
+  virtual bool isPlayer() const = 0;
+
+  virtual json toJson() const;
+  // Utiliser pour save.json et non la saveMap.json
+  json toPartyJson() const;
+  static Statistic statisticFromJson(const json &j);
+
   void update(sf::Time dt);
-  void draw(sf::RenderTarget &target, const tmx::Vector2u &tileSize) const;
+  void draw(sf::RenderTarget &target, const tmx::Vector2u &tileSize,
+            sf::RenderStates states = {}) const;
+
+  void moveTo(std::vector<Coord> coords, sf::Time tileRate);
+  void spriteMoveTo(std::vector<Coord> coords, sf::Time tileRate);
 
   void setState(const std::string &state) {
     this->state = state;
@@ -81,6 +118,10 @@ public:
   }
   Coord getCoord() const { return coord; }
   void setCoord(Coord c) { coord = c; }
+  const std::string &getNameId() const { return nameId; }
+  const std::string &getType() const { return type; }
   const Statistic &getStats() const { return stats; }
-  const std::string &getSpecialAttackName() const { return specialAttackName; }
+  const std::optional<std::string> &getSpecialAttackName() const {
+    return specialAttackName;
+  }
 };
