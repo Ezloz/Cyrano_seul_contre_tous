@@ -40,7 +40,6 @@ int myMain() {
   map.startCinematic(originCorner, introCorner, cinematicDuration);
 
   while (window.isOpen()) {
-    gameInstance.Update();
 
     while (const std::optional event = window.pollEvent()) {
       if (event->is<sf::Event::Closed>()) {
@@ -63,6 +62,7 @@ int myMain() {
     }
 
     gameInstance.ProcessInputs();
+    gameInstance.Update();
     if (introPhase >= 2) {
       map.move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
                gameInstance.GetDeltaTime());

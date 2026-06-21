@@ -1,14 +1,19 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "Map.h"
 
+#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 
 class UIManager {
   private:
-    tgui::Gui gui;
-
+  tgui::Gui gui;
+  
+  
   public:
-//    explicit UIManager(sf::RenderWindow window) : gui{window} {};
+  explicit UIManager(sf::RenderWindow *window) : gui{*window} { /*LoadOptions();*/ };
+  
+  bool LoadGUI(std::string name);
 
+  void draw(){gui.draw();};
 };

@@ -2,7 +2,7 @@ add_executable(main
   main.cpp
 )
 
-target_link_libraries(main PUBLIC lib_core sfml-graphics tmxlite TGUI::TGUI)
+target_link_libraries(main PUBLIC lib_core sfml-graphics tmxlite TGUI::TGUI nlohmann_json::nlohmann_json)
 
 add_custom_target(copy-resources ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/resources)
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/resources

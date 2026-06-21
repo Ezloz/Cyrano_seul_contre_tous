@@ -1,121 +1,54 @@
-BitmapButton.BitmapButton1 {
-    Image = None;
-    ImageScaling = 0;
-    Position = (170, 100);
-    Text = BitBtn;
-    TextSize = 13;
-
-    Renderer {
-        BackgroundColor = #F5F5F5;
-        BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #EBEBEB;
-        BackgroundColorHover = white;
-        BorderColor = #3C3C3C;
-        BorderColorDisabled = #7D7D7D;
-        BorderColorDown = black;
-        BorderColorFocused = #1E1EB4;
-        BorderColorHover = black;
-        Borders = (1, 1, 1, 1);
-        TextColor = #3C3C3C;
-        TextColorDisabled = #7D7D7D;
-        TextColorDown = black;
-        TextColorHover = black;
-        Texture = None;
-        TextureDisabled = None;
-        TextureDown = None;
-        TextureDownFocused = None;
-        TextureDownHover = None;
-        TextureFocused = None;
-        TextureHover = None;
-    }
+Renderer.1 {
+    BackgroundColor = #F5F5F5;
+    BackgroundColorDisabled = #E6E6E6;
+    BackgroundColorDown = #EBEBEB;
+    BackgroundColorHover = white;
+    BorderColor = #3C3C3C;
+    BorderColorDisabled = #7D7D7D;
+    BorderColorDown = black;
+    BorderColorFocused = #1E1EB4;
+    BorderColorHover = black;
+    Borders = (1, 1, 1, 1);
+    TextColor = #3C3C3C;
+    TextColorDisabled = #7D7D7D;
+    TextColorDown = black;
+    TextColorHover = black;
+    Texture = None;
+    TextureDisabled = None;
+    TextureDown = None;
+    TextureDownFocused = None;
+    TextureDownHover = None;
+    TextureFocused = None;
+    TextureHover = None;
 }
 
-Button.Button1 {
-    Position = (390, 270);
-    Text = Button;
-    TextSize = 13;
+Group.Group1 {
+    Size = (800, 100%);
 
     Renderer {
-        BackgroundColor = #F5F5F5;
-        BackgroundColorDisabled = #E6E6E6;
-        BackgroundColorDown = #EBEBEB;
-        BackgroundColorHover = white;
-        BorderColor = #3C3C3C;
-        BorderColorDisabled = #7D7D7D;
-        BorderColorDown = black;
-        BorderColorFocused = #1E1EB4;
-        BorderColorHover = black;
-        Borders = (1, 1, 1, 1);
-        TextColor = #3C3C3C;
-        TextColorDisabled = #7D7D7D;
-        TextColorDown = black;
-        TextColorHover = black;
-        Texture = "../cursor.png" Smooth;
-        TextureDisabled = None;
-        TextureDown = None;
-        TextureDownFocused = None;
-        TextureDownHover = None;
-        TextureFocused = None;
-        TextureHover = None;
     }
-}
 
-ComboBox.ComboBox1 {
-    ChangeItemOnScroll = false;
-    ItemsToDisplay = 0;
-    MaximumItems = 0;
-    Size = (150, 21);
-    TextSize = 13;
-
-    Renderer {
-        ArrowBackgroundColor = #F5F5F5;
-        ArrowBackgroundColorHover = white;
-        ArrowColor = #3C3C3C;
-        ArrowColorHover = black;
-        BackgroundColor = #F5F5F5;
-        BackgroundColorDisabled = #E6E6E6;
-        BorderColor = black;
-        Borders = (1, 1, 1, 1);
-        Padding = (0, 0, 0, 0);
-        TextColor = #3C3C3C;
-        TextColorDisabled = #7D7D7D;
-        TextureArrow = None;
-        TextureArrowDisabled = None;
-        TextureArrowHover = None;
-        TextureBackground = None;
-        TextureBackgroundDisabled = None;
-
-        ListBox {
-            BackgroundColor = #F5F5F5;
-            BackgroundColorHover = white;
-            BorderColor = black;
-            Borders = (1, 1, 1, 1);
-            Padding = (0, 0, 0, 0);
-            SelectedBackgroundColor = #006EFF;
-            SelectedBackgroundColorHover = #1E96FF;
-            SelectedTextColor = white;
-            TextColor = #3C3C3C;
-            TextColorHover = black;
-
-            Scrollbar {
-                ArrowBackgroundColor = #F5F5F5;
-                ArrowBackgroundColorHover = white;
-                ArrowColor = #3C3C3C;
-                ArrowColorHover = black;
-                ThumbColor = #DCDCDC;
-                ThumbColorHover = #E6E6E6;
-                TrackColor = #F5F5F5;
-            }
-        }
+    Button.ButtonStart {
+        Position = (38.75%, 128);
+        Renderer = &1;
+        Size = (180, 10.5%);
+        Text = Start;
+        TextSize = 13;
     }
-}
 
-Picture.Picture1 {
-    Position = (410, 50);
-    Size = (100, 100);
+    Button.ButtonOptions {
+        Position = (38.75%, 268);
+        Renderer = &1;
+        Size = (180, 10.5%);
+        Text = Options;
+        TextSize = 13;
+    }
 
-    Renderer {
-        Texture = "resources/DefaultPicture.png" Smooth;
-        TransparentTexture = false;
+    Button.ButtonQuit {
+        Position = (38.75%, 408);
+        Renderer = &1;
+        Size = (180, 10.5%);
+        Text = Quit;
+        TextSize = 13;
     }
 }

@@ -31,6 +31,12 @@ FetchContent_Declare(
 set(TGUI_BACKEND "SFML_GRAPHICS" CACHE STRING "TGUI backend" FORCE)
 FetchContent_MakeAvailable(TGUI)
 
+FetchContent_Declare(
+    json
+    URL https://github.com/nlohmann/json/archive/refs/tags/v3.12.0.zip
+)
+FetchContent_MakeAvailable(json)
+
 set(CMAKE_CXX_STANDARD 23)
 
 #

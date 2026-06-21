@@ -6,9 +6,9 @@ add_library(lib_core
 	MapLayer.h MapLayer.cpp
   Camera.h Camera.cpp
 	Character.h
-	UIManager.h
+	UIManager.h UIManager.cpp
 	TurnQueue.h TurnQueue.cpp
 )
 
 target_include_directories(lib_core PUBLIC ./)
-target_link_libraries(lib_core PUBLIC sfml-graphics TGUI::TGUI)
+target_link_libraries(lib_core PUBLIC sfml-graphics TGUI::TGUI nlohmann_json::nlohmann_json)
