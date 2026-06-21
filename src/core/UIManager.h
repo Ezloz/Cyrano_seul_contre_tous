@@ -13,7 +13,7 @@ class UIManager {
   public:
   explicit UIManager(sf::RenderWindow *window) : gui{*window} { /*LoadOptions();*/ };
   
-  bool LoadGUI(std::string name);
+  bool LoadGUI(std::string pathname);
 
-  void draw(){gui.draw();};
+  void draw(sf::RenderWindow* window = NULL){gui.draw();};
 };

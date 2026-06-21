@@ -65,3 +65,4 @@ void jsonDefaultMap(std::string savePath) {
                           {"effects", json::array()},
                           {"equipped", json::array()}}}}}};
   writeSave(savePath, defaultJson);
+}

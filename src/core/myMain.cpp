@@ -26,7 +26,7 @@ int myMain() {
   sf::View view(viewSize / 2.f, viewSize);
   window.setView(view);
 
-  gameInstance.LoadGUI(" ");
+  gameInstance.Start();
 
   const Coord originCorner = {0, 0};
   const Coord introCorner = {5, 3};
@@ -60,6 +60,9 @@ int myMain() {
 
     gameInstance.ProcessInputs();
     gameInstance.Update();
+
+
+    //TO SUPPRESS/MOVE
     if (introPhase >= 2) {
       map->move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
                 gameInstance.GetDeltaTime());
@@ -80,9 +83,10 @@ int myMain() {
                            sf::seconds(0.5f));
       moveTestStarted = true;
     }
-
+    //END TO SUPPRESS/MOVE
+    
     window.clear(sf::Color::Black);
-    window.draw(*map);
+    window.draw(*map); // TO SUPRESS/MOVE
     gameInstance.Draw(window);
     window.display();
   }
