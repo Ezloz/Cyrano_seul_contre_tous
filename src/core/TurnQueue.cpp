@@ -1,6 +1,6 @@
 #include "TurnQueue.h"
 
-#include <iostream>
+#include <SFML/Graphics.hpp>
 
 void bubbleSingleSort(std::vector<std::pair<Character*, float>>& vec, int index) {
   if (index <= 0 || index <= vec.size()-1){
@@ -56,6 +56,7 @@ void TurnQueue::EndCurrentCharacter(){ //End turn of current character and selec
   currentCharacter = GetNextCharacter();
 }
 
+
 void TurnQueue::AddCharacter(Character& character, float actionvalue){
   Character* ch = &character;
   turnQueue.push_back(std::pair{ch, actionvalue});
@@ -80,23 +81,35 @@ void TurnQueue::SetActionValue(const Character& character, float actionvalue){
 
 
 void TurnQueue::draw(sf::RenderTarget &target, sf::RenderStates states) const{
-    sf::Sprite sprite{currentCharacter->getPortrait()};
-    sprite.setScale({0.125f, 0.125f});
-    auto height = sprite.getGlobalBounds().size.y;
+  sf::Sprite sprite{currentCharacter->getPortrait()};
+  sprite.setScale({0.125f, 0.125f});
+  auto height = sprite.getGlobalBounds().size.y; //assuming all characters portraits are same size
+  sprite.setPosition({0.f, 0.f});
+  sf::RectangleShape border{sprite.getGlobalBounds().size};
+  
+  border.setOutlineColor(sf::Color::White);
+  border.setOutlineThickness(2.f);
+  
+  if (currentCharacter->getIsCursorSelected()){
+    border.setPosition({0.f, 0.f});
+    target.draw(border, states);
+  }
 
-    sprite.setPosition({0.f, 0.f});
-    target.draw(sprite, states);
+  target.draw(sprite, states);
   int index = 1;
   for (auto [charac, av] : turnQueue){
-    if (charac == currentCharacter && currentCharacter->isPlayer()){
-      sprite.setPosition({0.f, 0.f + index * height});
+    sprite = charac->getPortrait();
+    sprite.setScale({0.125f, 0.125f});
+    if (*charac == *currentCharacter){
       sprite.setColor(sf::Color(255, 255, 255, 125));
       target.draw(sprite, states);
     }
-    else{
-      sprite.setPosition({0.f, 0.f + index * height});
-      target.draw(sprite, states);
+    if (charac->getIsCursorSelected()){
+        border.setPosition({0.0f, index * height});
+        target.draw(border, states);
     }
+    sprite.setPosition({0.f, 0.f + index * height});
+    target.draw(sprite, states);
     index++;
   }
 }

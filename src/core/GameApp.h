@@ -76,7 +76,6 @@ public:
   void LoadMap(int slot, const std::string& startMap) {this->activeMap = Map::loadMap(slot, startMap);}
 
   void Start(){
-    printf("tesfsdf");
     this->state = GameState::IN_MENU;
     this->LoadGUI("resources/GUI/MainMenu.txt");
     const int slot = 1;

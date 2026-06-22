@@ -15,6 +15,7 @@ public:
                   std::move(equipementIds), tmpl, std::move(texture)) {}
 
   bool isPlayer() const override { return true; }
+  void workAI() {return;}
 
   // Tous les childrens doivent implémenter :
   // void attack(Character &other) override;

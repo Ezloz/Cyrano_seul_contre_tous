@@ -12,6 +12,6 @@ enum class GameState {
   IN_GAME,
   IN_GAMEMENU,
   IN_MENU,
-  IN_ANIMATION,
+  IN_BATTLE_ANIMATION,
   IN_CINEMATIC
 };

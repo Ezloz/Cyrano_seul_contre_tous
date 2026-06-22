@@ -30,15 +30,10 @@
 class Character {
 public:
   struct Statistic {
-    int life = 0, speed = 0, charisma = 0, power = 0, luck = 0, range = 0;
+    int life = 1, speed = 1, charisma = 1, power = 1, luck = 1, range = 1;
   };
 
 private:
-  int id;
-  static int nextId() {
-    static int counter{0};
-    return ++counter;
-  }
   const AnimationTemplate *animTemplate;
   std::shared_ptr<sf::Texture> texture;
   sf::Sprite sprite;
@@ -53,6 +48,7 @@ private:
   sf::Time moveTileRate = sf::Time::Zero;
   sf::Time moveDuration = sf::Time::Zero;
   bool moving = false;
+  bool isCursorSelected = false;
 
   // Position du sprite, peut etre entre deux tiles
   sf::Vector2f currentVisualTile() const;
@@ -90,17 +86,17 @@ public:
         stats(stats), nameId(std::move(nameId)), type(std::move(type)),
         effectIds(std::move(effectIds)),
         equipementIds(std::move(equipementIds)) {
-    id = nextId();
     state = animTemplate->defaultState();
   }
   virtual ~Character() = default;
 
-  bool operator==(const Character &other) const { return id == other.id; }
+  bool operator==(const Character &other) const { return getNameId() == other.getNameId(); }
 
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
 
   virtual bool isPlayer() const = 0;
+  virtual void workAI()=0;
 
   virtual json toJson() const;
   // Utiliser pour save.json et non la saveMap.json
@@ -121,6 +117,8 @@ public:
     frameIndex = 0;
     elapsed = sf::Time::Zero;
   }
+  bool getIsCursorSelected() {return isCursorSelected;}
+  void setIsCursorSelected(bool f) {this->isCursorSelected = f;}
   Coord getCoord() const { return coord; }
   void setCoord(Coord c) { coord = c; }
   const std::string &getNameId() const { return nameId; }

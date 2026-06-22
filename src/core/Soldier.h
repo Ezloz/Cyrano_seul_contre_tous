@@ -16,6 +16,8 @@ public:
   void attack(Character &other) override;
   void specialAttack(Character &other) override;
 
+  void workAI() override;
+
   // Factory
   static std::unique_ptr<Character> create(const json &j);
 };

@@ -92,15 +92,8 @@ public:
     }
   }
 
-  GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
-    if (state == GameState::IN_GAME && activeCharacter->isPlayer()){
-      this->move(inputs, inputsRelease, deltaTime);
-    }
-    return state;
-  }
-
-  void move(std::set<Input> inputs, std::set<Input> inputsRelease,
-            sf::Time deltaTime);
+  GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
+  void move();
 
   void startCinematic(Coord from, Coord to, sf::Time duration);
   bool isCinematicActive() const;

@@ -25,3 +25,7 @@ std::unique_ptr<Character> Soldier::create(const json &j) {
       j.value("effectIds", std::vector<std::string>{}),
       j.value("equipementIds", std::vector<std::string>{}));
 }
+
+void Soldier::workAI(){
+
+}

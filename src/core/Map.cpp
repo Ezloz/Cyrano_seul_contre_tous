@@ -195,14 +195,23 @@ void Map::setWalkable(Coord coord, bool walkable) {
       walkable ? 1 : 0;
 }
 
-void Map::move(std::set<Input> inputs, std::set<Input> inputsRelease,
-               sf::Time deltaTime) {
-  activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
+void Map::move() {
   cursorLayer->setOffset(activeCamera->getCursorOffset());
   for (auto &layer : layers) {
     layer->setOffset(activeCamera->getMapOffset());
   }
 }
+
+GameState Map::ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
+  if (state == GameState::IN_GAME){
+    if (activeCharacter->isPlayer()){
+      activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
+      this->move();
+    }
+  }
+  return state;
+}
+
 
 void Map::startCinematic(Coord from, Coord to, sf::Time duration) {
   activeCamera->generateCinematic(from, to, duration);
@@ -306,7 +315,8 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
   std::vector<std::pair<Character*, float>> queue = {};
   for (const auto& characPtr : map->characters){
     std::cout << characPtr->getStats().speed;
-    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/(float) characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
+//    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/(float) characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
+    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/10.0f)}); //PB HERE : Speed set to 0 ????
   }
   map->turnQueue.SetQueue(queue);
   map->activeCharacter = map->turnQueue.GetCurrentCharacter();
