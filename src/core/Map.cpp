@@ -204,10 +204,10 @@ void Map::move() {
 
 GameState Map::ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
   if (state == GameState::IN_GAME){
-    if (activeCharacter->isPlayer()){
+//    if (activeCharacter->isPlayer()){ TO ADD BACK WHEN TURNQUEUE IS WORKING
       activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
       this->move();
-    }
+//    }
   }
   return state;
 }
