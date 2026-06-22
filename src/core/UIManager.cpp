@@ -8,12 +8,18 @@ void updateTextSize(tgui::BackendGui& gui)
     gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
 }
 
+//taken and modified from TGUI website
 bool UIManager::LoadGUI(std::string pathname)
 {
     try
     {
         this->gui.loadWidgetsFromFile(pathname);
-//        loadWidgets(this->gui);
+        auto button = gui.get<tgui::Button>("ButtonStart");
+
+        if (button) {
+            button->setFocused(true);
+        }
+
         return true;
     }
     catch (const tgui::Exception& e)
@@ -23,5 +29,41 @@ bool UIManager::LoadGUI(std::string pathname)
     }
 }
 
+
+std::array<bool, 2> buttonPressed = {false, false};
+GameState UIManager::move(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
+    auto button = this->gui.getFocusedLeaf();
+
+    if (inputs.find(Input::CONFIRM) != inputs.end()){
+        if (button->getWidgetName() == "ButtonStart"){
+            return GameState::IN_GAME;
+        }
+        if (button->getWidgetName() == "ButtonStart"){
+            return GameState::IN_MENU;
+        }
+        if (button->getWidgetName() == "ButtonStart"){
+            return GameState::IN_MENU;
+        }
+    }
+
+    if (inputsRelease.find(Input::UP) != inputsRelease.end()){
+        buttonPressed[0] = false;
+    }
+    if (inputsRelease.find(Input::DOWN) != inputsRelease.end()){
+        buttonPressed[1] = false;
+    }
+    if (inputs.find(Input::UP) != inputs.end() && !buttonPressed[0]){
+        buttonPressed[0] = true;
+        button->setFocused(false);
+        button->getNavigationUp()->setFocused(true);
+    }
+    if (inputs.find(Input::DOWN) != inputs.end() && !buttonPressed[1]){
+        buttonPressed[1] = true;
+        button->setFocused(false);
+        button->getNavigationDown()->setFocused(true);
+    }
+
+    return GameState::IN_MENU;
+}
 
 

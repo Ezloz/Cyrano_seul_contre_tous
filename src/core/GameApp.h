@@ -41,11 +41,11 @@ private:
   UIManager uimanager;
 
 public:
-  explicit GameApp(sf::RenderWindow *window) : uimanager{window} { LoadOptions(); }
+  explicit GameApp(sf::RenderWindow& window) : uimanager{window} { LoadOptions(); }
 
   sf::Time GetDeltaTime() const { return deltaTime; }
   GameState GetGameState() const { return state; }
-  void SetGameState(GameState state);
+  void SetGameState(GameState state) { this->state = state; }
 
   std::set<Input> GetInputs() const { return inputs; }
   std::set<Input> GetReleasedInputs() const { return releasedInputs; }
@@ -53,14 +53,16 @@ public:
 
   Map *GetActiveMap() const { return activeMap.get(); }
 
+  sf::View GetViewSize();
+
   void transformRawInputToInput(RawInput rinput);
 
   void ProcessInputs() {
     GameState nextState = this->state;
       //...
-      //nextState = map.ProcessInputs(this->state, inputs, releaseInputs, deltaTime);
+      nextState = activeMap->ProcessInputs(this->state, inputs, releasedInputs, deltaTime);
       //...
-      //nextState = uimanager.ProcessInputs(this->state, inputs, releaseInputs, deltaTime)
+      nextState = uimanager.ProcessInputs(this->state, inputs, releasedInputs, deltaTime);
       //...
     this->state = nextState;
   }
@@ -69,23 +71,34 @@ public:
 
   void SaveGame();
   void LoadGame();
-  void LoadGUI(std::string pathname) {uimanager.LoadGUI(pathname);};
+  
+  void LoadGUI(std::string pathname) {uimanager.LoadGUI(pathname);}
+  void LoadMap(int slot, const std::string& startMap) {this->activeMap = Map::loadMap(slot, startMap);}
 
   void Start(){
+    printf("tesfsdf");
     this->state = GameState::IN_MENU;
     this->LoadGUI("resources/GUI/MainMenu.txt");
+    const int slot = 1;
+    const std::string startMap = "castleBlue";
+    this->LoadMap(slot, startMap);
   }
 
   void Update() {
     deltaTime = globalClock.restart();
     releasedInputs.clear();
-    //        map.update(this->state, deltaTime);
+    activeMap->update(deltaTime);
     //        uimanager.update(this->state, deltaTime);
   }
 
-  void Draw(const sf::RenderTarget &window) {
+  void Draw(sf::RenderTarget& window) {
     //    this->activeMap.draw(window)
-    this->uimanager.draw();
+    if (this->state != GameState::IN_MENU){
+      window.draw(*(this->activeMap));
+    }
+    if (this->state != GameState::IN_GAME){
+      this->uimanager.draw();
+    }
 //    window.draw();
     //        .update();
     //        .update();

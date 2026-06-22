@@ -8,8 +8,6 @@
 void GameApp::SaveOptions() {}
 
 void GameApp::LoadOptions() {
-  this->state = GameState::IN_GAME;
-  this->activeMap = std::make_unique<Map>("resources/little_test_20.tmx");
 
   std::ifstream is("resources/options.txt");
   std::ofstream os("resources/options.txt");
@@ -24,7 +22,14 @@ void GameApp::LoadOptions() {
                            {sf::Keyboard::Key::C, Input::MENU}};
 }
 
-void GameApp::SetGameState(GameState s) { this->state = s; }
+sf::View GameApp::GetViewSize(){ // TO REWORK
+  const tmx::Vector2u tileSize = activeMap->GetTileSize();
+  const Coord viewTiles = activeMap->GetViewSize();
+  const sf::Vector2f viewSize(viewTiles.x * tileSize.x,
+                              viewTiles.y * tileSize.y);
+  sf::View view(viewSize / 2.f, viewSize);
+  return view;
+}
 
 void GameApp::transformRawInputToInput(RawInput rinput) {
   if (std::holds_alternative<const sf::Event::KeyPressed *>(rinput)) {

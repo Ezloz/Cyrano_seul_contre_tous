@@ -89,6 +89,13 @@ public:
     }
   }
 
+  GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
+    if (state == GameState::IN_GAME){
+      this->move(inputs, inputsRelease, deltaTime);
+    }
+    return state;
+  }
+
   void move(std::set<Input> inputs, std::set<Input> inputsRelease,
             sf::Time deltaTime);
 
