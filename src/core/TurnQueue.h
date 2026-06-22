@@ -4,6 +4,7 @@
 
 #include "Character.h"
 
+constexpr float BASE_DEFAULT_AV = 10000.0f;
 
 
 class TurnQueue : public sf::Drawable {
@@ -21,11 +22,7 @@ private:
   void SetActionValue(int index, float actionvalue);
 
 public:
-  explicit TurnQueue(const std::vector<std::pair<Character*, float>>& tQ) : turnQueue{tQ} {
-    std::ranges::sort(turnQueue, {}, &std::pair<Character*, float>::second);
-    EndCurrentCharacter();
-    }
-
+  void SetQueue(const std::vector<std::pair<Character*, float>>& tQ);
   Character* GetCurrentCharacter() {return currentCharacter;};
   Character* GetNextCharacter() {return turnQueue[0].first;};
   void UpdateCurrentCharacter(float actionvalue); // same as using setActionValue() on CurrentCharacter
@@ -34,6 +31,6 @@ public:
   void RemoveCharacter(const Character& character);
   void SetActionValue(const Character& character, float actionvalue);
 
-  void draw();
+  void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 };

@@ -36,9 +36,11 @@ private:
   tmx::Vector2u tileSize;
   Coord viewSize = {15, 10};
   Coord edgeOffset = {3, 2};
+  TurnQueue turnQueue;
 
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
+  Character* activeCharacter; 
   std::vector<MapExit> exits;
 
   int gridWidth = 0;
@@ -58,6 +60,7 @@ private:
     if (cursorLayer && activeCamera->isCursorVisible()) {
       target.draw(*cursorLayer, states);
     }
+    turnQueue.draw(target, states);
   }
 
 public:
@@ -90,7 +93,7 @@ public:
   }
 
   GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
-    if (state == GameState::IN_GAME){
+    if (state == GameState::IN_GAME && activeCharacter->isPlayer()){
       this->move(inputs, inputsRelease, deltaTime);
     }
     return state;

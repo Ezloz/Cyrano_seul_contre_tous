@@ -42,6 +42,8 @@ private:
   const AnimationTemplate *animTemplate;
   std::shared_ptr<sf::Texture> texture;
   sf::Sprite sprite;
+  sf::Texture portrait_texture; // TO REWORK
+  sf::Sprite portrait;
   std::string state = "idle";
   std::size_t frameIndex = 0;
   sf::Time elapsed = sf::Time::Zero;
@@ -83,7 +85,8 @@ public:
             std::vector<std::string> equipementIds,
             const AnimationTemplate *tmpl, std::shared_ptr<sf::Texture> texture)
       : animTemplate(tmpl), texture(std::move(texture)), sprite(*this->texture),
-        coord(coord), specialAttackName(std::move(specialAttackName)),
+      portrait_texture{"resources/sprites/soldier/soldierPortrait.png"}, portrait{portrait_texture}, // TO REWORK (HARD CODED)
+      coord(coord), specialAttackName(std::move(specialAttackName)),
         stats(stats), nameId(std::move(nameId)), type(std::move(type)),
         effectIds(std::move(effectIds)),
         equipementIds(std::move(equipementIds)) {
@@ -110,6 +113,8 @@ public:
 
   void moveTo(std::vector<Coord> coords, sf::Time tileRate);
   void spriteMoveTo(std::vector<Coord> coords, sf::Time tileRate);
+
+  const sf::Sprite getPortrait() {return this->portrait;} // POSSIBLE REWORK : is it better to only keep textures in character ?
 
   void setState(const std::string &state) {
     this->state = state;

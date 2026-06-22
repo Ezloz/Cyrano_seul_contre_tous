@@ -54,7 +54,7 @@ int myMain() {
     gameInstance.Update();
 
 
-    //TO SUPPRESS/MOVE
+    //TO SUPPRESS/MOVE. TO REWORK
   /*
   if (introPhase >= 2) {
     gameInstance->activeMap->move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),

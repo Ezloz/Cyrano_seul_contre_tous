@@ -302,5 +302,13 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
   if (!fromSave) {
     map->saveState(slot);
   }
+
+  std::vector<std::pair<Character*, float>> queue = {};
+  for (const auto& characPtr : map->characters){
+    std::cout << characPtr->getStats().speed;
+    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/(float) characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
+  }
+  map->turnQueue.SetQueue(queue);
+  map->activeCharacter = map->turnQueue.GetCurrentCharacter();
   return map;
 }

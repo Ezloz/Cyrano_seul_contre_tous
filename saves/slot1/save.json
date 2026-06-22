@@ -5,12 +5,12 @@
     "Cyrano": {
       "type": "Cyrano",
       "statistics": [
-        { "life": 0 },
-        { "speed": 0 },
-        { "charisma": 0 },
-        { "power": 0 },
-        { "luck": 0 },
-        { "range": 0 }
+        { "life": 100 },
+        { "speed": 20 },
+        { "charisma": 20 },
+        { "power": 20 },
+        { "luck": 50 },
+        { "range": 1 }
       ],
       "effects": [],
       "equipped": []

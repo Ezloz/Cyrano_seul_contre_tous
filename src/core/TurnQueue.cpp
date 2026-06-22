@@ -1,5 +1,7 @@
 #include "TurnQueue.h"
 
+#include <iostream>
+
 void bubbleSingleSort(std::vector<std::pair<Character*, float>>& vec, int index) {
   if (index <= 0 || index <= vec.size()-1){
     return;
@@ -14,6 +16,21 @@ void bubbleSingleSort(std::vector<std::pair<Character*, float>>& vec, int index)
   }
 }
 
+
+void TurnQueue::SetQueue(const std::vector<std::pair<Character*, float>>& tQ) {
+  this->turnQueue = tQ;
+  std::ranges::sort(turnQueue, {}, &std::pair<Character*, float>::second);
+  EndCurrentCharacter();
+/*
+  std::cout << turnQueue[0].first->getNameId();
+  std::cout << turnQueue[1].first->getNameId();
+  std::cout << turnQueue[2].first->getNameId();
+  std::cout << turnQueue[0].second;
+  std::cout << turnQueue[1].second;
+  std::cout << turnQueue[2].second;
+*/
+
+}
 
 
 int TurnQueue::FindCharacterIndex(const Character& character){
@@ -57,15 +74,30 @@ void TurnQueue::SetActionValue(const Character& character, float actionvalue){
   SetActionValue(FindCharacterIndex(character), actionvalue);
 }
 
-void TurnQueue::draw(){
-  for (auto [charac, av] : turnQueue){
-    if (charac == currentCharacter){
-      //set alpha value to 0.5
-    }
+//constexpr int PORTRAIT_WIDTH_CUT = 500;
+//constexpr int PORTRAIT_HEIGHT_CUT = 200;
+//    sprite.setTextureRect(sf::IntRect(sf::Vector2i{0, 0}, sf::Vector2i{PORTRAIT_WIDTH_CUT, PORTRAIT_HEIGHT_CUT}));
 
+
+void TurnQueue::draw(sf::RenderTarget &target, sf::RenderStates states) const{
+    sf::Sprite sprite{currentCharacter->getPortrait()};
+    sprite.setScale({0.125f, 0.125f});
+    auto height = sprite.getGlobalBounds().size.y;
+
+    sprite.setPosition({0.f, 0.f});
+    target.draw(sprite, states);
+  int index = 1;
+  for (auto [charac, av] : turnQueue){
+    if (charac == currentCharacter && currentCharacter->isPlayer()){
+      sprite.setPosition({0.f, 0.f + index * height});
+      sprite.setColor(sf::Color(255, 255, 255, 125));
+      target.draw(sprite, states);
+    }
+    else{
+      sprite.setPosition({0.f, 0.f + index * height});
+      target.draw(sprite, states);
+    }
+    index++;
   }
 }
 
-void drawRectangleWithEnemyPortraitAndAV(float x, float y, float width, float height){
-
-}
