@@ -1,9 +1,10 @@
 #include "TurnQueue.h"
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 void bubbleSingleSort(std::vector<std::pair<Character*, float>>& vec, int index) {
-  if (index <= 0 || index <= vec.size()-1){
+  if (index <= 0 || index >= vec.size()-1){
     return;
   }
   if (vec[index-1].second > vec[index].second){
@@ -16,11 +17,23 @@ void bubbleSingleSort(std::vector<std::pair<Character*, float>>& vec, int index)
   }
 }
 
+Character* TurnQueue::GetNextCharacter() {
+  if (turnQueue.empty()) return nullptr;
+
+  float av_to_substract = turnQueue[0].second;
+
+  for (auto& elem : turnQueue) {
+    elem.second -= av_to_substract;
+  }
+
+  return turnQueue[0].first;
+}
+
 
 void TurnQueue::SetQueue(const std::vector<std::pair<Character*, float>>& tQ) {
   this->turnQueue = tQ;
   std::ranges::sort(turnQueue, {}, &std::pair<Character*, float>::second);
-  EndCurrentCharacter();
+  currentCharacter = GetNextCharacter();
 /*
   std::cout << turnQueue[0].first->getNameId();
   std::cout << turnQueue[1].first->getNameId();
@@ -33,9 +46,9 @@ void TurnQueue::SetQueue(const std::vector<std::pair<Character*, float>>& tQ) {
 }
 
 
-int TurnQueue::FindCharacterIndex(const Character& character){
+int TurnQueue::FindCharacterIndex(const Character* character){
   for (int i = 0; i < this->turnQueue.size(); i++){
-   if (*(turnQueue[i].first) == character){
+   if (turnQueue[i].first == character){
       return i;
     }
   }
@@ -48,22 +61,25 @@ void TurnQueue::SetActionValue(int index, float actionvalue){
 }
 
 void TurnQueue::UpdateCurrentCharacter(float actionvalue){ // same as using setActionValue() on CurrentCharacter
-  SetActionValue(currentCharacterIndex, actionvalue);
+  SetActionValue(FindCharacterIndex(currentCharacter), actionvalue);
 }
+
 
 void TurnQueue::EndCurrentCharacter(){ //End turn of current character and select a new current character (the one with lowest AV)
-  currentCharacterIndex = 0;
+//  std::cout << turnQueue[FindCharacterIndex(currentCharacter)].second << std::endl;
+//  UpdateCurrentCharacter(currentCharacter->getUsedAV());
+//  currentCharacter->resetUsedAV();
   currentCharacter = GetNextCharacter();
+  std::cout << currentCharacter->getNameId();
 }
 
 
-void TurnQueue::AddCharacter(Character& character, float actionvalue){
-  Character* ch = &character;
-  turnQueue.push_back(std::pair{ch, actionvalue});
+void TurnQueue::AddCharacter(Character* character, float actionvalue){
+  turnQueue.push_back(std::pair{character, actionvalue});
   bubbleSingleSort(turnQueue, turnQueue.size()-1);
 }
 
-void TurnQueue::RemoveCharacter(const Character& character){
+void TurnQueue::RemoveCharacter(const Character* character){
   int c = FindCharacterIndex(character);
   if (c == -1){
     return;
@@ -71,7 +87,7 @@ void TurnQueue::RemoveCharacter(const Character& character){
   turnQueue.erase(turnQueue.begin()+c);
 
 }
-void TurnQueue::SetActionValue(const Character& character, float actionvalue){
+void TurnQueue::SetActionValue(const Character* character, float actionvalue){
   SetActionValue(FindCharacterIndex(character), actionvalue);
 }
 

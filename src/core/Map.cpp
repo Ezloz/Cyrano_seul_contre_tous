@@ -204,11 +204,18 @@ void Map::move() {
 
 GameState Map::ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
   if (state == GameState::IN_GAME){
-//    if (activeCharacter->isPlayer()){ TO ADD BACK WHEN TURNQUEUE IS WORKING
+    if (getActiveCharacter()->isPlayer()){
       activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
       this->move();
-//    }
+    }
+    else{
+        if (this->getActiveCharacter()->workAI(this->tmxMap, this->characters)){
+          turnQueue.UpdateCurrentCharacter(this->getActiveCharacter()->getUsedAV());
+          turnQueue.EndCurrentCharacter();
+        }
+    }
   }
+    
   return state;
 }
 
@@ -319,6 +326,5 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
     queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/10.0f)}); //PB HERE : Speed set to 0 ????
   }
   map->turnQueue.SetQueue(queue);
-  map->activeCharacter = map->turnQueue.GetCurrentCharacter();
   return map;
 }

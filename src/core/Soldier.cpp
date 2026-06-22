@@ -26,6 +26,7 @@ std::unique_ptr<Character> Soldier::create(const json &j) {
       j.value("equipementIds", std::vector<std::string>{}));
 }
 
-void Soldier::workAI(){
-
+bool Soldier::workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters){
+      this->usedAV = 1000.0f / 10 ; // REWORK : REPLACE BY SPEED WHEN SPEED WORKING
+      return true;
 }

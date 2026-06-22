@@ -10,7 +10,6 @@ constexpr float BASE_DEFAULT_AV = 10000.0f;
 class TurnQueue : public sf::Drawable {
 private:
   Character* currentCharacter;
-  int currentCharacterIndex;
 
   /*   
   MUST BE SORTED AT ALL TIME 
@@ -18,18 +17,18 @@ private:
   */ 
   std::vector<std::pair<Character*, float>> turnQueue; 
 
-  int FindCharacterIndex(const Character& character);
+  int FindCharacterIndex(const Character* character);
   void SetActionValue(int index, float actionvalue);
+  Character* GetNextCharacter();
 
 public:
   void SetQueue(const std::vector<std::pair<Character*, float>>& tQ);
   Character* GetCurrentCharacter() {return currentCharacter;};
-  Character* GetNextCharacter() {return turnQueue[0].first;};
   void UpdateCurrentCharacter(float actionvalue); // same as using setActionValue() on CurrentCharacter
   void EndCurrentCharacter(); //End turn of current character and select a new current character (the one with lowest AV)
-  void AddCharacter(Character& character, float actionvalue);
-  void RemoveCharacter(const Character& character);
-  void SetActionValue(const Character& character, float actionvalue);
+  void AddCharacter(Character* character, float actionvalue);
+  void RemoveCharacter(const Character* character);
+  void SetActionValue(const Character* character, float actionvalue);
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 

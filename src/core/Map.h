@@ -40,7 +40,6 @@ private:
 
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
-  Character* activeCharacter; 
   std::vector<MapExit> exits;
 
   int gridWidth = 0;
@@ -70,6 +69,8 @@ public:
   tmx::Vector2u GetTileSize() const { return tileSize; };
 
   Coord GetViewSize() const { return viewSize; };
+
+  Character* getActiveCharacter() {return turnQueue.GetCurrentCharacter();}
 
   bool isWalkable(Coord coord) const;
   void setWalkable(Coord coord, bool walkable);

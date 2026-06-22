@@ -12,6 +12,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <tmxlite/Types.hpp>
+#include <tmxlite/Map.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -62,6 +63,7 @@ private:
   std::string movementState() const;
 
 protected:
+  float usedAV;
   Coord coord;
   std::optional<std::string> specialAttackName;
   Statistic stats;
@@ -94,9 +96,10 @@ public:
 
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
-
   virtual bool isPlayer() const = 0;
-  virtual void workAI()=0;
+  virtual bool workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters)=0;
+  float getUsedAV() {return this->usedAV;}
+  void resetUsedAV() {this->usedAV = 0.0f;}
 
   virtual json toJson() const;
   // Utiliser pour save.json et non la saveMap.json
@@ -110,7 +113,7 @@ public:
   void moveTo(std::vector<Coord> coords, sf::Time tileRate);
   void spriteMoveTo(std::vector<Coord> coords, sf::Time tileRate);
 
-  const sf::Sprite getPortrait() {return this->portrait;} // POSSIBLE REWORK : is it better to only keep textures in character ?
+  sf::Sprite getPortrait() const {return this->portrait;} // POSSIBLE REWORK : is it better to only keep textures in character ?
 
   void setState(const std::string &state) {
     this->state = state;
