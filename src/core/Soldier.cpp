@@ -4,6 +4,7 @@
 
 namespace {
 constexpr const char *typeId = "Soldier";
+constexpr const char *portraitId = "Soldier";
 constexpr const char *spriteId = "Soldier";
 } // namespace
 
@@ -12,7 +13,8 @@ Soldier::Soldier(std::string nameId, Coord coord, Statistic stats,
                  std::vector<std::string> equipementIds)
     : NPC(std::move(nameId), typeId, coord, std::nullopt, stats,
           std::move(effectIds), std::move(equipementIds),
-          getAnimationTemplate(spriteId), getTexture(spriteId)) {}
+          getAnimationTemplate(spriteId), getTexture(spriteId),
+          getPortrait(portraitId)) {}
 
 void Soldier::attack(Character &other) {}
 void Soldier::specialAttack(Character &other) {}
@@ -26,7 +28,9 @@ std::unique_ptr<Character> Soldier::create(const json &j) {
       j.value("equipementIds", std::vector<std::string>{}));
 }
 
-bool Soldier::workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters){
-      this->usedAV = 1000.0f / 10 ; // REWORK : REPLACE BY SPEED WHEN SPEED WORKING
-      return true;
+bool Soldier::workAI(
+    const tmx::Map &map,
+    const std::vector<std::unique_ptr<Character>> &characters) {
+  this->usedAV = 1000.0f / 10; // REWORK : REPLACE BY SPEED WHEN SPEED WORKING
+  return true;
 }

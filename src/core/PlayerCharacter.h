@@ -9,10 +9,12 @@ public:
                   std::vector<std::string> effectIds,
                   std::vector<std::string> equipementIds,
                   const AnimationTemplate *tmpl,
-                  std::shared_ptr<sf::Texture> texture)
+                  std::shared_ptr<sf::Texture> texture,
+                  std::shared_ptr<sf::Texture> portrait)
       : Character(std::move(nameId), std::move(type), coord,
                   std::move(specialAttackName), stats, std::move(effectIds),
-                  std::move(equipementIds), tmpl, std::move(texture)) {}
+                  std::move(equipementIds), tmpl, std::move(texture),
+                  std::move(portrait)) {}
 
   bool isPlayer() const override { return true; }
   bool workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters) {return false;}

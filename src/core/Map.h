@@ -44,7 +44,7 @@ private:
 
   int gridWidth = 0;
   int gridHeight = 0;
-  std::vector<char> walkableGrid;
+  std::vector<std::size_t> walkableGrid;
   void computeWalkableGrid();
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
@@ -70,7 +70,7 @@ public:
 
   Coord GetViewSize() const { return viewSize; };
 
-  Character* getActiveCharacter() {return turnQueue.GetCurrentCharacter();}
+  Character *getActiveCharacter() { return turnQueue.GetCurrentCharacter(); }
 
   bool isWalkable(Coord coord) const;
   void setWalkable(Coord coord, bool walkable);
@@ -93,7 +93,8 @@ public:
     }
   }
 
-  GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
+  GameState ProcessInputs(GameState state, std::set<Input> inputs,
+                          std::set<Input> inputsRelease, sf::Time deltaTime);
   void move();
 
   void startCinematic(Coord from, Coord to, sf::Time duration);

@@ -11,8 +11,8 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include <tmxlite/Types.hpp>
 #include <tmxlite/Map.hpp>
+#include <tmxlite/Types.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -38,8 +38,7 @@ private:
   const AnimationTemplate *animTemplate;
   std::shared_ptr<sf::Texture> texture;
   sf::Sprite sprite;
-  sf::Texture portrait_texture; // TO REWORK
-  sf::Sprite portrait;
+  std::shared_ptr<sf::Texture> portrait;
   std::string state = "idle";
   std::size_t frameIndex = 0;
   sf::Time elapsed = sf::Time::Zero;
@@ -81,25 +80,30 @@ public:
             std::optional<std::string> specialAttackName, Statistic stats,
             std::vector<std::string> effectIds,
             std::vector<std::string> equipementIds,
-            const AnimationTemplate *tmpl, std::shared_ptr<sf::Texture> texture)
+            const AnimationTemplate *tmpl, std::shared_ptr<sf::Texture> texture,
+            std::shared_ptr<sf::Texture> portrait)
       : animTemplate(tmpl), texture(std::move(texture)), sprite(*this->texture),
-      portrait_texture{"resources/sprites/soldier/soldierPortrait.png"}, portrait{portrait_texture}, // TO REWORK (HARD CODED)
-      coord(coord), specialAttackName(std::move(specialAttackName)),
-        stats(stats), nameId(std::move(nameId)), type(std::move(type)),
+        portrait(portrait), coord(coord),
+        specialAttackName(std::move(specialAttackName)), stats(stats),
+        nameId(std::move(nameId)), type(std::move(type)),
         effectIds(std::move(effectIds)),
         equipementIds(std::move(equipementIds)) {
     state = animTemplate->defaultState();
   }
   virtual ~Character() = default;
 
-  bool operator==(const Character &other) const { return getNameId() == other.getNameId(); }
+  bool operator==(const Character &other) const {
+    return getNameId() == other.getNameId();
+  }
 
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
-  virtual bool workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters)=0;
-  float getUsedAV() {return this->usedAV;}
-  void resetUsedAV() {this->usedAV = 0.0f;}
+  virtual bool
+  workAI(const tmx::Map &map,
+         const std::vector<std::unique_ptr<Character>> &characters) = 0;
+  float getUsedAV() { return this->usedAV; }
+  void resetUsedAV() { this->usedAV = 0.0f; }
 
   virtual json toJson() const;
   // Utiliser pour save.json et non la saveMap.json
@@ -113,15 +117,14 @@ public:
   void moveTo(std::vector<Coord> coords, sf::Time tileRate);
   void spriteMoveTo(std::vector<Coord> coords, sf::Time tileRate);
 
-  sf::Sprite getPortrait() const {return this->portrait;} // POSSIBLE REWORK : is it better to only keep textures in character ?
-
   void setState(const std::string &state) {
     this->state = state;
     frameIndex = 0;
     elapsed = sf::Time::Zero;
   }
-  bool getIsCursorSelected() {return isCursorSelected;}
-  void setIsCursorSelected(bool f) {this->isCursorSelected = f;}
+  bool getIsCursorSelected() { return isCursorSelected; }
+  void setIsCursorSelected(bool f) { this->isCursorSelected = f; }
+  sf::Sprite getPortraitSprite() const { return sf::Sprite{*portrait}; }
   Coord getCoord() const { return coord; }
   void setCoord(Coord c) { coord = c; }
   const std::string &getNameId() const { return nameId; }
