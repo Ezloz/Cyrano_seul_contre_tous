@@ -97,9 +97,15 @@ public:
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
-  virtual bool workAI(const std::vector<size_t>& map, const int gridWidth,
+  virtual bool workAI(const std::vector<size_t>& walkableGrid, 
+                      const int gridWidth, const int gridHeight,
                       const std::vector<std::unique_ptr<Character>>& characters)=0;
-  float getUsedAV() {return this->usedAV;}
+
+  virtual std::vector<Coord> calculateMoveRange(const std::vector<size_t>& walkableGrid, 
+                      const int gridWidth, const int gridHeight,
+                      const std::vector<std::unique_ptr<Character>>& characters);
+
+float getUsedAV() {return this->usedAV;}
   void resetUsedAV() {this->usedAV = 0.0f;}
 
   virtual json toJson() const;

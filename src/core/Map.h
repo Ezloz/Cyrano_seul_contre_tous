@@ -38,12 +38,14 @@ private:
   Coord edgeOffset = {3, 2};
   TurnQueue turnQueue;
   std::vector<Coord> walkPath = {};
+  std::vector<Coord> moveRange = {};
+  void updateWalkPathAndAV();
 
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
   std::vector<MapExit> exits;
 
-  Character* selectedCharacter = NULL;
+  Character* selectedCharacter = nullptr;
   int gridWidth = 0;
   int gridHeight = 0;
   std::vector<size_t> walkableGrid;

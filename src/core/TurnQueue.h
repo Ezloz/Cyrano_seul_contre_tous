@@ -24,6 +24,7 @@ private:
 public:
   void SetQueue(const std::vector<std::pair<Character*, float>>& tQ);
   Character* GetCurrentCharacter() {return currentCharacter;};
+  void AddActionValue(Character* character, float actionvalue);
   void UpdateCurrentCharacter(float actionvalue); // same as using setActionValue() on CurrentCharacter
   void EndCurrentCharacter(); //End turn of current character and select a new current character (the one with lowest AV)
   void AddCharacter(Character* character, float actionvalue);

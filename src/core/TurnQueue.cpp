@@ -44,13 +44,17 @@ int TurnQueue::FindCharacterIndex(const Character* character){
       return i;
     }
   }
-
+  assert(false);
   return -1;
 }
 void TurnQueue::SetActionValue(int index, float actionvalue){
 
   turnQueue[index].second = actionvalue;
   bubbleSingleSort(turnQueue, index);
+}
+
+void TurnQueue::AddActionValue(Character* character, float actionvalue){
+  turnQueue[FindCharacterIndex(character)].second += actionvalue;
 }
 
 void TurnQueue::UpdateCurrentCharacter(float actionvalue){ // same as using setActionValue() on CurrentCharacter

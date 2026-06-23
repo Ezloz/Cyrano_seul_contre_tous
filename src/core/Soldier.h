@@ -16,7 +16,7 @@ public:
   void attack(Character &other) override;
   void specialAttack(Character &other) override;
 
-  bool workAI(const std::vector<size_t>& map, const int gridWidth,
+  bool workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
               const std::vector<std::unique_ptr<Character>>& characters) override;
 
   // Factory

@@ -27,7 +27,7 @@
         "charisma": 10,
         "power": 10,
         "luck": 10,
-        "range": 1
+        "range": 5
       },
       "effectIds": [],
       "equipementIds": []
@@ -41,7 +41,7 @@
         "charisma": 10,
         "power": 10,
         "luck": 10,
-        "range": 1
+        "range": 5
       },
       "effectIds": [],
       "equipementIds": []
