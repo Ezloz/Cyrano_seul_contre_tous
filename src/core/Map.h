@@ -32,7 +32,6 @@ private:
   std::unique_ptr<Camera> activeCamera;
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
-  tmx::Map cursorTmx;
   tmx::Vector2u tileSize;
   Coord viewSize = {15, 10};
   Coord edgeOffset = {3, 2};
@@ -102,6 +101,19 @@ public:
 
   void update(sf::Time elapsed);
 
+  // void drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
+  //                    std::vector<Coord> bluetiles) const {
+  //   const tmx::Vector2u tileSize = activeMap->GetTileSize();
+  //   const sf::Texture blueTileTexture(BLUETILE_PATH,
+  //                                     sf::IntRect({0, 0}, {16, 16}));
+  //
+  //   for (const auto &coord : bluetiles) {
+  //     sf::Sprite sprite(texture);
+  //     const sf::Vector2f position(coord.x * tileSize.x, coord.y *
+  //     tileSize.y); sprite.setPosition(position); target.draw(frameSprite,
+  //     states);
+  //   }
+  // }
   // Persiste l'état de la map dans le slot donné
   // (saves/slot{N}/Maps/{mapId}/mapSave.json).
   void saveState(int N) const;
