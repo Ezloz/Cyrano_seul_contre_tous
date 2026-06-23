@@ -36,7 +36,6 @@ void Camera::processNewOffset(std::set<Input> inputs,
     doStep = true;
     delta.x = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0) - delta.x;
     delta.y = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0) - delta.y;
-    printf("%d, %d\n", delta.x, delta.y);
     delayedMove = true;
     freshPress = false;
   } else {

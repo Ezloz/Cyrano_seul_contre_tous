@@ -8,6 +8,8 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <memory>
 #include <optional>
@@ -36,6 +38,7 @@ private:
   Coord viewSize = {15, 10};
   Coord edgeOffset = {3, 2};
   TurnQueue turnQueue;
+  sf::Texture blueTileTexture; // loaded once from dataset["blueTile"]
 
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
@@ -118,19 +121,9 @@ public:
 
   void update(sf::Time elapsed);
 
-  // void drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
-  //                    std::vector<Coord> bluetiles) const {
-  //   const tmx::Vector2u tileSize = activeMap->GetTileSize();
-  //   const sf::Texture blueTileTexture(BLUETILE_PATH,
-  //                                     sf::IntRect({0, 0}, {16, 16}));
-  //
-  //   for (const auto &coord : bluetiles) {
-  //     sf::Sprite sprite(texture);
-  //     const sf::Vector2f position(coord.x * tileSize.x, coord.y *
-  //     tileSize.y); sprite.setPosition(position); target.draw(frameSprite,
-  //     states);
-  //   }
-  // }
+  void drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
+                     const std::vector<Coord> &blueTiles) const;
+
   // Persiste l'état de la map dans le slot donné
   // (saves/slot{N}/Maps/{mapId}/mapSave.json).
   void saveState(int N) const;

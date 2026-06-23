@@ -116,6 +116,11 @@ Map::Map(const std::string &name, int nbLayer) {
   tmx::Map cursorTmx;
   cursorTmx.load("resources/cursor/cursor.tmx");
   cursorLayer = std::make_unique<MapLayer>(cursorTmx, 0);
+
+  if (!blueTileTexture.loadFromFile(
+          openJson(DATASET).at("blueTile").get<std::string>())) {
+    printf("Texture de blueTile non trouvée\n");
+  }
 }
 
 Map::~Map() = default;
@@ -315,4 +320,18 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
   }
   map->turnQueue.SetQueue(queue);
   return map;
+}
+
+void Map::drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
+                        const std::vector<Coord> &blueTiles) const {
+  sf::RenderStates tileStates = states;
+  tileStates.transform.translate(activeCamera->getMapOffset());
+
+  for (const auto &coord : blueTiles) {
+    sf::Sprite sprite(blueTileTexture);
+    sprite.setPosition(
+        {static_cast<float>(coord.x) * static_cast<float>(tileSize.x),
+         static_cast<float>(coord.y) * static_cast<float>(tileSize.y)});
+    target.draw(sprite, tileStates);
+  }
 }
