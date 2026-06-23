@@ -75,7 +75,7 @@ private:
       character->draw(target, tileSize, characterStates);
     }
     if (selectedCharacter){
-//      selectedCharacter.drawMoveRange(); //WORK : drawMoverange() doesn't exist
+      this->drawBlueTiles(target, states, this->moveRange);
     }
     if (cursorLayer && activeCamera->isCursorVisible()) {
       target.draw(*cursorLayer, states);
