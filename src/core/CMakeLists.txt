@@ -14,6 +14,7 @@ add_library(lib_core
 	Soldier.h Soldier.cpp
 	UIManager.h UIManager.cpp
 	TurnQueue.h TurnQueue.cpp
+	CharacterAI.cpp
 )
 
 target_include_directories(lib_core PUBLIC ./)

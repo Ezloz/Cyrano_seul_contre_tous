@@ -66,6 +66,7 @@ public:
     delta = {0, 0};
   }
   sf::Vector2f getCursorOffset() { return cursorOffset; }
+  Coord getCursorCoord() { return cursor; }
   sf::Vector2f getMapOffset() { return mapOffset; }
   void processNewOffset(std::set<Input> inputs, std::set<Input> releaseInputs,
                         sf::Time deltaTime);

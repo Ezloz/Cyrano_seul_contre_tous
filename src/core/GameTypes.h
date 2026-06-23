@@ -6,6 +6,9 @@ struct Coord {
   int y = 0;
 };
 
+static bool operator==(const Coord& a, const Coord& b) {return a.x == b.x && a.y == b.y;}
+
+
 enum class Input { UP, DOWN, LEFT, RIGHT, CONFIRM, CANCEL, MENU, NB_INPUTS };
 
 enum class GameState {

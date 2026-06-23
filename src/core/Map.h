@@ -37,14 +37,16 @@ private:
   Coord viewSize = {15, 10};
   Coord edgeOffset = {3, 2};
   TurnQueue turnQueue;
+  std::vector<Coord> walkPath = {};
 
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
   std::vector<MapExit> exits;
 
+  Character* selectedCharacter = NULL;
   int gridWidth = 0;
   int gridHeight = 0;
-  std::vector<char> walkableGrid;
+  std::vector<size_t> walkableGrid;
   void computeWalkableGrid();
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
@@ -55,6 +57,9 @@ private:
     characterStates.transform.translate(activeCamera->getMapOffset());
     for (const auto &character : characters) {
       character->draw(target, tileSize, characterStates);
+    }
+    if (selectedCharacter){
+//      selectedCharacter.drawMoveRange(); //WORK : drawMoverange() doesn't exist
     }
     if (cursorLayer && activeCamera->isCursorVisible()) {
       target.draw(*cursorLayer, states);

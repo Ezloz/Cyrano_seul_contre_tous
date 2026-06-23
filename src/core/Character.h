@@ -97,7 +97,8 @@ public:
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
-  virtual bool workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters)=0;
+  virtual bool workAI(const std::vector<size_t>& map, const int gridWidth,
+                      const std::vector<std::unique_ptr<Character>>& characters)=0;
   float getUsedAV() {return this->usedAV;}
   void resetUsedAV() {this->usedAV = 0.0f;}
 

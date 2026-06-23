@@ -16,7 +16,8 @@ public:
   void attack(Character &other) override;
   void specialAttack(Character &other) override;
 
-  bool workAI(const tmx::Map& map, const std::vector<std::unique_ptr<Character>>& characters) override;
+  bool workAI(const std::vector<size_t>& map, const int gridWidth,
+              const std::vector<std::unique_ptr<Character>>& characters) override;
 
   // Factory
   static std::unique_ptr<Character> create(const json &j);

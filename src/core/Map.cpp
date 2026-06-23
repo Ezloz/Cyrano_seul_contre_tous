@@ -206,10 +206,31 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs, std::set<I
   if (state == GameState::IN_GAME){
     if (getActiveCharacter()->isPlayer()){
       activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
+
       this->move();
+      if (inputs.find(Input::CONFIRM) != inputs.end()){
+        if (selectedCharacter == NULL){
+          for (const auto& charac : this->characters){
+            if (charac->getCoord() == this->activeCamera->getCursorCoord()){
+              selectedCharacter = charac.get();
+              std::cout << selectedCharacter->getNameId();           
+            }
+          }
+        }
+        else if (selectedCharacter != NULL && selectedCharacter->isPlayer() && selectedCharacter == turnQueue.GetCurrentCharacter()
+                && (this->activeCamera->getCursorCoord().x - selectedCharacter->getCoord().x + 
+                    this->activeCamera->getCursorCoord().y - selectedCharacter->getCoord().y < selectedCharacter->getStats().range)){
+
+          turnQueue.EndCurrentCharacter();
+        }
+      }
+      if (inputs.find(Input::CANCEL) != inputs.end()){
+        this->walkPath = {};
+        selectedCharacter = NULL;
+      }
     }
     else{
-        if (this->getActiveCharacter()->workAI(this->tmxMap, this->characters)){
+        if (this->getActiveCharacter()->workAI(this->walkableGrid, static_cast<int>(tmxMap.getTileCount().x), this->characters)){
           turnQueue.EndCurrentCharacter();
         }
     }
@@ -243,6 +264,10 @@ void Map::update(sf::Time elapsed) {
   }
   for (auto &character : characters) {
     character->update(elapsed);
+  }
+
+  if (selectedCharacter){
+    
   }
 
   // Character Map::getCharacter(std::string id) {
