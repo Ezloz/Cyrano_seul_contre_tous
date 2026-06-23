@@ -199,10 +199,6 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
   return state;
 }
 
-void Map::startCinematic(Coord from, Coord to, sf::Time duration) {
-  activeCamera->generateCinematic(from, to, duration);
-}
-
 bool Map::isCinematicActive() const {
   return activeCamera->isCinematicActive();
 }
@@ -213,6 +209,16 @@ void Map::update(sf::Time elapsed) {
     for (auto &layer : layers) {
       layer->setOffset(activeCamera->getMapOffset());
     }
+  }
+  // Attend la fin de la cinematic
+  if (pendingMove && !activeCamera->isCinematicActive()) {
+    for (auto &character : characters) {
+      if (character->getNameId() == pendingMove->nameId) {
+        character->moveTo(std::move(pendingMove->path), pendingMove->tileRate);
+        break;
+      }
+    }
+    pendingMove.reset();
   }
 
   for (auto &layer : layers) {
@@ -234,8 +240,6 @@ void Map::update(sf::Time elapsed) {
 };
 
 void Map::saveState(int slot) const {
-  // Map state (canonical shape): NPCs keyed by nameId, player spawn positions,
-  // and exits. Player identity/stats go to the slot save, not here.
   json mapJson;
   mapJson["characters"] = json::object();
   json spawns = json::array();
