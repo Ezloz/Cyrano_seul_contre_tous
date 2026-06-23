@@ -36,7 +36,6 @@ void Camera::processNewOffset(std::set<Input> inputs,
     doStep = true;
     delta.x = (isPressed[RIGHT] ? 1 : 0) - (isPressed[LEFT] ? 1 : 0) - delta.x;
     delta.y = (isPressed[DOWN] ? 1 : 0) - (isPressed[UP] ? 1 : 0) - delta.y;
-    printf("%d, %d\n", delta.x, delta.y);
     delayedMove = true;
     freshPress = false;
   } else {
@@ -61,22 +60,19 @@ void Camera::processNewOffset(std::set<Input> inputs,
     cursor.x = std::clamp(previousCursor.x + delta.x, 0, mapSize.x - 1);
     cursor.y = std::clamp(previousCursor.y + delta.y, 0, mapSize.y - 1);
 
-    const Coord maxCorner = {std::max(0, mapSize.x - viewSize.x),
-                             std::max(0, mapSize.y - viewSize.y)};
-
     if (cursor.x - mapCorner.x < edgeOffset.x) {
       mapCorner.x = cursor.x - edgeOffset.x;
     } else if (cursor.x - mapCorner.x > viewSize.x - 1 - edgeOffset.x) {
       mapCorner.x = cursor.x - (viewSize.x - 1 - edgeOffset.x);
     }
-    mapCorner.x = std::clamp(mapCorner.x, 0, maxCorner.x);
+    mapCorner.x = std::clamp(mapCorner.x, 0, maxCornerMap.x);
 
     if (cursor.y - mapCorner.y < edgeOffset.y) {
       mapCorner.y = cursor.y - edgeOffset.y;
     } else if (cursor.y - mapCorner.y > viewSize.y - 1 - edgeOffset.y) {
       mapCorner.y = cursor.y - (viewSize.y - 1 - edgeOffset.y);
     }
-    mapCorner.y = std::clamp(mapCorner.y, 0, maxCorner.y);
+    mapCorner.y = std::clamp(mapCorner.y, 0, maxCornerMap.y);
   }
 
   // if (this->lastMove >= repeatRate) {
@@ -104,14 +100,11 @@ void Camera::processNewOffset(std::set<Input> inputs,
                  sf::Vector2f(3.0f, 3.0f);
 }
 
-void Camera::generateCinematic(Coord from, Coord to, sf::Time duration) {
-  const Coord maxCorner = {std::max(0, mapSize.x - viewSize.x),
-                           std::max(0, mapSize.y - viewSize.y)};
-
-  cinematicFrom.x = std::clamp(from.x, 0, maxCorner.x);
-  cinematicFrom.y = std::clamp(from.y, 0, maxCorner.y);
-  cinematicTo.x = std::clamp(to.x, 0, maxCorner.x);
-  cinematicTo.y = std::clamp(to.y, 0, maxCorner.y);
+void Camera::startCinematic(Coord from, Coord to, sf::Time duration) {
+  cinematicFrom.x = std::clamp(from.x, 0, maxCornerMap.x);
+  cinematicFrom.y = std::clamp(from.y, 0, maxCornerMap.y);
+  cinematicTo.x = std::clamp(to.x, 0, maxCornerMap.x);
+  cinematicTo.y = std::clamp(to.y, 0, maxCornerMap.y);
 
   // Téléportation si duration négative (voir update)
   cinematicDuration =

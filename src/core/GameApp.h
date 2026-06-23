@@ -38,6 +38,7 @@ private:
   sf::Clock globalClock;
   sf::Time deltaTime;
   std::unique_ptr<Map> activeMap;
+  int currentSlot = 1;
   UIManager uimanager;
 
 public:
@@ -73,7 +74,7 @@ public:
   void LoadGame();
   
   void LoadGUI(std::string pathname) {uimanager.LoadGUI(pathname);}
-  void LoadMap(int slot, const std::string& startMap) {this->activeMap = Map::loadMap(slot, startMap);}
+  void LoadMap(int slot, const std::string& startMap) {this->currentSlot = slot; this->activeMap = Map::loadMap(slot, startMap);}
 
   void Start(){
     this->state = GameState::IN_MENU;

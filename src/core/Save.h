@@ -7,6 +7,8 @@ using json = nlohmann::json;
 
 inline constexpr const char *DATASET = "resources/dataset.json";
 
+inline constexpr const char *DEFAULT_SAVE = "resources/defaultSave.json";
+
 json openJson(const std::string &file);
 void writeSave(const std::string &savePath, const json &content);
 std::string slotSavePath(int slot);

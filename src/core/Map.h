@@ -8,6 +8,8 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <memory>
 #include <optional>
@@ -32,7 +34,6 @@ private:
   std::unique_ptr<Camera> activeCamera;
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
-  tmx::Map cursorTmx;
   tmx::Vector2u tileSize;
   Coord viewSize = {15, 10};
   Coord edgeOffset = {3, 2};
@@ -40,6 +41,7 @@ private:
   std::vector<Coord> walkPath = {};
   std::vector<Coord> moveRange = {};
   void updateWalkPathAndAV();
+  sf::Texture blueTileTexture; // loaded once from dataset["blueTile"]
 
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
@@ -49,6 +51,18 @@ private:
   int gridWidth = 0;
   int gridHeight = 0;
   std::vector<size_t> walkableGrid;
+  // Delay le mouvement
+  struct PendingMove {
+    std::string nameId;
+    std::vector<Coord> path;
+    sf::Time tileRate;
+  };
+  std::optional<PendingMove> pendingMove;
+
+  int gridWidth = 0;
+  int gridHeight = 0;
+  std::vector<std::size_t> walkableGrid;
+
   void computeWalkableGrid();
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
@@ -77,7 +91,7 @@ public:
 
   Coord GetViewSize() const { return viewSize; };
 
-  Character* getActiveCharacter() {return turnQueue.GetCurrentCharacter();}
+  Character *getActiveCharacter() { return turnQueue.GetCurrentCharacter(); }
 
   bool isWalkable(Coord coord) const;
   void setWalkable(Coord coord, bool walkable);
@@ -92,21 +106,34 @@ public:
   // Le premier Coord doit coincider avec la position initiale du character
   void moveCharacterTo(const std::string &nameId, std::vector<Coord> path,
                        sf::Time tileRate) {
-    for (auto &character : characters) {
-      if (character->getNameId() == nameId) {
-        character->moveTo(std::move(path), tileRate);
-        return;
-      }
+    if (path.empty()) {
+      return;
     }
+    const Coord start = path.front();
+    const Coord end = path.back();
+    const Coord viewSize = activeCamera->getViewSize();
+    const Coord maxCorner = activeCamera->getMaxCornerMap();
+    Coord middle;
+    middle.x =
+        std::clamp((start.x + end.x) / 2 - viewSize.x / 2, 0, maxCorner.x);
+    middle.y =
+        std::clamp((start.y + end.y) / 2 - viewSize.y / 2, 0, maxCorner.y);
+    activeCamera->startCinematic(activeCamera->getMapCorner(), middle,
+                                 sf::milliseconds(300));
+    // Defer the actual move until the cinematic has finished (see update()).
+    pendingMove = PendingMove{nameId, std::move(path), tileRate};
   }
 
-  GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
+  GameState ProcessInputs(GameState state, std::set<Input> inputs,
+                          std::set<Input> inputsRelease, sf::Time deltaTime);
   void move();
 
-  void startCinematic(Coord from, Coord to, sf::Time duration);
   bool isCinematicActive() const;
 
   void update(sf::Time elapsed);
+
+  void drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
+                     const std::vector<Coord> &blueTiles) const;
 
   // Persiste l'état de la map dans le slot donné
   // (saves/slot{N}/Maps/{mapId}/mapSave.json).

@@ -22,7 +22,7 @@ void GameApp::LoadOptions() {
                            {sf::Keyboard::Key::C, Input::MENU}};
 }
 
-sf::View GameApp::GetViewSize(){ // TO REWORK
+sf::View GameApp::GetViewSize() { // TO REWORK
   const tmx::Vector2u tileSize = activeMap->GetTileSize();
   const Coord viewTiles = activeMap->GetViewSize();
   const sf::Vector2f viewSize(viewTiles.x * tileSize.x,
@@ -48,26 +48,12 @@ void GameApp::transformRawInputToInput(RawInput rinput) {
   }
 }
 
-void GameApp::SaveGame() {}
+void GameApp::SaveGame() {
+  if (activeMap) {
+    activeMap->saveState(currentSlot);
+  }
+}
 
 void GameApp::LoadGame() {}
 
 void GameApp::Quit() { this->SaveOptions(); }
-
-void jsonDefaultMap(std::string savePath) {
-  json defaultJson = {{"inventory", json::array()},
-                      {"map", "castleBlue"},
-                      {"playerCharacters",
-                       {{"Cyrano",
-                         {{"type", "Cyrano"},
-                          {"statistics",
-                           {{{"life", 0}},
-                            {{"speed", 0}},
-                            {{"charisma", 0}},
-                            {{"power", 0}},
-                            {{"luck", 0}},
-                            {{"range", 0}}}},
-                          {"effects", json::array()},
-                          {"equipped", json::array()}}}}}};
-  writeSave(savePath, defaultJson);
-}

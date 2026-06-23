@@ -3,6 +3,7 @@
 namespace {
 constexpr const char *typeId = "Cyrano";
 constexpr const char *spriteId = "Cyrano";
+constexpr const char *portraitId = "Cyrano";
 constexpr const char *specialAttackId = "Panache";
 } // namespace
 
@@ -11,7 +12,8 @@ Cyrano::Cyrano(std::string nameId, Coord coord, Statistic stats,
                std::vector<std::string> equipementIds)
     : PlayerCharacter(std::move(nameId), typeId, coord, specialAttackId, stats,
                       std::move(effectIds), std::move(equipementIds),
-                      getAnimationTemplate(spriteId), getTexture(spriteId)) {}
+                      getAnimationTemplate(spriteId), getTexture(spriteId),
+                      getPortrait(portraitId)) {}
 
 void Cyrano::attack(Character &other) {}
 void Cyrano::specialAttack(Character &other) {}

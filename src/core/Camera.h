@@ -27,14 +27,13 @@ private:
 
   Coord mapSize;
   Coord viewSize;
+  Coord maxCornerMap;
   tmx::Vector2u tileSize;
 
   sf::Time repeatRate;
   sf::Time repeatDelay;
   sf::Time lastMove;
 
-  // Cinematic state: slides the map view from one corner to another while the
-  // player has no control and the cursor is hidden.
   bool cinematicActive = false;
   bool cursorVisible = true;
   Coord cinematicFrom;
@@ -58,6 +57,8 @@ public:
     tileSize = map.getTileSize();
     mapSize = {static_cast<int>(map.getTileCount().x),
                static_cast<int>(map.getTileCount().y)};
+    maxCornerMap = {std::max(0, mapSize.x - viewSize.x),
+                    std::max(0, mapSize.y - viewSize.y)};
     repeatRate = sf::milliseconds(85);
     repeatDelay = sf::milliseconds(250);
     std::fill(isPressed, isPressed + static_cast<int>(Input::NB_INPUTS), false);
@@ -68,10 +69,13 @@ public:
   sf::Vector2f getCursorOffset() { return cursorOffset; }
   Coord getCursorCoord() { return cursor; }
   sf::Vector2f getMapOffset() { return mapOffset; }
+  Coord getMapCorner() const { return mapCorner; }
+  Coord getViewSize() const { return viewSize; }
+  Coord getMaxCornerMap() const { return maxCornerMap; }
   void processNewOffset(std::set<Input> inputs, std::set<Input> releaseInputs,
                         sf::Time deltaTime);
 
-  void generateCinematic(Coord from, Coord to, sf::Time duration);
+  void startCinematic(Coord from, Coord to, sf::Time duration);
   void updateCinematic(sf::Time deltaTime);
 
   bool isCinematicActive() const { return cinematicActive; }

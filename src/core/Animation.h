@@ -15,12 +15,21 @@
 #include "Save.h"
 
 inline std::unordered_map<std::string, std::string> textureDataset;
+inline std::unordered_map<std::string, std::string> portraitDataset;
 
 inline void parseTextureDataset() {
   json data = openJson(DATASET);
   for (auto it = data.at("textures").begin(); it != data.at("textures").end();
        ++it) {
     textureDataset[it.key()] = it.value();
+  }
+}
+
+inline void parsePortraitDataset() {
+  json data = openJson(DATASET);
+  for (auto it = data.at("portraits").begin(); it != data.at("portraits").end();
+       ++it) {
+    portraitDataset[it.key()] = it.value();
   }
 }
 
@@ -136,6 +145,39 @@ inline void ensureTextureDatasetLoaded() {
     parseTextureDataset();
     loaded = true;
   }
+}
+
+inline void ensurePortaitDatasetLoaded() {
+  static bool loaded = false;
+  if (!loaded) {
+    parsePortraitDataset();
+    loaded = true;
+  }
+}
+
+inline std::shared_ptr<sf::Texture> getPortrait(const std::string &portaitId) {
+  ensurePortaitDatasetLoaded();
+  static std::unordered_map<std::string, std::shared_ptr<sf::Texture>> cache;
+  auto it = cache.find(portaitId);
+  if (it != cache.end()) {
+    return it->second;
+  }
+  auto pathIt = portraitDataset.find(portaitId);
+  if (pathIt == portraitDataset.end()) {
+    throw std::runtime_error("Portait id inconnu: " + portaitId);
+  }
+  std::string path = pathIt->second; // resources/sprites/<dir>/Portrait.json
+  const std::string suffix = ".json";
+  if (path.size() >= suffix.size() &&
+      path.compare(path.size() - suffix.size(), suffix.size(), suffix) == 0) {
+    path.replace(path.size() - suffix.size(), suffix.size(), ".png");
+  }
+  auto tex = std::make_shared<sf::Texture>();
+  if (!tex->loadFromFile(path)) {
+    throw std::runtime_error("Erreur de chargement du portait: " + path);
+  }
+  cache.emplace(portaitId, tex);
+  return tex;
 }
 
 inline const AnimationTemplate *

@@ -4,6 +4,7 @@
 
 namespace {
 constexpr const char *typeId = "Soldier";
+constexpr const char *portraitId = "Soldier";
 constexpr const char *spriteId = "Soldier";
 } // namespace
 
@@ -12,7 +13,8 @@ Soldier::Soldier(std::string nameId, Coord coord, Statistic stats,
                  std::vector<std::string> equipementIds)
     : NPC(std::move(nameId), typeId, coord, std::nullopt, stats,
           std::move(effectIds), std::move(equipementIds),
-          getAnimationTemplate(spriteId), getTexture(spriteId)) {}
+          getAnimationTemplate(spriteId), getTexture(spriteId),
+          getPortrait(portraitId)) {}
 
 void Soldier::attack(Character &other) {}
 void Soldier::specialAttack(Character &other) {}

@@ -63,26 +63,6 @@ json loadParty(int slot) {
   return openJson(path).at("playerCharacters");
 }
 
-json seedParty(const json &mapJson) {
-  json party = json::object();
-  const json zeroStats = {{"life", 0},  {"speed", 0}, {"charisma", 0},
-                          {"power", 0}, {"luck", 0},  {"range", 0}};
-  for (const auto &entry : mapJson.value("entries", json::array())) {
-    for (const auto &spawn : entry.value("spawn", json::array())) {
-      for (const auto &[nameId, info] : spawn.items()) {
-        if (!CharacterFactory::isRegistered(nameId)) {
-          continue;
-        }
-        party[nameId] = {{"type", nameId},
-                         {"statistics", zeroStats},
-                         {"effectIds", json::array()},
-                         {"equipementIds", json::array()}};
-      }
-    }
-  }
-  return party;
-}
-
 std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
                                       const json &mapJson, const json &party) {
   auto map = std::make_unique<Map>(tmxPathForMap(mapId), 1);
@@ -133,9 +113,14 @@ Map::Map(const std::string &name, int nbLayer) {
     layers.push_back(std::make_unique<MapLayer>(tmxMap, i));
   }
   computeWalkableGrid();
-  // The cursor uses its own tmx::Map so tmxMap keeps holding the game map.
+  tmx::Map cursorTmx;
   cursorTmx.load("resources/cursor/cursor.tmx");
   cursorLayer = std::make_unique<MapLayer>(cursorTmx, 0);
+
+  if (!blueTileTexture.loadFromFile(
+          openJson(DATASET).at("blueTile").get<std::string>())) {
+    printf("Texture de blueTile non trouvée\n");
+  }
 }
 
 Map::~Map() = default;
@@ -290,13 +275,8 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs, std::set<I
         }
     }
   }
-    
+
   return state;
-}
-
-
-void Map::startCinematic(Coord from, Coord to, sf::Time duration) {
-  activeCamera->generateCinematic(from, to, duration);
 }
 
 bool Map::isCinematicActive() const {
@@ -309,6 +289,16 @@ void Map::update(sf::Time elapsed) {
     for (auto &layer : layers) {
       layer->setOffset(activeCamera->getMapOffset());
     }
+  }
+  // Attend la fin de la cinematic
+  if (pendingMove && !activeCamera->isCinematicActive()) {
+    for (auto &character : characters) {
+      if (character->getNameId() == pendingMove->nameId) {
+        character->moveTo(std::move(pendingMove->path), pendingMove->tileRate);
+        break;
+      }
+    }
+    pendingMove.reset();
   }
 
   for (auto &layer : layers) {
@@ -334,8 +324,6 @@ void Map::update(sf::Time elapsed) {
 };
 
 void Map::saveState(int slot) const {
-  // Map state (canonical shape): NPCs keyed by nameId, player spawn positions,
-  // and exits. Player identity/stats go to the slot save, not here.
   json mapJson;
   mapJson["characters"] = json::object();
   json spawns = json::array();
@@ -386,11 +374,13 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
   const bool fromSave = std::filesystem::exists(mapPath);
   const json mapJson = openJson(fromSave ? mapPath : defaultMapPath(mapId));
 
+  // First load of the slot (no save yet): seed the party from the new-game
+  // template; otherwise the slot save is the source of truth.
   json party;
   if (std::filesystem::exists(slotSavePath(slot))) {
     party = loadParty(slot);
   } else {
-    party = seedParty(openJson(defaultMapPath(mapId)));
+    party = openJson(DEFAULT_SAVE).value("playerCharacters", json::object());
   }
 
   auto map = mapFromCanonical(mapId, mapJson, party);
@@ -398,12 +388,29 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
     map->saveState(slot);
   }
 
-  std::vector<std::pair<Character*, float>> queue = {};
-  for (const auto& characPtr : map->characters){
+  std::vector<std::pair<Character *, float>> queue = {};
+  for (const auto &characPtr : map->characters) {
     std::cout << characPtr->getStats().speed;
-//    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/(float) characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
-    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/10.0f)}); //PB HERE : Speed set to 0 ????
+    //    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/(float)
+    //    characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
+    queue.push_back(
+        {characPtr.get(),
+         (BASE_DEFAULT_AV / 10.0f)}); // PB HERE : Speed set to 0 ????
   }
   map->turnQueue.SetQueue(queue);
   return map;
+}
+
+void Map::drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
+                        const std::vector<Coord> &blueTiles) const {
+  sf::RenderStates tileStates = states;
+  tileStates.transform.translate(activeCamera->getMapOffset());
+
+  for (const auto &coord : blueTiles) {
+    sf::Sprite sprite(blueTileTexture);
+    sprite.setPosition(
+        {static_cast<float>(coord.x) * static_cast<float>(tileSize.x),
+         static_cast<float>(coord.y) * static_cast<float>(tileSize.y)});
+    target.draw(sprite, tileStates);
+  }
 }

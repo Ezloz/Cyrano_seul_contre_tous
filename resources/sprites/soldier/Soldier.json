@@ -1,12 +1,13 @@
 {
-  "texture": "soldier", "defaultState": "idle",
+  "texture": "soldier",
+  "defaultState": "idle",
   "states": {
     "idle": {
-      "defaultFrameDuration": 0.15,
+      "defaultFrameDuration": 0.3,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
-        { "x": 0,  "y": 0 },
-        { "x": 24, "y": 0 },
+        { "x": 0, "y": 0 },
+        { "x": 24, "y": 0, "duration": 0.5 },
         { "x": 48, "y": 0 },
         { "x": 72, "y": 0 }
       ]
@@ -15,7 +16,7 @@
       "defaultFrameDuration": 0.15,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
-        { "x": 0,  "y": 24 },
+        { "x": 0, "y": 24 },
         { "x": 24, "y": 24 },
         { "x": 48, "y": 24 },
         { "x": 72, "y": 24 }
@@ -25,7 +26,7 @@
       "defaultFrameDuration": 0.15,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
-        { "x": 0,  "y": 48 },
+        { "x": 0, "y": 48 },
         { "x": 24, "y": 48 },
         { "x": 48, "y": 48 },
         { "x": 72, "y": 48 }
@@ -35,7 +36,7 @@
       "defaultFrameDuration": 0.15,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
-        { "x": 0,  "y": 72 },
+        { "x": 0, "y": 72 },
         { "x": 24, "y": 72 },
         { "x": 48, "y": 72 },
         { "x": 72, "y": 72 }
@@ -45,7 +46,7 @@
       "defaultFrameDuration": 0.15,
       "defaultFrameSize": { "w": 24, "h": 24 },
       "frames": [
-        { "x": 0,  "y": 96 },
+        { "x": 0, "y": 96 },
         { "x": 24, "y": 96 },
         { "x": 48, "y": 96 },
         { "x": 72, "y": 96 }

@@ -7,7 +7,12 @@
     "Soldier": "resources/sprites/soldier/Soldier.json",
     "Cyrano": "resources/sprites/cyrano/Cyrano.json"
   },
+  "portraits": {
+    "Soldier": "resources/sprites/soldier/Portrait.png",
+    "Cyrano": "resources/sprites/cyrano/Portrait.png"
+  },
   "maps": {
     "castleBlue": "resources/Maps/castleBlue/CastleBlue.tmx"
-  }
+  },
+  "blueTile": "resources/blueTile.png"
 }

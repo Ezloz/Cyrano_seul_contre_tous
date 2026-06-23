@@ -32,6 +32,7 @@ int myMain() {
 
     while (const std::optional event = window.pollEvent()) {
       if (event->is<sf::Event::Closed>()) {
+        gameInstance.SaveGame();
         gameInstance.Quit();
         window.close();
       }
