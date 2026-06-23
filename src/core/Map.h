@@ -48,9 +48,11 @@ private:
   std::vector<MapExit> exits;
 
   Character* selectedCharacter = nullptr;
+  bool freshpress = true;
   int gridWidth = 0;
   int gridHeight = 0;
   std::vector<size_t> walkableGrid;
+
   // Delay le mouvement
   struct PendingMove {
     std::string nameId;
@@ -59,9 +61,7 @@ private:
   };
   std::optional<PendingMove> pendingMove;
 
-  int gridWidth = 0;
-  int gridHeight = 0;
-  std::vector<std::size_t> walkableGrid;
+
 
   void computeWalkableGrid();
 
