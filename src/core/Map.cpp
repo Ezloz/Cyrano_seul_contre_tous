@@ -210,7 +210,6 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs, std::set<I
     }
     else{
         if (this->getActiveCharacter()->workAI(this->tmxMap, this->characters)){
-          turnQueue.UpdateCurrentCharacter(this->getActiveCharacter()->getUsedAV());
           turnQueue.EndCurrentCharacter();
         }
     }

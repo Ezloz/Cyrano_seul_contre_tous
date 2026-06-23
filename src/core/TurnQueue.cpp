@@ -4,14 +4,14 @@
 #include <iostream>
 
 void bubbleSingleSort(std::vector<std::pair<Character*, float>>& vec, int index) {
-  if (index <= 0 || index >= vec.size()-1){
-    return;
+  if (index < 0 || index > vec.size()-1){
+    return; // POSSIBLE REWORK : Maybe return an error ?
   }
-  if (vec[index-1].second > vec[index].second){
+  if (index > 0 && vec[index-1].second > vec[index].second){
     swap(vec[index], vec[index-1]);
     return bubbleSingleSort(vec, index-1);
   }
-  if (vec[index].second > vec[index+1].second){
+  if (index < vec.size()-1 && vec[index].second > vec[index+1].second){
     swap(vec[index], vec[index+1]);
     return bubbleSingleSort(vec, index+1);
   }
@@ -34,14 +34,6 @@ void TurnQueue::SetQueue(const std::vector<std::pair<Character*, float>>& tQ) {
   this->turnQueue = tQ;
   std::ranges::sort(turnQueue, {}, &std::pair<Character*, float>::second);
   currentCharacter = GetNextCharacter();
-/*
-  std::cout << turnQueue[0].first->getNameId();
-  std::cout << turnQueue[1].first->getNameId();
-  std::cout << turnQueue[2].first->getNameId();
-  std::cout << turnQueue[0].second;
-  std::cout << turnQueue[1].second;
-  std::cout << turnQueue[2].second;
-*/
 
 }
 
@@ -56,6 +48,7 @@ int TurnQueue::FindCharacterIndex(const Character* character){
   return -1;
 }
 void TurnQueue::SetActionValue(int index, float actionvalue){
+
   turnQueue[index].second = actionvalue;
   bubbleSingleSort(turnQueue, index);
 }
@@ -66,9 +59,8 @@ void TurnQueue::UpdateCurrentCharacter(float actionvalue){ // same as using setA
 
 
 void TurnQueue::EndCurrentCharacter(){ //End turn of current character and select a new current character (the one with lowest AV)
-//  std::cout << turnQueue[FindCharacterIndex(currentCharacter)].second << std::endl;
-//  UpdateCurrentCharacter(currentCharacter->getUsedAV());
-//  currentCharacter->resetUsedAV();
+  UpdateCurrentCharacter(currentCharacter->getUsedAV());
+  currentCharacter->resetUsedAV();
   currentCharacter = GetNextCharacter();
   std::cout << currentCharacter->getNameId();
 }
