@@ -95,6 +95,10 @@ public:
   void setWalkable(Coord coord, bool walkable);
 
   void setMapId(const std::string &id) { mapId = id; }
+  void setCursor(Coord c) {
+    activeCamera->setCursor(c);
+    move();
+  }
   void addCharacter(std::unique_ptr<Character> character) {
     characters.push_back(std::move(character));
   }
@@ -125,7 +129,6 @@ public:
   GameState ProcessInputs(GameState state, std::set<Input> inputs,
                           std::set<Input> inputsRelease, sf::Time deltaTime);
   void move();
-
   bool isCinematicActive() const;
 
   void update(sf::Time elapsed);

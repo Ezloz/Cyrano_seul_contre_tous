@@ -52,11 +52,12 @@ void TurnQueue::SetActionValue(int index, float actionvalue) {
   bubbleSingleSort(turnQueue, index);
 }
 
-void TurnQueue::AddActionValue(Character* character, float actionvalue){
+void TurnQueue::AddActionValue(Character *character, float actionvalue) {
   turnQueue[FindCharacterIndex(character)].second += actionvalue;
 }
 
-void TurnQueue::UpdateCurrentCharacter(float actionvalue){ // same as using setActionValue() on CurrentCharacter
+void TurnQueue::UpdateCurrentCharacter(
+    float actionvalue) { // same as using setActionValue() on CurrentCharacter
   SetActionValue(FindCharacterIndex(currentCharacter), actionvalue);
 }
 
@@ -66,7 +67,6 @@ void TurnQueue::EndCurrentCharacter() { // End turn of current character and
   UpdateCurrentCharacter(currentCharacter->getUsedAV());
   currentCharacter->resetUsedAV();
   currentCharacter = GetNextCharacter();
-  std::cout << currentCharacter->getNameId();
 }
 
 void TurnQueue::AddCharacter(Character *character, float actionvalue) {

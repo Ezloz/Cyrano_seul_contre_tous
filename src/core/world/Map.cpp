@@ -77,6 +77,8 @@ std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
                        npc.value("equipementIds", json::array()))));
   }
 
+  std::optional<Coord> playerCursor;
+  bool cursorIsCyrano = false;
   for (const auto &entry : mapJson.value("entries", json::array())) {
     for (const auto &spawn : entry.value("spawn", json::array())) {
       for (const auto &[nameId, info] : spawn.items()) {
@@ -84,14 +86,28 @@ std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
           continue;
         }
         const json &p = party.at(nameId);
-        map->addCharacter(CharacterFactory::create(
-            makeCreateJson(nameId, p.at("type").get<std::string>(),
-                           coordFromJson(info.at("coord")),
-                           p.value("statistics", json::object()),
-                           p.value("effectIds", json::array()),
-                           p.value("equipementIds", json::array()))));
+        const std::string type = p.at("type").get<std::string>();
+        const Coord spawnCoord = coordFromJson(info.at("coord"));
+
+        // Curseur sur Cyrano par défaut
+        if (!cursorIsCyrano) {
+          if (type == "Cyrano") {
+            playerCursor = spawnCoord;
+            cursorIsCyrano = true;
+          } else if (!playerCursor) {
+            playerCursor = spawnCoord;
+          }
+        }
+
+        map->addCharacter(CharacterFactory::create(makeCreateJson(
+            nameId, type, spawnCoord, p.value("statistics", json::object()),
+            p.value("effectIds", json::array()),
+            p.value("equipementIds", json::array()))));
       }
     }
+  }
+  if (playerCursor) {
+    map->setCursor(*playerCursor);
   }
 
   for (const auto &exitObj : mapJson.value("exits", json::array())) {

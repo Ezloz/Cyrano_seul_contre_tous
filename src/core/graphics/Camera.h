@@ -68,6 +68,10 @@ public:
   }
   sf::Vector2f getCursorOffset() { return cursorOffset; }
   Coord getCursorCoord() { return cursor; }
+
+  // Place le curseur sur `c`, recadre la caméra dessus et recalcule les offsets
+  // (curseur visible dès le premier rendu, sans attendre une entrée).
+  void setCursor(Coord c);
   sf::Vector2f getMapOffset() { return mapOffset; }
   Coord getMapCorner() const { return mapCorner; }
   Coord getViewSize() const { return viewSize; }
