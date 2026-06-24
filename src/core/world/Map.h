@@ -1,7 +1,7 @@
 #pragma once
-#include "graphics/Camera.h"
-#include "entities/Character.h"
 #include "app/GameTypes.h"
+#include "entities/Character.h"
+#include "graphics/Camera.h"
 #include "graphics/MapLayer.h"
 #include "world/TurnQueue.h"
 
@@ -47,7 +47,7 @@ private:
   std::vector<std::unique_ptr<Character>> characters;
   std::vector<MapExit> exits;
 
-  Character* selectedCharacter = nullptr;
+  Character *selectedCharacter = nullptr;
   bool freshpress = true;
   int gridWidth = 0;
   int gridHeight = 0;
@@ -61,8 +61,6 @@ private:
   };
   std::optional<PendingMove> pendingMove;
 
-
-
   void computeWalkableGrid();
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
@@ -74,7 +72,7 @@ private:
     for (const auto &character : characters) {
       character->draw(target, tileSize, characterStates);
     }
-    if (selectedCharacter){
+    if (selectedCharacter) {
       this->drawBlueTiles(target, states, this->moveRange);
     }
     if (cursorLayer && activeCamera->isCursorVisible()) {

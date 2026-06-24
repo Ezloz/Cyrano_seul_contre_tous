@@ -129,15 +129,15 @@ void Map::computeWalkableGrid() {
   const tmx::Vector2u tileCount = tmxMap.getTileCount();
   gridWidth = static_cast<int>(tileCount.x);
   gridHeight = static_cast<int>(tileCount.y);
-  walkableGrid.assign(static_cast<std::size_t>(gridWidth) * gridHeight, 0);
+  walkableGrid.assign(static_cast<int>(gridWidth) * gridHeight, 0);
 
   for (const auto &layer : tmxMap.getLayers()) {
     if (layer->getType() != tmx::Layer::Type::Tile) {
       continue;
     }
     const auto &tiles = layer->getLayerAs<tmx::TileLayer>().getTiles();
-    const std::size_t count = std::min(tiles.size(), walkableGrid.size());
-    for (std::size_t i = 0; i < count; ++i) {
+    const int count = std::min(tiles.size(), walkableGrid.size());
+    for (int i = 0; i < count; ++i) {
       const std::uint32_t gid = tiles[i].ID;
       if (gid == 0) {
         continue; // empty cell in this layer
@@ -167,8 +167,7 @@ bool Map::isWalkable(Coord coord) const {
       coord.y >= gridHeight) {
     return false;
   }
-  return walkableGrid[static_cast<std::size_t>(coord.y) * gridWidth +
-                      coord.x] != 0;
+  return walkableGrid[coord.y * gridWidth + coord.x] != 0;
 }
 
 void Map::setWalkable(Coord coord, bool walkable) {
@@ -176,8 +175,7 @@ void Map::setWalkable(Coord coord, bool walkable) {
       coord.y >= gridHeight) {
     return;
   }
-  walkableGrid[static_cast<std::size_t>(coord.y) * gridWidth + coord.x] =
-      walkable ? 1 : 0;
+  walkableGrid[coord.y * gridWidth + coord.x] = walkable ? 1 : 0;
 }
 
 void Map::move() {
