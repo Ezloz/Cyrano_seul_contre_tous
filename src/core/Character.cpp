@@ -2,7 +2,10 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cfenv>
+#include <cmath>
 #include <cstdlib>
+#include <math.h>
 
 void Character::update(sf::Time dt) {
   if (moving) {
@@ -31,47 +34,31 @@ void Character::update(sf::Time dt) {
 }
 
 void Character::moveTo(std::vector<Coord> coords, sf::Time tileRate) {
-  if (!coords.empty()) {
-    coord = coords.back();
+  if (coords.empty()) {
+    throw std::runtime_error("moveTo effectué avec un path vide");
   }
-  spriteMoveTo(std::move(coords), tileRate);
-}
-
-void Character::spriteMoveTo(std::vector<Coord> coords, sf::Time tileRate) {
-  int totalTiles = 0;
-  for (std::size_t i = 0; i + 1 < coords.size(); ++i) {
-    const Coord a = coords[i];
-    const Coord b = coords[i + 1];
-    assert(
-        (a.x == b.x || a.y == b.y) &&
-        "Le mouvement des sprite doit s'effectuer le long des axes"); // Eventuellement
-                                                                      // à
-                                                                      // modifier
-    totalTiles += std::abs(b.x - a.x) + std::abs(b.y - a.y);
-  }
+  coord = coords.back();
   movePath = std::move(coords);
   moveTileRate = tileRate;
+  moveIndexTile = 0;
   moveElapsed = sf::Time::Zero;
-  moveDuration = tileRate * static_cast<float>(totalTiles);
-  moving = totalTiles > 0;
+  const int segmentCount = static_cast<int>(movePath.size()) - 1;
+  moveDuration = tileRate * static_cast<float>(segmentCount);
+  moving = segmentCount >= 1;
 }
 
-std::size_t Character::currentSegment(float &t) const {
-  float tilesTraveled = moveElapsed / moveTileRate;
-  for (std::size_t i = 0; i + 1 < movePath.size(); ++i) {
-    const Coord a = movePath[i];
-    const Coord b = movePath[i + 1];
-    const float segLen =
-        static_cast<float>(std::abs(b.x - a.x) + std::abs(b.y - a.y));
-    const bool lastSegment = (i + 2 == movePath.size());
-    if (tilesTraveled <= segLen || lastSegment) {
-      t = segLen > 0.f ? std::clamp(tilesTraveled / segLen, 0.f, 1.f) : 1.f;
-      return i;
-    }
-    tilesTraveled -= segLen;
+int Character::currentSegment(float &t) const {
+  const int segmentCount = static_cast<int>(movePath.size()) - 1;
+
+  int i = static_cast<int>(std::floor(moveElapsed / moveTileRate));
+  if (i >= segmentCount) {
+    t = 1.f;
+    return segmentCount - 1;
   }
-  t = 1.f;
-  return 0;
+
+  t = std::fmod(moveElapsed.asMilliseconds(), moveTileRate.asMilliseconds()) /
+      static_cast<float>(moveTileRate.asMilliseconds());
+  return i;
 }
 
 sf::Vector2f Character::currentVisualTile() const {
@@ -79,7 +66,7 @@ sf::Vector2f Character::currentVisualTile() const {
     return {static_cast<float>(coord.x), static_cast<float>(coord.y)};
   }
   float t = 0.f;
-  const std::size_t i = currentSegment(t);
+  const int i = currentSegment(t);
   const Coord a = movePath[i];
   const Coord b = movePath[i + 1];
   return {static_cast<float>(a.x) + static_cast<float>(b.x - a.x) * t,
@@ -91,7 +78,7 @@ std::string Character::movementState() const {
     return "idle";
   }
   float t = 0.f;
-  const std::size_t i = currentSegment(t);
+  const int i = currentSegment(t);
   const Coord a = movePath[i];
   const Coord b = movePath[i + 1];
   if (b.x > a.x)

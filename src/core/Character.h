@@ -47,6 +47,7 @@ private:
   sf::Time moveElapsed = sf::Time::Zero;
   sf::Time moveTileRate = sf::Time::Zero;
   sf::Time moveDuration = sf::Time::Zero;
+  int moveIndexTile = 0;
   bool moving = false;
   bool isCursorSelected = false;
 
@@ -54,8 +55,8 @@ private:
   sf::Vector2f currentVisualTile() const;
 
   // indice actuel dans le movePath et met à jour t (pourcentage du parcours sur
-  // le segment, utiliser pour la position du sprite)
-  std::size_t currentSegment(float &t) const;
+  // la tile, utiliser pour la position du sprite)
+  int currentSegment(float &t) const;
 
   // renvoie la direction associé au mouvement actuel ("idle", "walkUp",
   // "walkDown", "walkLeft" or "walkRight").
@@ -99,16 +100,18 @@ public:
   virtual void attack(Character &other) = 0;
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
-  virtual bool workAI(const std::vector<size_t>& walkableGrid, 
-                      const int gridWidth, const int gridHeight,
-                      const std::vector<std::unique_ptr<Character>>& characters)=0;
+  virtual bool
+  workAI(const std::vector<size_t> &walkableGrid, const int gridWidth,
+         const int gridHeight,
+         const std::vector<std::unique_ptr<Character>> &characters) = 0;
 
-  virtual std::vector<Coord> calculateMoveRange(const std::vector<size_t>& walkableGrid, 
-                      const int gridWidth, const int gridHeight,
-                      const std::vector<std::unique_ptr<Character>>& characters);
+  virtual std::vector<Coord>
+  calculateMoveRange(const std::vector<size_t> &walkableGrid,
+                     const int gridWidth, const int gridHeight,
+                     const std::vector<std::unique_ptr<Character>> &characters);
 
-float getUsedAV() {return this->usedAV;}
-  void resetUsedAV() {this->usedAV = 0.0f;}
+  float getUsedAV() { return this->usedAV; }
+  void resetUsedAV() { this->usedAV = 0.0f; }
 
   virtual json toJson() const;
   // Utiliser pour save.json et non la saveMap.json
@@ -120,7 +123,6 @@ float getUsedAV() {return this->usedAV;}
             sf::RenderStates states = {}) const;
 
   void moveTo(std::vector<Coord> coords, sf::Time tileRate);
-  void spriteMoveTo(std::vector<Coord> coords, sf::Time tileRate);
 
   void setState(const std::string &state) {
     this->state = state;
