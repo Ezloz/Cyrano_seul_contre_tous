@@ -430,6 +430,8 @@ void Map::drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
 
   for (const auto &coord : blueTiles) {
     sf::Sprite sprite(blueTileTexture);
+    // 50% de transparence (alpha 128 sur 255).
+    sprite.setColor(sf::Color(255, 255, 255, 128));
     sprite.setPosition(
         {static_cast<float>(coord.x) * static_cast<float>(tileSize.x),
          static_cast<float>(coord.y) * static_cast<float>(tileSize.y)});
