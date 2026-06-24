@@ -15,7 +15,7 @@ Cyrano::Cyrano(std::string nameId, Coord coord, Statistic stats,
                       getAnimationTemplate(spriteId), getTexture(spriteId),
                       getPortrait(portraitId)) {}
 
-void Cyrano::attack(Character &other) {}
+void Cyrano::attack(Character &other) { lungeAt(other); }
 void Cyrano::specialAttack(Character &other) {}
 
 std::unique_ptr<Character> Cyrano::create(const json &j) {

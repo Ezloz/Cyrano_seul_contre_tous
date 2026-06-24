@@ -7,11 +7,27 @@
 #include <cstdlib>
 #include <math.h>
 
+namespace {
+constexpr float lungeReach = 0.4f;
+constexpr float pi = 3.14f;
+} // namespace
+
 void Character::update(sf::Time dt) {
   if (moving) {
     moveElapsed += dt;
     if (moveElapsed >= moveDuration) {
       moving = false;
+    }
+  }
+
+  if (lunging) {
+    lungeElapsed += dt;
+    if (lungeElapsed >= lungeDuration) {
+      lunging = false;
+      if (lungeTarget != nullptr) {
+        processDommage(*lungeTarget);
+        lungeTarget = nullptr;
+      }
     }
   }
 
@@ -47,6 +63,32 @@ void Character::moveTo(std::vector<Coord> coords, sf::Time tileRate) {
   moving = segmentCount >= 1;
 }
 
+void Character::lungeAt(Character &other, sf::Time duration) {
+  const int dx = other.coord.x - coord.x;
+  const int dy = other.coord.y - coord.y;
+
+  const float len = std::sqrt(static_cast<float>(dx * dx + dy * dy));
+  // Direction du lunge
+  lungeDir =
+      len > 0.f ? sf::Vector2f{dx / len, dy / len} : sf::Vector2f{0.f, 0.f};
+
+  if (std::abs(dx) >= std::abs(dy)) {
+    lungeState = dx >= 0 ? "walkRight" : "walkLeft";
+  } else {
+    lungeState = dy >= 0 ? "walkDown" : "walkUp";
+  }
+
+  lungeTarget = &other;
+  lungeElapsed = sf::Time::Zero;
+  lungeDuration = duration;
+  lunging = duration > sf::Time::Zero;
+}
+
+void Character::processDommage(Character &other) {
+  // TODO: appliquer les dégâts
+  (void)other;
+}
+
 int Character::currentSegment(float &t) const {
   const int segmentCount = static_cast<int>(movePath.size()) - 1;
 
@@ -62,18 +104,31 @@ int Character::currentSegment(float &t) const {
 }
 
 sf::Vector2f Character::currentVisualTile() const {
-  if (!moving || movePath.size() < 2 || moveTileRate <= sf::Time::Zero) {
-    return {static_cast<float>(coord.x), static_cast<float>(coord.y)};
+  sf::Vector2f base = {static_cast<float>(coord.x),
+                       static_cast<float>(coord.y)};
+  if (moving && movePath.size() >= 2 && moveTileRate > sf::Time::Zero) {
+    float t = 0.f;
+    const int i = currentSegment(t);
+    const Coord a = movePath[i];
+    const Coord b = movePath[i + 1];
+    base = {static_cast<float>(a.x) + static_cast<float>(b.x - a.x) * t,
+            static_cast<float>(a.y) + static_cast<float>(b.y - a.y) * t};
   }
-  float t = 0.f;
-  const int i = currentSegment(t);
-  const Coord a = movePath[i];
-  const Coord b = movePath[i + 1];
-  return {static_cast<float>(a.x) + static_cast<float>(b.x - a.x) * t,
-          static_cast<float>(a.y) + static_cast<float>(b.y - a.y) * t};
+
+  if (lunging && lungeDuration > sf::Time::Zero) {
+    const float lt = std::clamp(lungeElapsed / lungeDuration, 0.f, 1.f);
+    const float reach = std::sin(pi * lt) * lungeReach;
+    base.x += lungeDir.x * reach;
+    base.y += lungeDir.y * reach;
+  }
+
+  return base;
 }
 
 std::string Character::movementState() const {
+  if (lunging) {
+    return lungeState;
+  }
   if (!moving || movePath.size() < 2 || moveTileRate <= sf::Time::Zero) {
     return "idle";
   }

@@ -16,7 +16,7 @@ Soldier::Soldier(std::string nameId, Coord coord, Statistic stats,
           getAnimationTemplate(spriteId), getTexture(spriteId),
           getPortrait(portraitId)) {}
 
-void Soldier::attack(Character &other) {}
+void Soldier::attack(Character &other) { lungeAt(other); }
 void Soldier::specialAttack(Character &other) {}
 
 std::unique_ptr<Character> Soldier::create(const json &j) {

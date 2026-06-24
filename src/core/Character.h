@@ -51,6 +51,15 @@ private:
   bool moving = false;
   bool isCursorSelected = false;
 
+  bool lunging = false;
+  sf::Time lungeElapsed = sf::Time::Zero;
+  sf::Time lungeDuration = sf::Time::Zero;
+  sf::Vector2f lungeDir = {0.f, 0.f};
+  std::string lungeState = "idle";
+  // Cible de l'attaque en cours (dois etre enregistrer pour persister entre
+  // frame)
+  Character *lungeTarget = nullptr;
+
   // Position du sprite, peut etre entre deux tiles
   sf::Vector2f currentVisualTile() const;
 
@@ -61,6 +70,10 @@ private:
   // renvoie la direction associé au mouvement actuel ("idle", "walkUp",
   // "walkDown", "walkLeft" or "walkRight").
   std::string movementState() const;
+
+  // Appelé une fois l'animation d'attaque (lunge) terminée. Appliquera les
+  // dégâts à `other` ; ne fait rien pour l'instant.
+  void processDommage(Character &other);
 
 protected:
   float usedAV;
@@ -123,6 +136,8 @@ public:
             sf::RenderStates states = {}) const;
 
   void moveTo(std::vector<Coord> coords, sf::Time tileRate);
+
+  void lungeAt(Character &other, sf::Time duration = sf::milliseconds(300));
 
   void setState(const std::string &state) {
     this->state = state;
