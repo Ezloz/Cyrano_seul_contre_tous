@@ -100,6 +100,36 @@ void Camera::processNewOffset(std::set<Input> inputs,
                  sf::Vector2f(3.0f, 3.0f);
 }
 
+void Camera::setCursor(Coord c) {
+  cursor.x = std::clamp(c.x, 0, mapSize.x - 1);
+  cursor.y = std::clamp(c.y, 0, mapSize.y - 1);
+  previousCursor = cursor;
+
+  // Recentre la caméra pour garder le curseur dans la vue (même logique que
+  // processNewOffset).
+  if (cursor.x - mapCorner.x < edgeOffset.x) {
+    mapCorner.x = cursor.x - edgeOffset.x;
+  } else if (cursor.x - mapCorner.x > viewSize.x - 1 - edgeOffset.x) {
+    mapCorner.x = cursor.x - (viewSize.x - 1 - edgeOffset.x);
+  }
+  mapCorner.x = std::clamp(mapCorner.x, 0, maxCornerMap.x);
+
+  if (cursor.y - mapCorner.y < edgeOffset.y) {
+    mapCorner.y = cursor.y - edgeOffset.y;
+  } else if (cursor.y - mapCorner.y > viewSize.y - 1 - edgeOffset.y) {
+    mapCorner.y = cursor.y - (viewSize.y - 1 - edgeOffset.y);
+  }
+  mapCorner.y = std::clamp(mapCorner.y, 0, maxCornerMap.y);
+  previousMapCorner = mapCorner;
+
+  mapOffset = sf::Vector2f(-static_cast<float>(mapCorner.x) * tileSize.x,
+                           -static_cast<float>(mapCorner.y) * tileSize.y);
+  cursorOffset =
+      sf::Vector2f(static_cast<float>(cursor.x - mapCorner.x) * tileSize.x,
+                   static_cast<float>(cursor.y - mapCorner.y) * tileSize.y) -
+      sf::Vector2f(3.0f, 3.0f);
+}
+
 void Camera::startCinematic(Coord from, Coord to, sf::Time duration) {
   cinematicFrom.x = std::clamp(from.x, 0, maxCornerMap.x);
   cinematicFrom.y = std::clamp(from.y, 0, maxCornerMap.y);

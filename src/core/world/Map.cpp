@@ -80,6 +80,8 @@ std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
                        npc.value("equipementIds", json::array()))));
   }
 
+  std::optional<Coord> playerCursor;
+  bool cursorIsCyrano = false;
   for (const auto &entry : mapJson.value("entries", json::array())) {
     for (const auto &spawn : entry.value("spawn", json::array())) {
       for (const auto &[nameId, info] : spawn.items()) {
@@ -87,14 +89,28 @@ std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
           continue;
         }
         const json &p = party.at(nameId);
-        map->addCharacter(CharacterFactory::create(
-            makeCreateJson(nameId, p.at("type").get<std::string>(),
-                           coordFromJson(info.at("coord")),
-                           p.value("statistics", json::object()),
-                           p.value("effectIds", json::array()),
-                           p.value("equipementIds", json::array()))));
+        const std::string type = p.at("type").get<std::string>();
+        const Coord spawnCoord = coordFromJson(info.at("coord"));
+
+        // Curseur sur Cyrano par défaut
+        if (!cursorIsCyrano) {
+          if (type == "Cyrano") {
+            playerCursor = spawnCoord;
+            cursorIsCyrano = true;
+          } else if (!playerCursor) {
+            playerCursor = spawnCoord;
+          }
+        }
+
+        map->addCharacter(CharacterFactory::create(makeCreateJson(
+            nameId, type, spawnCoord, p.value("statistics", json::object()),
+            p.value("effectIds", json::array()),
+            p.value("equipementIds", json::array()))));
       }
     }
+  }
+  if (playerCursor) {
+    map->setCursor(*playerCursor);
   }
 
   for (const auto &exitObj : mapJson.value("exits", json::array())) {
@@ -132,15 +148,15 @@ void Map::computeWalkableGrid() {
   const tmx::Vector2u tileCount = tmxMap.getTileCount();
   gridWidth = static_cast<int>(tileCount.x);
   gridHeight = static_cast<int>(tileCount.y);
-  walkableGrid.assign(static_cast<std::size_t>(gridWidth) * gridHeight, 0);
+  walkableGrid.assign(static_cast<int>(gridWidth) * gridHeight, 0);
 
   for (const auto &layer : tmxMap.getLayers()) {
     if (layer->getType() != tmx::Layer::Type::Tile) {
       continue;
     }
     const auto &tiles = layer->getLayerAs<tmx::TileLayer>().getTiles();
-    const std::size_t count = std::min(tiles.size(), walkableGrid.size());
-    for (std::size_t i = 0; i < count; ++i) {
+    const int count = std::min(tiles.size(), walkableGrid.size());
+    for (int i = 0; i < count; ++i) {
       const std::uint32_t gid = tiles[i].ID;
       if (gid == 0) {
         continue; // empty cell in this layer
@@ -170,8 +186,7 @@ bool Map::isWalkable(Coord coord) const {
       coord.y >= gridHeight) {
     return false;
   }
-  return walkableGrid[static_cast<std::size_t>(coord.y) * gridWidth +
-                      coord.x] != 0;
+  return walkableGrid[coord.y * gridWidth + coord.x] != 0;
 }
 
 void Map::setWalkable(Coord coord, bool walkable) {
@@ -179,8 +194,7 @@ void Map::setWalkable(Coord coord, bool walkable) {
       coord.y >= gridHeight) {
     return;
   }
-  walkableGrid[static_cast<std::size_t>(coord.y) * gridWidth + coord.x] =
-      walkable ? 1 : 0;
+  walkableGrid[coord.y * gridWidth + coord.x] = walkable ? 1 : 0;
 }
 
 void Map::move() {
