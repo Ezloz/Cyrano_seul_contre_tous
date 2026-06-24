@@ -1,4 +1,4 @@
-#include "entities/Character.h"
+#include "Character.h"
 
 #include <algorithm>
 #include <cassert>
@@ -193,6 +193,8 @@ Character::Statistic Character::statisticFromJson(const json &j) {
   const auto assign = [&s](const std::string &key, int value) {
     if (key == "life")
       s.life = value;
+    if (key == "maxLife")
+      s.maxLife = value;
     else if (key == "speed")
       s.speed = value;
     else if (key == "charisma")
