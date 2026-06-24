@@ -334,11 +334,9 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
           }
         } else {
           if (selectedCharacter->isPlayer() &&
-              selectedCharacter == turnQueue.GetCurrentCharacter()
-
-              && isInRange(selectedCharacter->getCoord(), cursor,
-                           selectedCharacter->getStats().range) &&
-              !(cursor == selectedCharacter->getCoord())) {
+              selectedCharacter == turnQueue.GetCurrentCharacter() && 
+            (std::find(this->moveRange.begin(), this->moveRange.end(), cursor) 
+                  != this->moveRange.end())) {
             this->moveRange.clear();
 
             this->moveCharacterTo(selectedCharacter->getNameId(),
