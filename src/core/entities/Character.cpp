@@ -1,4 +1,4 @@
-#include "entities/Character.h"
+#include "Character.h"
 
 #include <algorithm>
 #include <cassert>
@@ -195,6 +195,7 @@ json Character::toPartyJson() const {
       {"type", type},
       {"statistics",
        {{"life", stats.life},
+        {"maxLife", stats.maxLife},
         {"speed", stats.speed},
         {"charisma", stats.charisma},
         {"power", stats.power},
@@ -210,6 +211,8 @@ Character::Statistic Character::statisticFromJson(const json &j) {
   const auto assign = [&s](const std::string &key, int value) {
     if (key == "life")
       s.life = value;
+    else if (key == "maxLife")
+      s.maxLife = value;
     else if (key == "speed")
       s.speed = value;
     else if (key == "charisma")

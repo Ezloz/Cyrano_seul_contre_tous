@@ -105,21 +105,9 @@ void Camera::setCursor(Coord c) {
   cursor.y = std::clamp(c.y, 0, mapSize.y - 1);
   previousCursor = cursor;
 
-  // Recentre la caméra pour garder le curseur dans la vue (même logique que
-  // processNewOffset).
-  if (cursor.x - mapCorner.x < edgeOffset.x) {
-    mapCorner.x = cursor.x - edgeOffset.x;
-  } else if (cursor.x - mapCorner.x > viewSize.x - 1 - edgeOffset.x) {
-    mapCorner.x = cursor.x - (viewSize.x - 1 - edgeOffset.x);
-  }
-  mapCorner.x = std::clamp(mapCorner.x, 0, maxCornerMap.x);
-
-  if (cursor.y - mapCorner.y < edgeOffset.y) {
-    mapCorner.y = cursor.y - edgeOffset.y;
-  } else if (cursor.y - mapCorner.y > viewSize.y - 1 - edgeOffset.y) {
-    mapCorner.y = cursor.y - (viewSize.y - 1 - edgeOffset.y);
-  }
-  mapCorner.y = std::clamp(mapCorner.y, 0, maxCornerMap.y);
+  // Centre la caméra sur le curseur
+  mapCorner.x = std::clamp(cursor.x - viewSize.x / 2, 0, maxCornerMap.x);
+  mapCorner.y = std::clamp(cursor.y - viewSize.y / 2, 0, maxCornerMap.y);
   previousMapCorner = mapCorner;
 
   mapOffset = sf::Vector2f(-static_cast<float>(mapCorner.x) * tileSize.x,

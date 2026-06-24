@@ -6,6 +6,7 @@
       "type": "Cyrano",
       "statistics": {
         "life": 1,
+        "maxLife": 1,
         "speed": 1,
         "charisma": 1,
         "power": 1,

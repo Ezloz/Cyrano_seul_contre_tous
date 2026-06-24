@@ -84,6 +84,7 @@ void TurnQueue::RemoveCharacter(const Character *character) {
   }
   turnQueue.erase(turnQueue.begin() + c);
 }
+
 void TurnQueue::SetActionValue(const Character *character, float actionvalue) {
   SetActionValue(FindCharacterIndex(character), actionvalue);
 }

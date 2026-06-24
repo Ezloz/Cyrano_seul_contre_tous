@@ -1,9 +1,7 @@
-// TODO:: Json parseur pour sauvegarder l'état des characters + importer d'état
-// des ennemis par défaut
 #pragma once
 
-#include "graphics/Animation.h"
 #include "app/GameTypes.h"
+#include "graphics/Animation.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -31,7 +29,8 @@
 class Character {
 public:
   struct Statistic {
-    int life = 1, speed = 1, charisma = 1, power = 1, luck = 1, range = 1;
+    int life = 1, maxLife = 1, speed = 1, charisma = 1, power = 1, luck = 1,
+        range = 1;
   };
 
 private:

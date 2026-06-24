@@ -9,10 +9,10 @@
 #include <tmxlite/TileLayer.hpp>
 #include <tmxlite/Tileset.hpp>
 
-#include <ranges>
 #include <algorithm>
 #include <filesystem>
 #include <queue>
+#include <ranges>
 #include <unordered_set>
 
 namespace {
@@ -145,6 +145,23 @@ Map::Map(const std::string &name, int nbLayer) {
 
 Map::~Map() = default;
 
+void Map::removeDeadCharacters() {
+  for (auto it = characters.begin(); it != characters.end();) {
+    Character *c = it->get();
+    if (c->getStats().life <= 0) {
+      if (selectedCharacter == c) {
+        selectedCharacter = nullptr;
+        walkPath.clear();
+        moveRange.clear();
+      }
+      turnQueue.RemoveCharacter(c);
+      it = characters.erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
 void Map::computeWalkableGrid() {
   const tmx::Vector2u tileCount = tmxMap.getTileCount();
   gridWidth = static_cast<int>(tileCount.x);
@@ -224,13 +241,16 @@ void Map::updateWalkPathAndAV() {
   if ((std::find(this->moveRange.begin(), this->moveRange.end(), cursor) != this->moveRange.end())) {
     if (isInRange(previousCase, cursor, 1) &&
         this->walkPath.size() <= selectedCharacter->getStats().range) {
-      this->walkPath.erase(std::find(this->walkPath.begin(), this->walkPath.end(), cursor), this->walkPath.end());
+      this->walkPath.erase(
+          std::find(this->walkPath.begin(), this->walkPath.end(), cursor),
+          this->walkPath.end());
       this->walkPath.push_back(cursor);
     } else {
-      this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
+      this->walkPath = simplePath(this->moveRange,
+                                  this->selectedCharacter->getCoord(), cursor);
     }
     float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
-    float total_cost = case_av * (this->walkPath.size() - 1);
+    float total_cost = case_av * (this->walkPath.size());
     turnQueue.UpdateCurrentCharacter(total_cost);
     return;
   }
@@ -325,6 +345,8 @@ void Map::update(sf::Time elapsed) {
   for (auto &character : characters) {
     character->update(elapsed);
   }
+
+  removeDeadCharacters();
 
   if (selectedCharacter != nullptr) {
     // BLUE

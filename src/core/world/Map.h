@@ -63,6 +63,8 @@ private:
 
   void computeWalkableGrid();
 
+  void removeDeadCharacters();
+
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
     for (const auto &layer : layers) {
       target.draw(*layer, states);
