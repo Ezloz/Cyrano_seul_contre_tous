@@ -8,8 +8,11 @@
 #include <tmxlite/TileLayer.hpp>
 #include <tmxlite/Tileset.hpp>
 
+#include <ranges>
 #include <algorithm>
 #include <filesystem>
+#include <queue>
+#include <unordered_set>
 
 namespace {
 std::string tmxPathForMap(const std::string &mapId) {
@@ -187,24 +190,83 @@ void Map::move() {
   }
 }
 
-std::vector<Coord> straightPath(Coord start, Coord end) {
-  std::vector<Coord> path;
+struct CoordHash {
+    size_t operator()(const Coord& c) const {
+        return std::hash<int>()(c.x) ^ (std::hash<int>()(c.y) << 1);
+    }
+};
 
-  Coord current = start;
-  path.push_back(current);
+std::vector<Coord> BFS(
+    const std::vector<Coord>& moveRange,
+    const Coord& start,
+    const Coord& target)
+{
+    std::unordered_set<Coord, CoordHash> walkable(moveRange.begin(), moveRange.end());
 
-  while (current.x != end.x) {
-    current.x += (end.x > current.x) ? 1 : -1;
-    path.push_back(current);
-  }
+    std::queue<Coord> q;
+    std::unordered_map<Coord, Coord, CoordHash> parent;
+    std::unordered_set<Coord, CoordHash> visited;
 
-  while (current.y != end.y) {
-    current.y += (end.y > current.y) ? 1 : -1;
-    path.push_back(current);
-  }
+    auto push = [&](const Coord& from, const Coord& to) {
+        if (walkable.count(to) && !visited.count(to)) {
+            visited.insert(to);
+            parent[to] = from;
+            q.push(to);
+        }
+    };
 
-  return path;
+    q.push(start);
+    visited.insert(start);
+
+    const int dx[4] = {1, -1, 0, 0};
+    const int dy[4] = {0, 0, 1, -1};
+
+    bool found = false;
+
+    while (!q.empty() && !found) {
+        Coord cur = q.front();
+        q.pop();
+
+        for (int i = 0; i < 4; i++) {
+            Coord nxt{cur.x + dx[i], cur.y + dy[i]};
+
+            if (nxt == target) {
+                parent[nxt] = cur;
+                found = true;
+                break;
+            }
+
+            push(cur, nxt);
+        }
+    }
+
+    // Reconstruct path
+    std::vector<Coord> path;
+    Coord cur = target;
+    path.push_back(cur);
+
+    while (!(cur == start)) {
+        cur = parent[cur];
+        path.push_back(cur);
+    }
+
+    std::reverse(path.begin(), path.end());
+    return path;
 }
+
+std::vector<Coord> simplePath(const std::vector<Coord>& moveRange, const Coord& start, const Coord& target)
+{
+  auto it = std::ranges::min_element(moveRange,
+      [&](const Coord& a, const Coord& b) {
+          return manhattanDistance(a, target) < manhattanDistance(b, target);
+      });
+
+  Coord closestCoord = *it;
+
+  return BFS(moveRange, start, target);
+
+}
+
 
 void Map::updateWalkPathAndAV() {
   Coord cursor = this->activeCamera->getCursorCoord();
@@ -221,25 +283,17 @@ void Map::updateWalkPathAndAV() {
   if (cursor == previousCase) {
     return;
   }
-  if (isInRange(selectedCharacter->getCoord(), cursor,
-                selectedCharacter->getStats().range)) {
+  if (isInRange(selectedCharacter->getCoord(), cursor, selectedCharacter->getStats().range)) {
     if (isInRange(previousCase, cursor, 1) &&
-        this->walkPath.size() < selectedCharacter->getStats().range) {
+        this->walkPath.size() <= selectedCharacter->getStats().range) {
+      this->walkPath.erase(std::find(this->walkPath.begin(), this->walkPath.end(), cursor), this->walkPath.end());
       this->walkPath.push_back(cursor);
       std::cout << cursor.x << "," << cursor.y;
-      float case_av =
-          100.0f / selectedCharacter->getStats()
-                       .speed; // TO REWORK : No magic number+ take tile
-                               // propreties into account (not implemented yet)
-      turnQueue.AddActionValue(selectedCharacter, case_av);
     } else {
-      this->walkPath = straightPath(selectedCharacter->getCoord(), cursor);
-      float case_av =
-          100.0f / selectedCharacter->getStats()
-                       .speed; // TO REWORK : No magic number+ take tile
-                               // propreties into account (not implemented yet)
-      turnQueue.UpdateCurrentCharacter(case_av * (this->walkPath.size() - 1));
+      this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
     }
+    float case_av = 100.0f / selectedCharacter->getStats().speed; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
+    turnQueue.UpdateCurrentCharacter(case_av * (this->walkPath.size() - 1));
     return;
   }
 }

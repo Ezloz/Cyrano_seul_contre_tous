@@ -2093,27 +2093,27 @@
  </tile>
  <tile id="418">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="419">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="420">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="421">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="422">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="423">
@@ -2253,22 +2253,22 @@
  </tile>
  <tile id="450">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="451">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="452">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="453">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="454">
@@ -2413,7 +2413,7 @@
  </tile>
  <tile id="482">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="483">
@@ -2428,7 +2428,7 @@
  </tile>
  <tile id="485">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="486">
@@ -2593,7 +2593,7 @@
  </tile>
  <tile id="518">
   <properties>
-   <property name="walkable" type="bool" value="false"/>
+   <property name="walkable" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="519">

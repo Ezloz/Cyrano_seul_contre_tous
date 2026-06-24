@@ -13,7 +13,6 @@ add_library(lib_core
 	entities/CharacterAI.cpp
 	entities/PlayerCharacter.h
 	entities/NPC.h
-	entities/Object.h
 	entities/Cyrano.h entities/Cyrano.cpp
 	entities/Soldier.h entities/Soldier.cpp
 	ui/UIManager.h ui/UIManager.cpp
