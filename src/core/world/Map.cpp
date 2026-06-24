@@ -8,10 +8,10 @@
 #include <tmxlite/TileLayer.hpp>
 #include <tmxlite/Tileset.hpp>
 
-#include <ranges>
 #include <algorithm>
 #include <filesystem>
 #include <queue>
+#include <ranges>
 #include <unordered_set>
 
 namespace {
@@ -144,6 +144,23 @@ Map::Map(const std::string &name, int nbLayer) {
 
 Map::~Map() = default;
 
+void Map::removeDeadCharacters() {
+  for (auto it = characters.begin(); it != characters.end();) {
+    Character *c = it->get();
+    if (c->getStats().life <= 0) {
+      if (selectedCharacter == c) {
+        selectedCharacter = nullptr;
+        walkPath.clear();
+        moveRange.clear();
+      }
+      turnQueue.RemoveCharacter(c);
+      it = characters.erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
 void Map::computeWalkableGrid() {
   const tmx::Vector2u tileCount = tmxMap.getTileCount();
   gridWidth = static_cast<int>(tileCount.x);
@@ -205,82 +222,78 @@ void Map::move() {
 }
 
 struct CoordHash {
-    size_t operator()(const Coord& c) const {
-        return std::hash<int>()(c.x) ^ (std::hash<int>()(c.y) << 1);
-    }
+  size_t operator()(const Coord &c) const {
+    return std::hash<int>()(c.x) ^ (std::hash<int>()(c.y) << 1);
+  }
 };
 
-std::vector<Coord> BFS(
-    const std::vector<Coord>& moveRange,
-    const Coord& start,
-    const Coord& target)
-{
-    std::unordered_set<Coord, CoordHash> walkable(moveRange.begin(), moveRange.end());
+std::vector<Coord> BFS(const std::vector<Coord> &moveRange, const Coord &start,
+                       const Coord &target) {
+  std::unordered_set<Coord, CoordHash> walkable(moveRange.begin(),
+                                                moveRange.end());
 
-    std::queue<Coord> q;
-    std::unordered_map<Coord, Coord, CoordHash> parent;
-    std::unordered_set<Coord, CoordHash> visited;
+  std::queue<Coord> q;
+  std::unordered_map<Coord, Coord, CoordHash> parent;
+  std::unordered_set<Coord, CoordHash> visited;
 
-    auto push = [&](const Coord& from, const Coord& to) {
-        if (walkable.count(to) && !visited.count(to)) {
-            visited.insert(to);
-            parent[to] = from;
-            q.push(to);
-        }
-    };
-
-    q.push(start);
-    visited.insert(start);
-
-    const int dx[4] = {1, -1, 0, 0};
-    const int dy[4] = {0, 0, 1, -1};
-
-    bool found = false;
-
-    while (!q.empty() && !found) {
-        Coord cur = q.front();
-        q.pop();
-
-        for (int i = 0; i < 4; i++) {
-            Coord nxt{cur.x + dx[i], cur.y + dy[i]};
-
-            if (nxt == target) {
-                parent[nxt] = cur;
-                found = true;
-                break;
-            }
-
-            push(cur, nxt);
-        }
+  auto push = [&](const Coord &from, const Coord &to) {
+    if (walkable.count(to) && !visited.count(to)) {
+      visited.insert(to);
+      parent[to] = from;
+      q.push(to);
     }
+  };
 
-    // Reconstruct path
-    std::vector<Coord> path;
-    Coord cur = target;
+  q.push(start);
+  visited.insert(start);
+
+  const int dx[4] = {1, -1, 0, 0};
+  const int dy[4] = {0, 0, 1, -1};
+
+  bool found = false;
+
+  while (!q.empty() && !found) {
+    Coord cur = q.front();
+    q.pop();
+
+    for (int i = 0; i < 4; i++) {
+      Coord nxt{cur.x + dx[i], cur.y + dy[i]};
+
+      if (nxt == target) {
+        parent[nxt] = cur;
+        found = true;
+        break;
+      }
+
+      push(cur, nxt);
+    }
+  }
+
+  // Reconstruct path
+  std::vector<Coord> path;
+  Coord cur = target;
+  path.push_back(cur);
+
+  while (!(cur == start)) {
+    cur = parent[cur];
     path.push_back(cur);
+  }
 
-    while (!(cur == start)) {
-        cur = parent[cur];
-        path.push_back(cur);
-    }
-
-    std::reverse(path.begin(), path.end());
-    return path;
+  std::reverse(path.begin(), path.end());
+  return path;
 }
 
-std::vector<Coord> simplePath(const std::vector<Coord>& moveRange, const Coord& start, const Coord& target)
-{
-  auto it = std::ranges::min_element(moveRange,
-      [&](const Coord& a, const Coord& b) {
-          return manhattanDistance(a, target) < manhattanDistance(b, target);
+std::vector<Coord> simplePath(const std::vector<Coord> &moveRange,
+                              const Coord &start, const Coord &target) {
+  auto it =
+      std::ranges::min_element(moveRange, [&](const Coord &a, const Coord &b) {
+        return manhattanDistance(a, target) < manhattanDistance(b, target);
       });
 
   Coord closestCoord = *it;
 
   return BFS(moveRange, start, target);
-
 }
-
 
 void Map::updateWalkPathAndAV() {
   Coord cursor = this->activeCamera->getCursorCoord();
@@ -297,16 +310,23 @@ void Map::updateWalkPathAndAV() {
   if (cursor == previousCase) {
     return;
   }
-  if (isInRange(selectedCharacter->getCoord(), cursor, selectedCharacter->getStats().range)) {
+  if (isInRange(selectedCharacter->getCoord(), cursor,
+                selectedCharacter->getStats().range)) {
     if (isInRange(previousCase, cursor, 1) &&
         this->walkPath.size() <= selectedCharacter->getStats().range) {
-      this->walkPath.erase(std::find(this->walkPath.begin(), this->walkPath.end(), cursor), this->walkPath.end());
+      this->walkPath.erase(
+          std::find(this->walkPath.begin(), this->walkPath.end(), cursor),
+          this->walkPath.end());
       this->walkPath.push_back(cursor);
       std::cout << cursor.x << "," << cursor.y;
     } else {
-      this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
+      this->walkPath = simplePath(this->moveRange,
+                                  this->selectedCharacter->getCoord(), cursor);
     }
-    float case_av = 100.0f / selectedCharacter->getStats().speed; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
+    float case_av =
+        100.0f / selectedCharacter->getStats()
+                     .speed; // TO REWORK : No magic number+ take tile +
+                             // propreties into account (not implemented yet)
     turnQueue.UpdateCurrentCharacter(case_av * (this->walkPath.size() - 1));
     return;
   }
@@ -400,6 +420,8 @@ void Map::update(sf::Time elapsed) {
   for (auto &character : characters) {
     character->update(elapsed);
   }
+
+  removeDeadCharacters();
 
   if (selectedCharacter != nullptr) {
     // BLUE

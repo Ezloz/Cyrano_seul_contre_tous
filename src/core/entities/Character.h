@@ -29,7 +29,8 @@
 class Character {
 public:
   struct Statistic {
-    int life, maxLife, speed, charisma, power, luck, range;
+    int life = 1, maxLife = 1, speed = 1, charisma = 1, power = 1, luck = 1,
+        range = 1;
   };
 
 private:
