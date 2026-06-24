@@ -10,7 +10,7 @@ add_library(lib_core
 	graphics/Animation.h
 	entities/Character.h entities/Character.cpp
 	entities/CharacterFactory.h entities/CharacterFactory.cpp
-	entities/CharacterAI.cpp
+	entities/CharacterAI.h entities/CharacterAI.cpp
 	entities/PlayerCharacter.h
 	entities/NPC.h
 	entities/Cyrano.h entities/Cyrano.cpp

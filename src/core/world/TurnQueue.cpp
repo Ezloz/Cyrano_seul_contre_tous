@@ -23,6 +23,7 @@ Character *TurnQueue::GetNextCharacter() {
     return nullptr;
 
   float av_to_substract = turnQueue[0].second;
+  std::cout << "av :" << av_to_substract;
 
   for (auto &elem : turnQueue) {
     elem.second -= av_to_substract;
@@ -66,7 +67,9 @@ void TurnQueue::EndCurrentCharacter() { // End turn of current character and
                                         // one with lowest AV)
   UpdateCurrentCharacter(currentCharacter->getUsedAV());
   currentCharacter->resetUsedAV();
+  auto av = turnQueue[0].second;
   currentCharacter = GetNextCharacter();
+  std::cout << currentCharacter->getNameId() << '+' << turnQueue[0].first->getNameId() << ',' << av;
 }
 
 void TurnQueue::AddCharacter(Character *character, float actionvalue) {
@@ -99,7 +102,8 @@ void TurnQueue::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   sf::RectangleShape border{sprite.getGlobalBounds().size};
 
   border.setOutlineColor(sf::Color::White);
-  border.setOutlineThickness(2.f);
+  border.setOutlineThickness(0.5f);
+  border.setFillColor(sf::Color{255,255,255,0});
 
   if (currentCharacter->getIsCursorSelected()) {
     border.setPosition({0.f, 0.f});

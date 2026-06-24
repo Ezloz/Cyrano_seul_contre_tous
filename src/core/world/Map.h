@@ -74,6 +74,7 @@ private:
     }
     if (selectedCharacter) {
       this->drawBlueTiles(target, states, this->moveRange);
+//    this->drawPortraitAndStats();
     }
     if (cursorLayer && activeCamera->isCursorVisible()) {
       target.draw(*cursorLayer, states);

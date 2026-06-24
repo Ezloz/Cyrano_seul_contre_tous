@@ -63,6 +63,22 @@ void Character::moveTo(std::vector<Coord> coords, sf::Time tileRate) {
   moving = segmentCount >= 1;
 }
 
+float Character::calculateDamage() {
+  return this->stats.power;
+}
+
+void Character::receiveDamage(float damage) {
+  this->stats.life -= damage;
+  if (this->stats.life <= 0){
+    this->die();
+  }
+}
+
+void Character::die() {
+  
+}
+
+
 void Character::lungeAt(Character &other, sf::Time duration) {
   const int dx = other.coord.x - coord.x;
   const int dy = other.coord.y - coord.y;
@@ -85,7 +101,8 @@ void Character::lungeAt(Character &other, sf::Time duration) {
 }
 
 void Character::processDommage(Character &other) {
-  // TODO: appliquer les dégâts
+  other.receiveDamage(this->calculateDamage());
+
   (void)other;
 }
 

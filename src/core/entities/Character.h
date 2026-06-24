@@ -75,6 +75,13 @@ private:
   // dégâts à `other` ; ne fait rien pour l'instant.
   void processDommage(Character &other);
 
+float calculateDamage();
+
+void receiveDamage(float damage); 
+
+void die();
+
+
 protected:
   float usedAV;
   Coord coord;
@@ -110,11 +117,11 @@ public:
     return getNameId() == other.getNameId();
   }
 
-  virtual void attack(Character &other) = 0;
+  virtual void attack(Character &other)=0;
   // void Character::processDommage(Character &other);
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
-  virtual bool
+  virtual std::vector<Coord>
   workAI(const std::vector<size_t> &walkableGrid, const int gridWidth,
          const int gridHeight,
          const std::vector<std::unique_ptr<Character>> &characters) = 0;
@@ -139,6 +146,8 @@ public:
   void moveTo(std::vector<Coord> coords, sf::Time tileRate);
 
   void lungeAt(Character &other, sf::Time duration = sf::milliseconds(300));
+
+
 
   void setState(const std::string &state) {
     this->state = state;

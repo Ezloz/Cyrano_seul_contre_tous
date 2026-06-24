@@ -1,6 +1,7 @@
 #include "world/Map.h"
 
 #include "entities/CharacterFactory.h"
+#include "entities/CharacterAI.h"
 #include "io/Save.h"
 
 #include <tmxlite/Layer.hpp>
@@ -204,83 +205,6 @@ void Map::move() {
   }
 }
 
-struct CoordHash {
-    size_t operator()(const Coord& c) const {
-        return std::hash<int>()(c.x) ^ (std::hash<int>()(c.y) << 1);
-    }
-};
-
-std::vector<Coord> BFS(
-    const std::vector<Coord>& moveRange,
-    const Coord& start,
-    const Coord& target)
-{
-    std::unordered_set<Coord, CoordHash> walkable(moveRange.begin(), moveRange.end());
-
-    std::queue<Coord> q;
-    std::unordered_map<Coord, Coord, CoordHash> parent;
-    std::unordered_set<Coord, CoordHash> visited;
-
-    auto push = [&](const Coord& from, const Coord& to) {
-        if (walkable.count(to) && !visited.count(to)) {
-            visited.insert(to);
-            parent[to] = from;
-            q.push(to);
-        }
-    };
-
-    q.push(start);
-    visited.insert(start);
-
-    const int dx[4] = {1, -1, 0, 0};
-    const int dy[4] = {0, 0, 1, -1};
-
-    bool found = false;
-
-    while (!q.empty() && !found) {
-        Coord cur = q.front();
-        q.pop();
-
-        for (int i = 0; i < 4; i++) {
-            Coord nxt{cur.x + dx[i], cur.y + dy[i]};
-
-            if (nxt == target) {
-                parent[nxt] = cur;
-                found = true;
-                break;
-            }
-
-            push(cur, nxt);
-        }
-    }
-
-    // Reconstruct path
-    std::vector<Coord> path;
-    Coord cur = target;
-    path.push_back(cur);
-
-    while (!(cur == start)) {
-        cur = parent[cur];
-        path.push_back(cur);
-    }
-
-    std::reverse(path.begin(), path.end());
-    return path;
-}
-
-std::vector<Coord> simplePath(const std::vector<Coord>& moveRange, const Coord& start, const Coord& target)
-{
-  auto it = std::ranges::min_element(moveRange,
-      [&](const Coord& a, const Coord& b) {
-          return manhattanDistance(a, target) < manhattanDistance(b, target);
-      });
-
-  Coord closestCoord = *it;
-
-  return BFS(moveRange, start, target);
-
-}
-
 
 void Map::updateWalkPathAndAV() {
   Coord cursor = this->activeCamera->getCursorCoord();
@@ -297,17 +221,17 @@ void Map::updateWalkPathAndAV() {
   if (cursor == previousCase) {
     return;
   }
-  if (isInRange(selectedCharacter->getCoord(), cursor, selectedCharacter->getStats().range)) {
+  if ((std::find(this->moveRange.begin(), this->moveRange.end(), cursor) != this->moveRange.end())) {
     if (isInRange(previousCase, cursor, 1) &&
         this->walkPath.size() <= selectedCharacter->getStats().range) {
       this->walkPath.erase(std::find(this->walkPath.begin(), this->walkPath.end(), cursor), this->walkPath.end());
       this->walkPath.push_back(cursor);
-      std::cout << cursor.x << "," << cursor.y;
     } else {
       this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
     }
-    float case_av = 100.0f / selectedCharacter->getStats().speed; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
-    turnQueue.UpdateCurrentCharacter(case_av * (this->walkPath.size() - 1));
+    float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
+    float total_cost = case_av * (this->walkPath.size() - 1);
+    turnQueue.UpdateCurrentCharacter(total_cost);
     return;
   }
 }
@@ -321,46 +245,49 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
     if (getActiveCharacter()->isPlayer()) {
       activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
       this->move();
-      if (inputs.find(Input::CONFIRM) !=
-          inputs.end()) { // To REWORK : Single press
+      if (inputs.find(Input::CONFIRM) != inputs.end()) { // To REWORK : Single press
         if (selectedCharacter == nullptr) {
           for (const auto &charac : this->characters) {
             if (charac->getCoord() == cursor) {
               selectedCharacter = charac.get();
+              selectedCharacter->setIsCursorSelected(true);
               //              std::cout << selectedCharacter->getNameId();
               this->moveRange = selectedCharacter->calculateMoveRange(
                   walkableGrid, gridWidth, gridHeight, characters);
             }
           }
         } else {
-          if (selectedCharacter->isPlayer() &&
-              selectedCharacter == turnQueue.GetCurrentCharacter() && 
-            (std::find(this->moveRange.begin(), this->moveRange.end(), cursor) 
-                  != this->moveRange.end())) {
-            this->moveRange.clear();
-
-            this->moveCharacterTo(selectedCharacter->getNameId(),
-                                  this->walkPath, sf::milliseconds(85));
-
-            this->walkPath.clear();
-            selectedCharacter = nullptr;
-
-            turnQueue.EndCurrentCharacter();
+          if (selectedCharacter->isPlayer() && selectedCharacter == turnQueue.GetCurrentCharacter()){
+            if (std::find(this->moveRange.begin(), this->moveRange.end(), cursor) != this->moveRange.end()) {
+              this->moveRange.clear();
+              this->moveCharacterTo(selectedCharacter->getNameId(),
+              this->walkPath, sf::milliseconds(85));
+              this->walkPath.clear();
+              selectedCharacter->setIsCursorSelected(false);
+              selectedCharacter = nullptr;              
+              turnQueue.EndCurrentCharacter();
+            }
+//            else if (std::find(this->characters.begin(), this->characters.end(), cursor) != this->characters.end()){
+//            }
           }
         }
       }
       if (inputs.find(Input::CANCEL) != inputs.end()) {
-        turnQueue.UpdateCurrentCharacter(0);
-        this->walkPath.clear();
-        this->moveRange.clear();
-        selectedCharacter = nullptr;
+        if (selectedCharacter != nullptr){
+          this->walkPath.clear();
+          this->moveRange.clear();
+          selectedCharacter->setIsCursorSelected(false);
+          selectedCharacter = nullptr;
+        }
       }
     } else {
-      if (this->getActiveCharacter()->workAI(
+      auto movePath = this->getActiveCharacter()->workAI(
               this->walkableGrid, static_cast<int>(tmxMap.getTileCount().x),
-              static_cast<int>(tmxMap.getTileCount().y), this->characters)) {
-        turnQueue.EndCurrentCharacter();
+              static_cast<int>(tmxMap.getTileCount().y), this->characters);
+      if (!movePath.empty()) {
+        moveCharacterTo(getActiveCharacter()->getNameId(), movePath, sf::milliseconds(85));
       }
+      turnQueue.EndCurrentCharacter();
     }
   }
 

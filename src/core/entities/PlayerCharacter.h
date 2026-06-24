@@ -17,8 +17,8 @@ public:
                   std::move(portrait)) {}
 
   bool isPlayer() const override { return true; }
-  bool workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
-              const std::vector<std::unique_ptr<Character>>& characters) {return false;}
+  std::vector<Coord> workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
+              const std::vector<std::unique_ptr<Character>>& characters) {return {};}
 
   // Tous les childrens doivent implémenter :
   // void attack(Character &other) override;
