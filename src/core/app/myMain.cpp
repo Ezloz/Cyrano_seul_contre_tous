@@ -1,12 +1,12 @@
-#include "myMain.h"
+#include "app/myMain.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include "GameApp.h"
-#include "Map.h"
+#include "app/GameApp.h"
+#include "world/Map.h"
 
 int myMain() {
 

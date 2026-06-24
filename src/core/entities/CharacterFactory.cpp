@@ -1,8 +1,8 @@
-#include "CharacterFactory.h"
+#include "entities/CharacterFactory.h"
 
-#include "Character.h"
-#include "Cyrano.h"
-#include "Soldier.h"
+#include "entities/Character.h"
+#include "entities/Cyrano.h"
+#include "entities/Soldier.h"
 
 #include <stdexcept>
 

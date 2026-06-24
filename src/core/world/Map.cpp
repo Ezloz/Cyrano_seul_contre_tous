@@ -1,7 +1,7 @@
-#include "Map.h"
+#include "world/Map.h"
 
-#include "CharacterFactory.h"
-#include "Save.h"
+#include "entities/CharacterFactory.h"
+#include "io/Save.h"
 
 #include <tmxlite/Layer.hpp>
 #include <tmxlite/Property.hpp>

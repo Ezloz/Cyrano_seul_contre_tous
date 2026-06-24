@@ -2,8 +2,8 @@
 // des ennemis par défaut
 #pragma once
 
-#include "Animation.h"
-#include "GameTypes.h"
+#include "graphics/Animation.h"
+#include "app/GameTypes.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>

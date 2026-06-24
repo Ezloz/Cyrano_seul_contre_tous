@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Character.h"
+#include "entities/Character.h"
 
 class PlayerCharacter : public Character {
 public:

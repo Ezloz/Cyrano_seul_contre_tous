@@ -1,9 +1,9 @@
 #pragma once
-#include "Camera.h"
-#include "Character.h"
-#include "GameTypes.h"
-#include "MapLayer.h"
-#include "TurnQueue.h"
+#include "graphics/Camera.h"
+#include "entities/Character.h"
+#include "app/GameTypes.h"
+#include "graphics/MapLayer.h"
+#include "world/TurnQueue.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>

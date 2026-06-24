@@ -5,9 +5,9 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include "UIManager.h"
-#include "GameTypes.h"
-#include "Map.h"
+#include "ui/UIManager.h"
+#include "app/GameTypes.h"
+#include "world/Map.h"
 
 #include <map>
 #include <set>

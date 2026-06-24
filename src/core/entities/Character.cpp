@@ -1,4 +1,4 @@
-#include "Character.h"
+#include "entities/Character.h"
 
 #include <algorithm>
 #include <cassert>

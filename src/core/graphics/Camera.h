@@ -1,5 +1,5 @@
 #pragma once
-#include "GameTypes.h"
+#include "app/GameTypes.h"
 #include <algorithm>
 #include <tmxlite/Map.hpp>
 

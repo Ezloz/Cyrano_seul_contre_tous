@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "Character.h"
+#include "entities/Character.h"
 
 constexpr float BASE_DEFAULT_AV = 10000.0f;
 

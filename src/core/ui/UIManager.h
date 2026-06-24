@@ -5,7 +5,7 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
-#include "GameTypes.h"
+#include "app/GameTypes.h"
 
 class UIManager {
   private:

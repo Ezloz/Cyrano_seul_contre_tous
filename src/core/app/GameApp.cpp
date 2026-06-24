@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "GameApp.h"
+#include "app/GameApp.h"
 
 void GameApp::SaveOptions() {}
 

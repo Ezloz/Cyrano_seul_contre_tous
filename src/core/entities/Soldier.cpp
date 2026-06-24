@@ -1,4 +1,4 @@
-#include "Soldier.h"
+#include "entities/Soldier.h"
 
 #include <optional>
 

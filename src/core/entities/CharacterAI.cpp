@@ -1,5 +1,5 @@
-#include "Character.h"
-#include "Soldier.h"
+#include "entities/Character.h"
+#include "entities/Soldier.h"
 #include <queue>
 #include <unordered_set>
 

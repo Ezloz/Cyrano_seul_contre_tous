@@ -1,4 +1,4 @@
-#include "UIManager.h"
+#include "ui/UIManager.h"
 
 
 void updateTextSize(tgui::BackendGui& gui)

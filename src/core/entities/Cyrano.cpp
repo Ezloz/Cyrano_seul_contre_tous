@@ -1,4 +1,4 @@
-#include "Cyrano.h"
+#include "entities/Cyrano.h"
 
 namespace {
 constexpr const char *typeId = "Cyrano";
