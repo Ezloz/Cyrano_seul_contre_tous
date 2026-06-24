@@ -111,6 +111,7 @@ public:
   }
 
   virtual void attack(Character &other) = 0;
+  // void Character::processDommage(Character &other);
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
   virtual bool
