@@ -2,7 +2,7 @@
   "entries": [
     {
       "spawn": [
-        { "Cyrano": { "coord": { "x": 3, "y": 3 } } },
+        { "Cyrano": { "coord": { "x": 16, "y": 21 } } },
         { "Chritian": { "coord": { "x": 4, "y": 4 } } }
       ]
     }
@@ -20,7 +20,7 @@
   "characters": {
     "soldier1": {
       "type": "Soldier",
-      "coord": { "x": 5, "y": 3 },
+      "coord": { "x": 16, "y": 15 },
       "statistics": {
         "life": 10,
         "speed": 10,
@@ -34,7 +34,35 @@
     },
     "soldier2": {
       "type": "Soldier",
-      "coord": { "x": 6, "y": 3 },
+      "coord": { "x": 7, "y": 7 },
+      "statistics": {
+        "life": 10,
+        "speed": 10,
+        "charisma": 10,
+        "power": 10,
+        "luck": 10,
+        "range": 5
+      },
+      "effectIds": [],
+      "equipementIds": []
+    },
+    "soldier3": {
+      "type": "Soldier",
+      "coord": { "x": 9, "y": 7 },
+      "statistics": {
+        "life": 10,
+        "speed": 10,
+        "charisma": 10,
+        "power": 10,
+        "luck": 10,
+        "range": 5
+      },
+      "effectIds": [],
+      "equipementIds": []
+    },
+    "soldier4": {
+      "type": "Soldier",
+      "coord": { "x": 28, "y": 7 },
       "statistics": {
         "life": 10,
         "speed": 10,
