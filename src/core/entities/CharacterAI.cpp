@@ -201,5 +201,6 @@ std::vector<Coord> Soldier::workAI(const std::vector<size_t>& walkableGrid, cons
     if (path.empty()){
         this->usedAV = (case_av * (path.size() - 1));
     }
+    return {};
     return path;
 }

@@ -18,12 +18,11 @@ void bubbleSingleSort(std::vector<std::pair<Character *, float>> &vec,
   }
 }
 
-Character *TurnQueue::GetNextCharacter() {
+Character *TurnQueue::NextCharacter() {
   if (turnQueue.empty())
     return nullptr;
 
   float av_to_substract = turnQueue[0].second;
-  std::cout << "av :" << av_to_substract;
 
   for (auto &elem : turnQueue) {
     elem.second -= av_to_substract;
@@ -35,15 +34,17 @@ Character *TurnQueue::GetNextCharacter() {
 void TurnQueue::SetQueue(const std::vector<std::pair<Character *, float>> &tQ) {
   this->turnQueue = tQ;
   std::ranges::sort(turnQueue, {}, &std::pair<Character *, float>::second);
-  currentCharacter = GetNextCharacter();
+  currentCharacter = NextCharacter();
 }
 
 int TurnQueue::FindCharacterIndex(const Character *character) {
   for (int i = 0; i < this->turnQueue.size(); i++) {
-    if (turnQueue[i].first == character) {
+    if (turnQueue[i].first->getNameId() == character->getNameId()) {
       return i;
     }
   }
+
+  std::cout << "ERROR : Character " << character->getNameId() << " not found in queue\n";
   assert(false);
   return -1;
 }
@@ -54,7 +55,10 @@ void TurnQueue::SetActionValue(int index, float actionvalue) {
 }
 
 void TurnQueue::AddActionValue(Character *character, float actionvalue) {
-  turnQueue[FindCharacterIndex(character)].second += actionvalue;
+  auto index = FindCharacterIndex(currentCharacter);
+  turnQueue[index].second += actionvalue;
+  bubbleSingleSort(turnQueue, index);
+
 }
 
 void TurnQueue::UpdateCurrentCharacter(
@@ -62,14 +66,12 @@ void TurnQueue::UpdateCurrentCharacter(
   SetActionValue(FindCharacterIndex(currentCharacter), actionvalue);
 }
 
-void TurnQueue::EndCurrentCharacter() { // End turn of current character and
-                                        // select a new current character (the
-                                        // one with lowest AV)
-  UpdateCurrentCharacter(currentCharacter->getUsedAV());
+void TurnQueue::EndCurrentCharacter() { // End turn of current character and select a new current character (the one with lowest AV)
+  
+  AddActionValue(currentCharacter, currentCharacter->getUsedAV());
   currentCharacter->resetUsedAV();
-  auto av = turnQueue[0].second;
-  currentCharacter = GetNextCharacter();
-  std::cout << currentCharacter->getNameId() << '+' << turnQueue[0].first->getNameId() << ',' << av;
+//  std::cout << currentCharacter->getNameId() << '+' << turnQueue[0].first->getNameId() << ',' << turnQueue[FindCharacterIndex(currentCharacter)].second;
+  currentCharacter = NextCharacter();
 }
 
 void TurnQueue::AddCharacter(Character *character, float actionvalue) {

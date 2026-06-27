@@ -3,44 +3,88 @@
 #include <utility>
 #include <algorithm>
 
-struct Character {
-    int id;
-};
+#include <entities/Soldier.h>
+#include <world/TurnQueue.h>
 
-void bubbleSort(std::vector<std::pair<Character*, float>>& vec) {
-    int n = static_cast<int>(vec.size());
 
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < n - i - 1; ++j) {
-            if (vec[j].second > vec[j + 1].second) {
-                std::swap(vec[j], vec[j + 1]);
-            }
-        }
-    }
-}
-
-TEST(BubbleSortTest, SortBySecondAscending) {
-    Character a{1}, b{2}, c{3}, d{4};
+TEST(TurnQueueTest, GoodRotation) {
+    Soldier charac1{"soldier1", {0,0}, {1,1,1,1,1,1,1}, {}, {}};
+    Soldier charac2{"soldier2", {1,3}, {1,1,1,1,1,1,1}, {}, {}};
+    Soldier charac3{"soldier3", {2,2}, {1,1,1,1,1,1,1}, {}, {}};
+    Soldier charac4{"soldier4", {4,1}, {1,1,1,1,1,1,1}, {}, {}};
+    
 
     std::vector<std::pair<Character*, float>> vec = {
-        {&a, 3.5f},
-        {&b, 1.2f},
-        {&c, 4.8f},
-        {&d, 2.0f}
+        {&charac1, 3.5f},
+        {&charac2, 1.2f},
+        {&charac3, 4.8f},
+        {&charac4, 2.0f}
     };
 
-    bubbleSort(vec);
+    TurnQueue turnManager;
+    turnManager.SetQueue(vec);
+    ASSERT_EQ(turnManager.GetSize(), 4u);
 
-    ASSERT_EQ(vec.size(), 4u);
-    EXPECT_EQ(vec[0].first->id, 2);
-    EXPECT_FLOAT_EQ(vec[0].second, 1.2f);
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
+    
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier4");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
 
-    EXPECT_EQ(vec[1].first->id, 4);
-    EXPECT_FLOAT_EQ(vec[1].second, 2.0f);
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier1");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
 
-    EXPECT_EQ(vec[2].first->id, 1);
-    EXPECT_FLOAT_EQ(vec[2].second, 3.5f);
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier3");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
 
-    EXPECT_EQ(vec[3].first->id, 3);
-    EXPECT_FLOAT_EQ(vec[3].second, 4.8f);
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
+}
+
+TEST(TurnQueueTest, NegativeAV) {
+    Soldier charac1{"soldier1", {0,0}, {1,1,1,1,1,1,1}, {}, {}};
+    Soldier charac2{"soldier2", {1,3}, {1,1,1,1,1,1,1}, {}, {}};
+    Soldier charac3{"soldier3", {2,2}, {1,1,1,1,1,1,1}, {}, {}};
+    Soldier charac4{"soldier4", {4,1}, {1,1,1,1,1,1,1}, {}, {}};
+    
+
+    std::vector<std::pair<Character*, float>> vec = {
+        {&charac1, 3.5f},
+        {&charac2, -2.0f},
+        {&charac3, 4.8f},
+        {&charac4, -1.2f}
+    };
+
+    TurnQueue turnManager;
+    turnManager.SetQueue(vec);
+    ASSERT_EQ(turnManager.GetSize(), 4u);
+
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
+    
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier4");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
+
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier1");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
+
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier3");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
+
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
+    turnManager.UpdateCurrentCharacter(-10.0f);
+    turnManager.EndCurrentCharacter();
+
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
+    turnManager.UpdateCurrentCharacter(10.0f);
+    turnManager.EndCurrentCharacter();
+
+    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
 }

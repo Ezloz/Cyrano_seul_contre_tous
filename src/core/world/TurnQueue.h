@@ -19,9 +19,10 @@ private:
 
   int FindCharacterIndex(const Character* character);
   void SetActionValue(int index, float actionvalue);
-  Character* GetNextCharacter();
+  Character* NextCharacter();
 
 public:
+  int GetSize() const {return turnQueue.size();};
   void SetQueue(const std::vector<std::pair<Character*, float>>& tQ);
   Character* GetCurrentCharacter() {return currentCharacter;};
   void AddActionValue(Character* character, float actionvalue);

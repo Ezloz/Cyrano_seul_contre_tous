@@ -231,6 +231,7 @@ void Map::updateWalkPathAndAV() {
                                              // playable
     return;
   }
+
   if (this->walkPath.empty()) {
     this->walkPath.push_back(selectedCharacter->getCoord());
   }
@@ -238,31 +239,24 @@ void Map::updateWalkPathAndAV() {
   if (cursor == previousCase) {
     return;
   }
-  if ((std::find(this->moveRange.begin(), this->moveRange.end(), cursor) != this->moveRange.end())) {
-    if (isInRange(previousCase, cursor, 1) &&
-        this->walkPath.size() <= selectedCharacter->getStats().range) {
-      this->walkPath.erase(
-          std::find(this->walkPath.begin(), this->walkPath.end(), cursor),
-          this->walkPath.end());
-      this->walkPath.push_back(cursor);
-    } else {
-      this->walkPath = simplePath(this->moveRange,
-                                  this->selectedCharacter->getCoord(), cursor);
-    }
-    float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
-    float total_cost = case_av * (this->walkPath.size());
-    turnQueue.UpdateCurrentCharacter(total_cost);
-    return;
-  }
+  this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
+
+  float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
+  float total_cost = case_av * (this->walkPath.size() - 1);
+//    turnQueue.UpdateCurrentCharacter(total_cost);
+  turnQueue.UpdateCurrentCharacter(10.0f);
+  return;
 }
+
+
 
 GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
                              std::set<Input> inputsRelease,
                              sf::Time deltaTime) {
   if (state == GameState::IN_GAME) {
     Coord cursor = this->activeCamera->getCursorCoord();
-    updateWalkPathAndAV();
     if (getActiveCharacter()->isPlayer()) {
+      updateWalkPathAndAV();
       activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
       this->move();
       if (inputs.find(Input::CONFIRM) != inputs.end()) { // To REWORK : Single press
@@ -284,7 +278,8 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
               this->walkPath, sf::milliseconds(85));
               this->walkPath.clear();
               selectedCharacter->setIsCursorSelected(false);
-              selectedCharacter = nullptr;              
+              selectedCharacter = nullptr;          
+              turnQueue.UpdateCurrentCharacter(10.0f);    
               turnQueue.EndCurrentCharacter();
             }
 //            else if (std::find(this->characters.begin(), this->characters.end(), cursor) != this->characters.end()){
@@ -300,7 +295,8 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
           selectedCharacter = nullptr;
         }
       }
-    } else {
+    } 
+    else {
       auto movePath = this->getActiveCharacter()->workAI(
               this->walkableGrid, static_cast<int>(tmxMap.getTileCount().x),
               static_cast<int>(tmxMap.getTileCount().y), this->characters);

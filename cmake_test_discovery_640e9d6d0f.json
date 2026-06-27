@@ -1,0 +1,22 @@
+{
+  "tests": 2,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "TurnQueueTest",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "GoodRotation",
+          "file": "D:\/root\/GitHub\/Cyrano_seul_contre_tous\/src\/test\/unitTests.cpp",
+          "line": 10
+        },
+        {
+          "name": "NegativeAV",
+          "file": "D:\/root\/GitHub\/Cyrano_seul_contre_tous\/src\/test\/unitTests.cpp",
+          "line": 47
+        }
+      ]
+    }
+  ]
+}

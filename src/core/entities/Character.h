@@ -82,7 +82,7 @@ void die();
 
 
 protected:
-  float usedAV;
+  float usedAV = 0.0f;
   Coord coord;
   std::optional<std::string> specialAttackName;
   Statistic stats;
@@ -130,7 +130,8 @@ public:
                      const int gridWidth, const int gridHeight,
                      const std::vector<std::unique_ptr<Character>> &characters);
 
-  float getUsedAV() { return this->usedAV; }
+  float getUsedAV() const { return this->usedAV; }
+  void setUsedAV(float av) { this->usedAV = av; }
   void resetUsedAV() { this->usedAV = 0.0f; }
 
   virtual json toJson() const;
