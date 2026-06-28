@@ -33,6 +33,7 @@ private:
   std::map<sf::Keyboard::Key, Input> keyboardToInput;
 
   std::set<Input> inputs;
+  std::set<Input> pressedInputs;
   std::set<Input> releasedInputs;
   GameState state;
   sf::Clock globalClock;
@@ -49,6 +50,7 @@ public:
   void SetGameState(GameState state) { this->state = state; }
 
   std::set<Input> GetInputs() const { return inputs; }
+  std::set<Input> GetPressedInputs() const { return pressedInputs; }
   std::set<Input> GetReleasedInputs() const { return releasedInputs; }
   void ClearReleasedInputs() { releasedInputs.clear(); }
 
@@ -62,10 +64,10 @@ public:
     GameState nextState = this->state;
       //...
       if (this->state == GameState::IN_GAME)
-        nextState = activeMap->ProcessInputs(inputs, releasedInputs, deltaTime);
+        nextState = activeMap->ProcessInputs(inputs, pressedInputs, releasedInputs, deltaTime);
       //...
       if (this->state == GameState::IN_MENU)
-        nextState = uimanager.ProcessInputs(inputs, releasedInputs, deltaTime);
+        nextState = uimanager.ProcessInputs(inputs, pressedInputs, releasedInputs, deltaTime);
       //...
     this->state = nextState;
   }

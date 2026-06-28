@@ -250,7 +250,7 @@ void Map::updateWalkPathAndAV() {
 
 
 
-GameState Map::ProcessInputs(std::set<Input> inputs,
+GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInputs,
                              std::set<Input> inputsRelease,
                              sf::Time deltaTime) {
     Coord cursor = this->activeCamera->getCursorCoord();

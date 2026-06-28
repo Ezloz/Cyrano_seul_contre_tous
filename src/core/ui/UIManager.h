@@ -18,7 +18,7 @@ class UIManager {
   
   bool LoadGUI(const std::string& pathname);
 
-  GameState ProcessInputs(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
+  GameState ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInputs, std::set<Input> inputsRelease, sf::Time deltaTime);
 
   GameState move(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
 

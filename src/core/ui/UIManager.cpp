@@ -9,7 +9,7 @@ void updateTextSize(tgui::BackendGui& gui)
     gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
 }
 
-GameState UIManager::ProcessInputs(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){    
+GameState UIManager::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInputs, std::set<Input> inputsRelease, sf::Time deltaTime){    
     GameState state = this->move(inputs, inputsRelease, deltaTime);
     return state;
 }
