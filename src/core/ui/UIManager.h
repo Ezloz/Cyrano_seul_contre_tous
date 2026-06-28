@@ -16,14 +16,9 @@ class UIManager {
   public:
   explicit UIManager(sf::RenderWindow& window) : gui{window} { /*LoadOptions();*/ };
   
-  bool LoadGUI(std::string pathname);
+  bool LoadGUI(const std::string& pathname);
 
-  GameState ProcessInputs(GameState state, std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
-    if (state == GameState::IN_MENU){
-      state = this->move(inputs, inputsRelease, deltaTime);
-    }
-    return state;
-  }
+  GameState ProcessInputs(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
 
   GameState move(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime);
 

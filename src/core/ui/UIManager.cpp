@@ -1,5 +1,6 @@
 #include "ui/UIManager.h"
 
+constexpr GameState DEFAULT_STATE = GameState::IN_MENU;
 
 void updateTextSize(tgui::BackendGui& gui)
 {
@@ -8,8 +9,14 @@ void updateTextSize(tgui::BackendGui& gui)
     gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
 }
 
+GameState UIManager::ProcessInputs(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){    
+    GameState state = this->move(inputs, inputsRelease, deltaTime);
+    return state;
+}
+    
+
 //taken and modified from TGUI website
-bool UIManager::LoadGUI(std::string pathname)
+bool UIManager::LoadGUI(const std::string& pathname)
 {
     try
     {
@@ -30,19 +37,13 @@ bool UIManager::LoadGUI(std::string pathname)
 }
 
 
-std::array<bool, 2> buttonPressed = {false, false};
+std::array<bool, 2> buttonPressed = {false, false}; // this is very bad and a result of the way inputs are given.
 GameState UIManager::move(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
     auto button = this->gui.getFocusedLeaf();
 
     if (inputs.find(Input::CONFIRM) != inputs.end()){
         if (button->getWidgetName() == "ButtonStart"){
             return GameState::IN_GAME;
-        }
-        if (button->getWidgetName() == "ButtonStart"){
-            return GameState::IN_MENU;
-        }
-        if (button->getWidgetName() == "ButtonStart"){
-            return GameState::IN_MENU;
         }
     }
 
@@ -63,7 +64,7 @@ GameState UIManager::move(std::set<Input> inputs, std::set<Input> inputsRelease,
         button->getNavigationDown()->setFocused(true);
     }
 
-    return GameState::IN_MENU;
+    return DEFAULT_STATE;
 }
 
 

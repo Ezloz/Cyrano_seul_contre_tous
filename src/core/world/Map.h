@@ -129,7 +129,7 @@ public:
     pendingMove = PendingMove{nameId, std::move(path), tileRate};
   }
 
-  GameState ProcessInputs(GameState state, std::set<Input> inputs,
+  GameState ProcessInputs(std::set<Input> inputs,
                           std::set<Input> inputsRelease, sf::Time deltaTime);
   void move();
   bool isCinematicActive() const;

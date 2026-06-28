@@ -61,9 +61,11 @@ public:
   void ProcessInputs() {
     GameState nextState = this->state;
       //...
-      nextState = activeMap->ProcessInputs(this->state, inputs, releasedInputs, deltaTime);
+      if (this->state == GameState::IN_GAME)
+        nextState = activeMap->ProcessInputs(inputs, releasedInputs, deltaTime);
       //...
-      nextState = uimanager.ProcessInputs(this->state, inputs, releasedInputs, deltaTime);
+      if (this->state == GameState::IN_MENU)
+        nextState = uimanager.ProcessInputs(inputs, releasedInputs, deltaTime);
       //...
     this->state = nextState;
   }

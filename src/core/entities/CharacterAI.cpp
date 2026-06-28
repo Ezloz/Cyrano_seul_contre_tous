@@ -2,8 +2,10 @@
 #include "entities/Soldier.h"
 #include <queue>
 #include <unordered_set>
+#include <unordered_map>
 #include <ranges>
 #include <algorithm>
+
 
 struct CoordHash {
     size_t operator()(const Coord& c) const {
@@ -82,7 +84,7 @@ std::vector<Coord> BFSPath(const std::vector<Coord>& moveRange,
 
 std::vector<Coord> simplePath(const std::vector<Coord>& moveRange, const Coord& start, const Coord& target)
 {
-    if (start == target){
+    if (start == target || moveRange.empty()){
         return {};
     }
     auto it = std::ranges::min_element(moveRange,
@@ -92,7 +94,10 @@ std::vector<Coord> simplePath(const std::vector<Coord>& moveRange, const Coord& 
 
   Coord closestCoord = *it;
 
-  return BFSPath(moveRange, start, closestCoord);
+  auto moveRangeAndStart = moveRange;
+  moveRangeAndStart.push_back(start);
+
+  return BFSPath(moveRangeAndStart, start, closestCoord);
 
 }
 
@@ -194,13 +199,16 @@ std::vector<Coord> Soldier::workAI(const std::vector<size_t>& walkableGrid, cons
                      const std::vector<std::unique_ptr<Character>>& characters){
     
     this->usedAV = 50.0f;
+    auto player = FindNearestPlayer(this->getCoord(), characters);
+    if (manhattanDistance(this->getCoord(), player) == 1){
+        return {};
+    }
+
     std::vector<Coord> moveRange = this->calculateMoveRange(walkableGrid, gridWidth, gridHeight, characters);
     std::vector<Coord> path = simplePath(moveRange, this->coord, FindNearestPlayer(this->coord, characters));
-    return {};
-    float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
-    if (path.empty()){
+    float case_av = 10.0f; // TO REWORK : Take tile propreties into account (not implemented yet)
+    if (!path.empty()){
         this->usedAV = (case_av * (path.size() - 1));
     }
-    return {};
     return path;
 }

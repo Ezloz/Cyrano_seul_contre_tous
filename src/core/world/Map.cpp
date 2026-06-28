@@ -15,6 +15,8 @@
 #include <ranges>
 #include <unordered_set>
 
+constexpr GameState DEFAULT_STATE = GameState::IN_GAME;
+
 namespace {
 std::string tmxPathForMap(const std::string &mapId) {
   json data = openJson(DATASET);
@@ -236,24 +238,21 @@ void Map::updateWalkPathAndAV() {
     this->walkPath.push_back(selectedCharacter->getCoord());
   }
   Coord previousCase = this->walkPath.back();
-  if (cursor == previousCase) {
-    return;
-  }
+
   this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
 
   float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
   float total_cost = case_av * (this->walkPath.size() - 1);
 //    turnQueue.UpdateCurrentCharacter(total_cost);
-  turnQueue.UpdateCurrentCharacter(10.0f);
+  turnQueue.UpdateCurrentCharacter(total_cost);
   return;
 }
 
 
 
-GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
+GameState Map::ProcessInputs(std::set<Input> inputs,
                              std::set<Input> inputsRelease,
                              sf::Time deltaTime) {
-  if (state == GameState::IN_GAME) {
     Coord cursor = this->activeCamera->getCursorCoord();
     if (getActiveCharacter()->isPlayer()) {
       updateWalkPathAndAV();
@@ -305,9 +304,8 @@ GameState Map::ProcessInputs(GameState state, std::set<Input> inputs,
       }
       turnQueue.EndCurrentCharacter();
     }
-  }
 
-  return state;
+  return DEFAULT_STATE;
 }
 
 bool Map::isCinematicActive() const {
