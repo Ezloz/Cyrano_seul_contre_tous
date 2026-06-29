@@ -19,6 +19,8 @@ constexpr int manhattanDistance(Coord object, Coord target){
 
 enum class Input { UP, DOWN, LEFT, RIGHT, CONFIRM, CANCEL, MENU, NB_INPUTS };
 
+enum class Action { NOTHING, ATTACK, MOVE, SPECIAL_ATTACK };
+
 enum class GameState {
   IN_GAME,
   IN_GAMEMENU,

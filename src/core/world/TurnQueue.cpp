@@ -70,6 +70,7 @@ void TurnQueue::EndCurrentCharacter() { // End turn of current character and sel
   
   AddActionValue(currentCharacter, currentCharacter->getUsedAV());
   currentCharacter->resetUsedAV();
+  currentCharacter->resetWork();
 //  std::cout << currentCharacter->getNameId() << '+' << turnQueue[0].first->getNameId() << ',' << turnQueue[FindCharacterIndex(currentCharacter)].second;
   currentCharacter = NextCharacter();
 }

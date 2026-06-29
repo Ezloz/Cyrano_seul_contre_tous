@@ -7,7 +7,7 @@
       "tests": 2,
       "testsuite": [
         {
-          "name": "GoodRotation",
+          "name": "GoodRotation1",
           "file": "D:\/root\/GitHub\/Cyrano_seul_contre_tous\/src\/test\/unitTests.cpp",
           "line": 10
         },

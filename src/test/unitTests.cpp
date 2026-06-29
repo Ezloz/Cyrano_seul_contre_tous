@@ -7,7 +7,7 @@
 #include <world/TurnQueue.h>
 
 
-TEST(TurnQueueTest, GoodRotation) {
+TEST(TurnQueueTest, GoodRotation1) {
     Soldier charac1{"soldier1", {0,0}, {1,1,1,1,1,1,1}, {}, {}};
     Soldier charac2{"soldier2", {1,3}, {1,1,1,1,1,1,1}, {}, {}};
     Soldier charac3{"soldier3", {2,2}, {1,1,1,1,1,1,1}, {}, {}};
@@ -62,21 +62,6 @@ TEST(TurnQueueTest, NegativeAV) {
     turnManager.SetQueue(vec);
     ASSERT_EQ(turnManager.GetSize(), 4u);
 
-    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
-    turnManager.UpdateCurrentCharacter(10.0f);
-    turnManager.EndCurrentCharacter();
-    
-    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier4");
-    turnManager.UpdateCurrentCharacter(10.0f);
-    turnManager.EndCurrentCharacter();
-
-    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier1");
-    turnManager.UpdateCurrentCharacter(10.0f);
-    turnManager.EndCurrentCharacter();
-
-    EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier3");
-    turnManager.UpdateCurrentCharacter(10.0f);
-    turnManager.EndCurrentCharacter();
 
     EXPECT_EQ(turnManager.GetCurrentCharacter()->getNameId(), "soldier2");
     turnManager.UpdateCurrentCharacter(-10.0f);

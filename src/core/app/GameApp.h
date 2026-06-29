@@ -97,10 +97,8 @@ public:
 
   void Draw(sf::RenderTarget& window) {
     //    this->activeMap.draw(window)
-    if (this->state != GameState::IN_MENU){
       window.draw(*(this->activeMap));
-    }
-    if (this->state != GameState::IN_GAME){
+    if (this->state == GameState::IN_MENU){
       this->uimanager.draw();
     }
 //    window.draw();

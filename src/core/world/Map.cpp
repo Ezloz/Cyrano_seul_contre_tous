@@ -241,9 +241,8 @@ void Map::updateWalkPathAndAV() {
 
   this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
 
-  float case_av = 10.0f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
-  float total_cost = case_av * (this->walkPath.size() - 1);
-//    turnQueue.UpdateCurrentCharacter(total_cost);
+  float case_av = 3.3f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
+  float total_cost = case_av * (this->walkPath.size());
   turnQueue.UpdateCurrentCharacter(total_cost);
   return;
 }
@@ -278,8 +277,6 @@ GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInpu
               this->walkPath.clear();
               selectedCharacter->setIsCursorSelected(false);
               selectedCharacter = nullptr;          
-              turnQueue.UpdateCurrentCharacter(10.0f);    
-              turnQueue.EndCurrentCharacter();
             }
 //            else if (std::find(this->characters.begin(), this->characters.end(), cursor) != this->characters.end()){
 //            }
@@ -296,13 +293,22 @@ GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInpu
       }
     } 
     else {
-      auto movePath = this->getActiveCharacter()->workAI(
+      auto [action, movePath] = this->getActiveCharacter()->workAI(
               this->walkableGrid, static_cast<int>(tmxMap.getTileCount().x),
               static_cast<int>(tmxMap.getTileCount().y), this->characters);
-      if (!movePath.empty()) {
+      if (action == Action::MOVE) {
         moveCharacterTo(getActiveCharacter()->getNameId(), movePath, sf::milliseconds(85));
       }
-      turnQueue.EndCurrentCharacter();
+      if (action == Action::ATTACK){
+        Coord playertargetcoords = movePath[0];
+        Character* playertarget;
+        for (auto& charac : characters){
+          if (charac->getCoord() == playertargetcoords){
+            playertarget = charac.get();
+          }
+        }
+        getActiveCharacter()->lungeAt(*playertarget);
+      }
     }
 
   return DEFAULT_STATE;
@@ -341,6 +347,10 @@ void Map::update(sf::Time elapsed) {
   }
 
   removeDeadCharacters();
+
+  if (this->getActiveCharacter()->getTurnEnded()){
+    turnQueue.EndCurrentCharacter();
+  }
 
   if (selectedCharacter != nullptr) {
     // BLUE

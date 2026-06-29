@@ -41,7 +41,7 @@ private:
   std::string state = "idle";
   std::size_t frameIndex = 0;
   sf::Time elapsed = sf::Time::Zero;
-
+  
   std::vector<Coord> movePath;
   sf::Time moveElapsed = sf::Time::Zero;
   sf::Time moveTileRate = sf::Time::Zero;
@@ -49,6 +49,7 @@ private:
   int moveIndexTile = 0;
   bool moving = false;
   bool isCursorSelected = false;
+  bool turnEnded = false;
 
   bool lunging = false;
   sf::Time lungeElapsed = sf::Time::Zero;
@@ -95,6 +96,9 @@ protected:
   // std::optional<Accessory> firstAccessory;
   // std::optional<Accessory> secondAccessory;
 
+  bool workFinished = false;
+
+
 public:
   Character(std::string nameId, std::string type, Coord coord,
             std::optional<std::string> specialAttackName, Statistic stats,
@@ -120,7 +124,7 @@ public:
   // void Character::processDommage(Character &other);
   virtual void specialAttack(Character &other) = 0;
   virtual bool isPlayer() const = 0;
-  virtual std::vector<Coord>
+  virtual std::pair<Action, std::vector<Coord>>
   workAI(const std::vector<size_t> &walkableGrid, const int gridWidth,
          const int gridHeight,
          const std::vector<std::unique_ptr<Character>> &characters) = 0;
@@ -133,6 +137,10 @@ public:
   float getUsedAV() const { return this->usedAV; }
   void setUsedAV(float av) { this->usedAV = av; }
   void resetUsedAV() { this->usedAV = 0.0f; }
+  bool getOccupied() {return this->moving || this->lunging;}
+  bool getTurnEnded() {return this->turnEnded;}
+  void resetWork() {workFinished = false;}
+
 
   virtual json toJson() const;
   // Utiliser pour save.json et non la saveMap.json

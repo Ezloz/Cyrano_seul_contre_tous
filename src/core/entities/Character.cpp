@@ -13,10 +13,13 @@ constexpr float pi = 3.14f;
 } // namespace
 
 void Character::update(sf::Time dt) {
+
+  this->turnEnded = false;
   if (moving) {
     moveElapsed += dt;
     if (moveElapsed >= moveDuration) {
       moving = false;
+      this->turnEnded = true;
     }
   }
 
@@ -27,9 +30,11 @@ void Character::update(sf::Time dt) {
       if (lungeTarget != nullptr) {
         processDommage(*lungeTarget);
         lungeTarget = nullptr;
+        this->turnEnded = true;
       }
     }
   }
+
 
   // Change l'animation en fonction de la direction du mouvement
   const std::string desiredState = movementState();

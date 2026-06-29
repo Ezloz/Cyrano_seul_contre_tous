@@ -16,8 +16,8 @@ public:
   void attack(Character &other) override;
   void specialAttack(Character &other) override;
 
-  std::vector<Coord> workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
-              const std::vector<std::unique_ptr<Character>>& characters) override;
+  std::pair<Action, std::vector<Coord>> workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
+              const std::vector<std::unique_ptr<Character>>& characters)  override;
 
   // Factory
   static std::unique_ptr<Character> create(const json &j);

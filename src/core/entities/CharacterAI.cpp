@@ -195,20 +195,26 @@ Coord FindNearestPlayer(Coord origin, const std::vector<std::unique_ptr<Characte
 }
 
 
-std::vector<Coord> Soldier::workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
+std::pair<Action, std::vector<Coord>> Soldier::workAI(const std::vector<size_t>& walkableGrid, const int gridWidth, const int gridHeight,
                      const std::vector<std::unique_ptr<Character>>& characters){
-    
+
+    if (this->workFinished || this->getOccupied()){
+        return {Action::NOTHING,  {}};
+    }
+
     this->usedAV = 50.0f;
     auto player = FindNearestPlayer(this->getCoord(), characters);
     if (manhattanDistance(this->getCoord(), player) == 1){
-        return {};
+        this->workFinished = true;
+        return {Action::ATTACK, {player}};
     }
 
     std::vector<Coord> moveRange = this->calculateMoveRange(walkableGrid, gridWidth, gridHeight, characters);
     std::vector<Coord> path = simplePath(moveRange, this->coord, FindNearestPlayer(this->coord, characters));
     float case_av = 10.0f; // TO REWORK : Take tile propreties into account (not implemented yet)
     if (!path.empty()){
-        this->usedAV = (case_av * (path.size() - 1));
+        this->workFinished = true;
+        this->usedAV = (case_av * path.size());
     }
-    return path;
+    return {Action::MOVE, path};
 }
