@@ -100,12 +100,12 @@ public:
       activeMap->update(deltaTime);
 
       // Party anéantie : efface la sauvegarde du slot et passe en GAME_OVER.
-      if (state != GameState::GAME_OVER && !activeMap->hasPlayerCharacters()) {
-        deleteSave(currentSlot);
+//      if (state != GameState::GAME_OVER && !activeMap->hasPlayerCharacters()) {
+//        deleteSave(currentSlot);
 //        state = GameState::GAME_OVER; Doesn't work ?
       }
-      if (state != GameState::GAME_OVER && !activeMap->hasEnemyCharacters()) {
-        deleteSave(currentSlot);
+//      if (state != GameState::GAME_OVER && !activeMap->hasEnemyCharacters()) {
+//        deleteSave(currentSlot);
 //        state = GameState::GAME_OVER; Doesn't work ?
       }
 
