@@ -102,8 +102,13 @@ public:
       // Party anéantie : efface la sauvegarde du slot et passe en GAME_OVER.
       if (state != GameState::GAME_OVER && !activeMap->hasPlayerCharacters()) {
         deleteSave(currentSlot);
-        state = GameState::GAME_OVER;
+//        state = GameState::GAME_OVER; Doesn't work ?
       }
+      if (state != GameState::GAME_OVER && !activeMap->hasEnemyCharacters()) {
+        deleteSave(currentSlot);
+//        state = GameState::GAME_OVER; Doesn't work ?
+      }
+
     }
 //    uimanager.update();
   }

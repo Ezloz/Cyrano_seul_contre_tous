@@ -104,6 +104,10 @@ public:
   // False dès qu'il ne reste plus aucun personnage joueur sur la map.
   bool hasPlayerCharacters() const;
 
+  // False dès qu'il ne reste plus aucun personnage non-joueur sur la map.
+  bool hasEnemyCharacters() const;
+
+
   bool isWalkable(Coord coord) const;
   void setWalkable(Coord coord, bool walkable);
 

@@ -192,6 +192,16 @@ bool Map::hasPlayerCharacters() const {
   return false;
 }
 
+bool Map::hasEnemyCharacters() const {
+  for (const auto &character : characters) {
+    if (!character->isPlayer()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 void Map::computeWalkableGrid() {
   const tmx::Vector2u tileCount = tmxMap.getTileCount();
   gridWidth = static_cast<int>(tileCount.x);
