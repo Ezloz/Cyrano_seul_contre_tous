@@ -264,7 +264,7 @@ void Map::updateWalkPathAndAV() {
 
   this->walkPath = simplePath(this->moveRange, this->selectedCharacter->getCoord(), cursor);
 
-  float case_av = 3.3f; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
+  float case_av = 100.0f / selectedCharacter->getStats().speed; // TO REWORK : No magic number+ take tile + propreties into account (not implemented yet)
   float total_cost = case_av * (this->walkPath.size());
   turnQueue.UpdateCurrentCharacter(total_cost);
   return;
@@ -325,7 +325,7 @@ GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> justPressed
       }
       if ((justPressedInputs.contains(Input::MENU))) {
         if (selectedCharacter != nullptr){
-          uimanager->LoadCharacterStatsMenu(selectedCharacter); // NOT WORKING T-T
+          uimanager->LoadCharacterStatsMenu(selectedCharacter);
           return GameState::IN_MENU;
         }
       }
@@ -477,6 +477,7 @@ std::unique_ptr<Map> Map::loadMap(UIManager* uim, int slot, const std::string &m
   assert(queue.size() == map->characters.size());
 
   map->turnQueue.SetQueue(queue);
+  map->uimanager = uim;
   return map;
 }
 

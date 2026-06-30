@@ -16,11 +16,10 @@ Group.Group1 {
     Button.ButtonStart {
         NavigationDown = ButtonOptions;
         NavigationUp = ButtonQuit;
-        Position = (38.75%, 21.33%);
+        Position = (38.75%, 200);
         Size = (22.5%, 10.5%);
         Text = Start;
         TextSize = 13;
-	Focused = true;
 
         Renderer {
             BackgroundColor = #F5F5F5;
@@ -51,7 +50,7 @@ Group.Group1 {
     Button.ButtonOptions {
         NavigationDown = ButtonQuit;
         NavigationUp = ButtonStart;
-        Position = (38.75%, 44.67%);
+        Position = (38.75%, 300);
         Size = (22.5%, 10.5%);
         Text = Options;
         TextSize = 13;
@@ -85,7 +84,7 @@ Group.Group1 {
     Button.ButtonQuit {
         NavigationDown = ButtonStart;
         NavigationUp = ButtonOptions;
-        Position = (38.75%, 68%);
+        Position = (38.75%, 400);
         Size = (22.5%, 10.5%);
         Text = Quit;
         TextSize = 13;
@@ -113,6 +112,49 @@ Group.Group1 {
             TextureDownHover = None;
             TextureFocused = None;
             TextureHover = None;
+        }
+    }
+}
+
+TextArea.TextArea1 {
+    DefaultText = "Cyrano - Seul contre tous";
+    HorizontalScrollbarPolicy = Never;
+    MaximumCharacters = 0;
+    Position = (140, 70);
+    Size = (560, 62.8572);
+    Text = "Cyrano - Seul contre tous";
+    TextSize = 40;
+    VerticalScrollbarPolicy = Automatic;
+
+    Renderer {
+        BackgroundColor = #FFFFFF00;
+        BorderColor = transparent;
+        Borders = (1, 1, 1, 1);
+        CaretColor = black;
+        CaretWidth = 1;
+        DefaultTextColor = #A0A0A0;
+        Padding = (0, 0, 0, 0);
+        SelectedTextBackgroundColor = #006EFF;
+        SelectedTextColor = white;
+        TextColor = black;
+        TextureBackground = None;
+
+        Scrollbar {
+            ArrowBackgroundColor = #F5F5F5;
+            ArrowBackgroundColorHover = white;
+            ArrowColor = #3C3C3C;
+            ArrowColorHover = black;
+            TextureArrowDown = None;
+            TextureArrowDownHover = None;
+            TextureArrowUp = None;
+            TextureArrowUpHover = None;
+            TextureThumb = None;
+            TextureThumbHover = None;
+            TextureTrack = None;
+            TextureTrackHover = None;
+            ThumbColor = #DCDCDC;
+            ThumbColorHover = #E6E6E6;
+            TrackColor = #F5F5F5;
         }
     }
 }

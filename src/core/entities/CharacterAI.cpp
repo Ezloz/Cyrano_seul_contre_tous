@@ -145,7 +145,7 @@ std::pair<Action, std::vector<Coord>> Soldier::workAI(const std::vector<size_t>&
 
     std::vector<Coord> moveRange = this->calculateMoveRange(walkableGrid, gridWidth, gridHeight, characters);
     std::vector<Coord> path = simplePath(moveRange, this->coord, FindNearestPlayer(this->coord, characters));
-    float case_av = 10.0f; // TO REWORK : Take tile propreties into account (not implemented yet)
+    float case_av = 100.0f / this->getStats().speed; // TO REWORK : Take tile propreties into account (not implemented yet)
     if (!path.empty()){
         this->workFinished = true;
         this->usedAV = (case_av * path.size());

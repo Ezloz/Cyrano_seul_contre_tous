@@ -33,7 +33,7 @@ class Map : public sf::Drawable {
 private:
   tmx::Map tmxMap;
   std::unique_ptr<Camera> activeCamera;
-  UIManager* uimanager;
+  UIManager* uimanager = nullptr;
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
   tmx::Vector2u tileSize;
