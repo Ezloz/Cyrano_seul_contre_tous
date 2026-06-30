@@ -9,11 +9,68 @@ void updateTextSize(tgui::BackendGui& gui)
     gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
 }
 
-GameState UIManager::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInputs, std::set<Input> inputsRelease, sf::Time deltaTime){    
-    GameState state = this->move(inputs, inputsRelease, deltaTime);
+GameState UIManager::ProcessInputs(std::set<Input> inputs, std::set<Input> justPressedInputs, std::set<Input> inputsRelease, sf::Time deltaTime){    
+    GameState state = this->move(inputs, justPressedInputs, inputsRelease, deltaTime);
     return state;
 }
-    
+
+
+void UIManager::Unload(){
+    gui.removeAllWidgets();
+}
+
+void UIManager::LoadCharacterStatsMenu(const Character* character){ // NOT WORKING and I don't know why T-T
+
+    if (character == nullptr)
+        return;
+
+    auto panel = tgui::ScrollablePanel::create();
+    panel->setSize({"100%", "100%"});
+    panel->setPosition({"0%", "0%"});
+    panel->getRenderer()->setBackgroundColor(tgui::Color(20, 20, 20, 200));
+
+    float y = 0.f;
+    const float step = 8.f;
+
+    auto addLine = [&](const std::string& text)
+    {
+        auto label = tgui::Label::create(text);
+        label->setPosition(5, y);
+        panel->add(label);
+        y += step;
+    };
+
+    const auto& s = character->getStats();
+
+    addLine("Character Type: " + character->getType());
+
+    addLine("Life: " + std::to_string(s.life));
+    addLine("Max Life: " + std::to_string(s.maxLife));
+    addLine("Speed: " + std::to_string(s.speed));
+    addLine("Charisma: " + std::to_string(s.charisma));
+    addLine("Power: " + std::to_string(s.power));
+    addLine("Luck: " + std::to_string(s.luck));
+    addLine("Range: " + std::to_string(s.range));
+
+    addLine("Effects:");
+    if (character->getEffectsIds().empty())
+        addLine("  None");
+    else
+        for (const auto& e : character->getEffectsIds())
+            addLine("  - " + e);
+
+    addLine("Equipment:");
+    if (character->getEquipementIds().empty())
+        addLine("  None");
+    else
+        for (const auto& e : character->getEquipementIds())
+            addLine("  - " + e);
+
+
+    printf("Error here :");
+    this->gui.add(panel, "StatsPanel");
+    printf("No error");
+}
 
 //taken and modified from TGUI website
 bool UIManager::LoadGUI(const std::string& pathname)
@@ -26,6 +83,7 @@ bool UIManager::LoadGUI(const std::string& pathname)
         if (button) {
             button->setFocused(true);
         }
+        this->current_name = "MainMenu";
 
         return true;
     }
@@ -37,29 +95,34 @@ bool UIManager::LoadGUI(const std::string& pathname)
 }
 
 
-std::array<bool, 2> buttonPressed = {false, false}; // this is very bad and a result of the way inputs are given.
-GameState UIManager::move(std::set<Input> inputs, std::set<Input> inputsRelease, sf::Time deltaTime){
+GameState UIManager::move(std::set<Input> inputs, std::set<Input> justPressedInputs, 
+                          std::set<Input> inputsRelease, sf::Time deltaTime){
+
+
     auto button = this->gui.getFocusedLeaf();
 
-    if (inputs.find(Input::CONFIRM) != inputs.end()){
+    if (!button){
+        printf("no button");
+        if (justPressedInputs.contains(Input::CANCEL)){
+            return GameState::IN_GAME;
+        }        
+        return DEFAULT_STATE;
+    }
+
+
+    if (justPressedInputs.contains(Input::CONFIRM)){
         if (button->getWidgetName() == "ButtonStart"){
+            Unload();
+            this->current_name = "None";
             return GameState::IN_GAME;
         }
     }
 
-    if (inputsRelease.find(Input::UP) != inputsRelease.end()){
-        buttonPressed[0] = false;
-    }
-    if (inputsRelease.find(Input::DOWN) != inputsRelease.end()){
-        buttonPressed[1] = false;
-    }
-    if (inputs.find(Input::UP) != inputs.end() && !buttonPressed[0]){
-        buttonPressed[0] = true;
+    if (justPressedInputs.contains(Input::UP)){
         button->setFocused(false);
         button->getNavigationUp()->setFocused(true);
     }
-    if (inputs.find(Input::DOWN) != inputs.end() && !buttonPressed[1]){
-        buttonPressed[1] = true;
+    if (justPressedInputs.contains(Input::DOWN)){
         button->setFocused(false);
         button->getNavigationDown()->setFocused(true);
     }

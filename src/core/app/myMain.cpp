@@ -15,18 +15,10 @@ int myMain() {
 
   GameApp gameInstance{window};
   gameInstance.Start();
-  // A remplacer lors du choix du joueur (slot) et de la map de départ.
 
   window.setView(gameInstance.GetViewSize());
 
 
-  const Coord originCorner = {0, 0};
-  const Coord introCorner = {5, 3};
-  const sf::Time cinematicDuration = sf::seconds(1.f);
-  int introPhase = 0;
-//  gameInstance->activeMap->startCinematic(originCorner, introCorner, cinematicDuration);
-
-  bool moveTestStarted = false;
 
   while (window.isOpen()) {
 
@@ -37,12 +29,12 @@ int myMain() {
         window.close();
       }
 
-      if (const auto *resized = event->getIf<sf::Event::Resized>()) {
+//      if (const auto *resized = event->getIf<sf::Event::Resized>()) {
         // sf::FloatRect visibleArea({0.f, 0.f}, sf::Vector2f(resized->size));
         // window.setView(sf::View(visibleArea));
-
-        window.setView(gameInstance.GetViewSize());
-      } else if (const auto *keyPressed =
+//        window.setView(gameInstance.GetViewSize());
+//      } 
+      if (const auto *keyPressed =
                      event->getIf<sf::Event::KeyPressed>()) {
         gameInstance.transformRawInputToInput(keyPressed);
       } else if (const auto *keyUnpressed =
@@ -54,9 +46,29 @@ int myMain() {
     gameInstance.ProcessInputs();
     gameInstance.Update();
 
+    
+    window.clear(sf::Color::Black);
+    gameInstance.Draw(window);
+    window.display();
+  }
+
+  return 0;
+}
+
+
 
     //TO SUPPRESS/MOVE. TO REWORK
   /*
+  const Coord originCorner = {0, 0};
+  const Coord introCorner = {5, 3};
+  const sf::Time cinematicDuration = sf::seconds(1.f);
+  int introPhase = 0;
+//  gameInstance->activeMap->startCinematic(originCorner, introCorner, cinematicDuration);
+
+  bool moveTestStarted = false;
+
+
+
   if (introPhase >= 2) {
     gameInstance->activeMap->move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
     gameInstance.GetDeltaTime());
@@ -79,11 +91,3 @@ int myMain() {
   }
 */
     //END TO SUPPRESS/MOVE
-    
-    window.clear(sf::Color::Black);
-    gameInstance.Draw(window);
-    window.display();
-  }
-
-  return 0;
-}

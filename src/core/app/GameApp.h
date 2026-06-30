@@ -33,8 +33,8 @@ private:
   std::map<sf::Keyboard::Key, Input> keyboardToInput;
 
   std::set<Input> inputs;
-  std::set<Input> pressedInputs;
-  std::set<Input> releasedInputs;
+  std::set<Input> justPressedInputs;
+  std::set<Input> justReleasedInputs;
   GameState state;
   sf::Clock globalClock;
   sf::Time deltaTime;
@@ -50,9 +50,10 @@ public:
   void SetGameState(GameState state) { this->state = state; }
 
   std::set<Input> GetInputs() const { return inputs; }
-  std::set<Input> GetPressedInputs() const { return pressedInputs; }
-  std::set<Input> GetReleasedInputs() const { return releasedInputs; }
-  void ClearReleasedInputs() { releasedInputs.clear(); }
+  std::set<Input> GetPressedInputs() const { return justPressedInputs; }
+  std::set<Input> GetReleasedInputs() const { return justReleasedInputs; }
+  void ClearJustReleasedInputs() { justReleasedInputs.clear(); }
+  void ClearJustPressedInputs() { justPressedInputs.clear(); }
 
   Map *GetActiveMap() const { return activeMap.get(); }
 
@@ -64,10 +65,10 @@ public:
     GameState nextState = this->state;
       //...
       if (this->state == GameState::IN_GAME)
-        nextState = activeMap->ProcessInputs(inputs, pressedInputs, releasedInputs, deltaTime);
+        nextState = activeMap->ProcessInputs(inputs, justPressedInputs, justReleasedInputs, deltaTime);
       //...
       if (this->state == GameState::IN_MENU)
-        nextState = uimanager.ProcessInputs(inputs, pressedInputs, releasedInputs, deltaTime);
+        nextState = uimanager.ProcessInputs(inputs, justPressedInputs, justReleasedInputs, deltaTime);
       //...
     this->state = nextState;
   }
@@ -77,35 +78,34 @@ public:
   void SaveGame();
   void LoadGame();
   
-  void LoadGUI(std::string pathname) {uimanager.LoadGUI(pathname);}
-  void LoadMap(int slot, const std::string& startMap) {this->currentSlot = slot; this->activeMap = Map::loadMap(slot, startMap);}
+  void LoadMap(int slot, const std::string& startMap) {this->currentSlot = slot; this->activeMap = Map::loadMap(&uimanager, slot, startMap);}
 
-  void Start(){
+  void Start(){ //TO REWORK
     this->state = GameState::IN_MENU;
-    this->LoadGUI("resources/GUI/MainMenu.txt");
-    const int slot = 1;
+    this->uimanager.LoadGUI("resources/GUI/MainMenu.txt");
+    const int slot = 1; 
     const std::string startMap = "castleBlue";
     this->LoadMap(slot, startMap);
   }
 
   void Update() {
     deltaTime = globalClock.restart();
-    releasedInputs.clear();
-    activeMap->update(deltaTime);
-    //        uimanager.update(this->state, deltaTime);
+    justReleasedInputs.clear();
+    justPressedInputs.clear();
+    if (activeMap){
+      activeMap->update(deltaTime);
+    }
+//    uimanager.update();
   }
 
   void Draw(sf::RenderTarget& window) {
-    //    this->activeMap.draw(window)
-      window.draw(*(this->activeMap));
+
+  if (this->state == GameState::IN_GAME){
+    window.draw(*(this->activeMap));
+  }
     if (this->state == GameState::IN_MENU){
       this->uimanager.draw();
     }
-//    window.draw();
-    //        .update();
-    //        .update();
-    //        .update();
-    //        .update();
   }
 
   //    void SomeBusinessLogic()

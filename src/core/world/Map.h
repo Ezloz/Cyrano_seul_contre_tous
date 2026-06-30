@@ -4,6 +4,7 @@
 #include "graphics/Camera.h"
 #include "graphics/MapLayer.h"
 #include "world/TurnQueue.h"
+#include "ui/UIManager.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -32,6 +33,7 @@ class Map : public sf::Drawable {
 private:
   tmx::Map tmxMap;
   std::unique_ptr<Camera> activeCamera;
+  UIManager* uimanager;
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
   tmx::Vector2u tileSize;
@@ -39,19 +41,21 @@ private:
   Coord edgeOffset = {3, 2};
   TurnQueue turnQueue;
   std::vector<Coord> walkPath = {};
+  std::vector<Coord> attackRange = {};
   std::vector<Coord> moveRange = {};
-  void updateWalkPathAndAV();
   sf::Texture blueTileTexture; // loaded once from dataset["blueTile"]
-
+  sf::Texture redTileTexture; // loaded once from dataset["redTile"]
+  
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
   std::vector<MapExit> exits;
-
+  
   Character *selectedCharacter = nullptr;
   bool freshpress = true;
   int gridWidth = 0;
   int gridHeight = 0;
   std::vector<size_t> walkableGrid;
+  void updateWalkPathAndAV();
 
   // Delay le mouvement
   struct PendingMove {
@@ -61,9 +65,11 @@ private:
   };
   std::optional<PendingMove> pendingMove;
 
-  void computeWalkableGrid();
-
   void removeDeadCharacters();
+  
+  Character* FindCharacterByCoord(const Coord& position);
+  
+  void computeWalkableGrid();
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
     for (const auto &layer : layers) {
@@ -75,7 +81,8 @@ private:
       character->draw(target, tileSize, characterStates);
     }
     if (selectedCharacter) {
-      this->drawBlueTiles(target, states, this->moveRange);
+      this->drawOverTiles(this->blueTileTexture, target, states, this->moveRange);
+      this->drawOverTiles(this->redTileTexture, target, states, this->attackRange);
 //    this->drawPortraitAndStats();
     }
     if (cursorLayer && activeCamera->isCursorVisible()) {
@@ -129,15 +136,15 @@ public:
     pendingMove = PendingMove{nameId, std::move(path), tileRate};
   }
 
-  GameState ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInputs,
+  GameState ProcessInputs(std::set<Input> inputs, std::set<Input> justPressedInputs,
                           std::set<Input> inputsRelease, sf::Time deltaTime);
   void move();
   bool isCinematicActive() const;
 
   void update(sf::Time elapsed);
 
-  void drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
-                     const std::vector<Coord> &blueTiles) const;
+  void drawOverTiles(const sf::Texture& tile_tex, sf::RenderTarget &target, sf::RenderStates states,
+                     const std::vector<Coord> &tiles) const;
 
   // Persiste l'état de la map dans le slot donné
   // (saves/slot{N}/Maps/{mapId}/mapSave.json).
@@ -146,5 +153,5 @@ public:
   // Charge la map mapId du slot. Si aucune sauvegarde n'existe pour cette map
   // dans ce slot, génère l'état par défaut
   // (resources/Maps/{mapId}/defaultMap.json) et l'écrit dans le slot.
-  static std::unique_ptr<Map> loadMap(int slot, const std::string &mapId);
+  static std::unique_ptr<Map> loadMap(UIManager* uimanager, int slot, const std::string &mapId);
 };

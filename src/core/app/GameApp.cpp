@@ -36,8 +36,8 @@ void GameApp::transformRawInputToInput(RawInput rinput) {
     auto input = this->keyboardToInput.find(
         std::get<const sf::Event::KeyPressed *>(rinput)->code);
     if (input != this->keyboardToInput.end()) {
-      if (this->inputs.contains(input->second)){
-        this->pressedInputs.emplace(input->second);
+      if (!this->inputs.contains(input->second)){
+        this->justPressedInputs.emplace(input->second);
       }
       this->inputs.emplace(input->second);
     }
@@ -46,8 +46,9 @@ void GameApp::transformRawInputToInput(RawInput rinput) {
     auto input = this->keyboardToInput.find(
         std::get<const sf::Event::KeyReleased *>(rinput)->code);
     if (input != this->keyboardToInput.end()) {
+      this->justPressedInputs.erase(input->second);
       this->inputs.erase(input->second);
-      this->releasedInputs.emplace(input->second);
+      this->justReleasedInputs.emplace(input->second);
     }
   }
 }

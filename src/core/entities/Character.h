@@ -134,6 +134,10 @@ public:
                      const int gridWidth, const int gridHeight,
                      const std::vector<std::unique_ptr<Character>> &characters);
 
+  virtual std::vector<Coord>
+  calculateAttackRange(const int gridWidth, const int gridHeight);
+
+
   float getUsedAV() const { return this->usedAV; }
   void setUsedAV(float av) { this->usedAV = av; }
   void resetUsedAV() { this->usedAV = 0.0f; }
@@ -170,6 +174,9 @@ public:
   const std::string &getNameId() const { return nameId; }
   const std::string &getType() const { return type; }
   const Statistic &getStats() const { return stats; }
+  const std::vector<std::string>& getEffectsIds() const {return effectIds;}
+  const std::vector<std::string>& getEquipementIds() const {return equipementIds;}
+
   const std::optional<std::string> &getSpecialAttackName() const {
     return specialAttackName;
   }

@@ -7,7 +7,7 @@
       "statistics": {
         "life": 30,
         "maxLife": 30,
-        "speed": 30,
+        "speed": 15,
         "charisma": 3,
         "power": 5,
         "luck": 1,

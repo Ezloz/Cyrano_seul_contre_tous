@@ -14,5 +14,6 @@
   "maps": {
     "castleBlue": "resources/Maps/castleBlue/CastleBlue.tmx"
   },
-  "blueTile": "resources/blueTile.png"
+  "blueTile": "resources/blueTile.png",
+  "redTile": "resources/redTile.png"
 }

@@ -69,6 +69,7 @@ json loadParty(int slot) {
   return openJson(path).at("playerCharacters");
 }
 
+
 std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
                                       const json &mapJson, const json &party) {
   auto map = std::make_unique<Map>(tmxPathForMap(mapId), 1);
@@ -126,6 +127,7 @@ std::unique_ptr<Map> mapFromCanonical(const std::string &mapId,
 }
 } // namespace
 
+
 Map::Map(const std::string &name, int nbLayer) {
   tmxMap.load(name);
   tileSize = tmxMap.getTileSize();
@@ -142,6 +144,10 @@ Map::Map(const std::string &name, int nbLayer) {
   if (!blueTileTexture.loadFromFile(
           openJson(DATASET).at("blueTile").get<std::string>())) {
     printf("Texture de blueTile non trouvée\n");
+  }
+  if (!redTileTexture.loadFromFile(
+          openJson(DATASET).at("redTile").get<std::string>())) {
+    printf("Texture de redTile non trouvée\n");
   }
 }
 
@@ -162,6 +168,18 @@ void Map::removeDeadCharacters() {
       ++it;
     }
   }
+}
+
+Character* Map::FindCharacterByCoord(const Coord& position){
+
+  Character* playertarget = nullptr;
+  for (auto& charac : this->characters){
+    if (charac->getCoord() == position){
+      playertarget = charac.get();
+    }
+  }
+
+  return playertarget;
 }
 
 void Map::computeWalkableGrid() {
@@ -234,6 +252,11 @@ void Map::updateWalkPathAndAV() {
     return;
   }
 
+  if (!this->attackRange.empty()) {
+    turnQueue.UpdateCurrentCharacter(30.0f);    
+    return;
+  }
+
   if (this->walkPath.empty()) {
     this->walkPath.push_back(selectedCharacter->getCoord());
   }
@@ -249,7 +272,7 @@ void Map::updateWalkPathAndAV() {
 
 
 
-GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInputs,
+GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> justPressedInputs,
                              std::set<Input> inputsRelease,
                              sf::Time deltaTime) {
     Coord cursor = this->activeCamera->getCursorCoord();
@@ -257,20 +280,23 @@ GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInpu
       updateWalkPathAndAV();
       activeCamera->processNewOffset(inputs, inputsRelease, deltaTime);
       this->move();
-      if (inputs.find(Input::CONFIRM) != inputs.end()) { // To REWORK : Single press
+      if (justPressedInputs.contains(Input::CONFIRM)) {
         if (selectedCharacter == nullptr) {
-          for (const auto &charac : this->characters) {
-            if (charac->getCoord() == cursor) {
-              selectedCharacter = charac.get();
-              selectedCharacter->setIsCursorSelected(true);
-              //              std::cout << selectedCharacter->getNameId();
-              this->moveRange = selectedCharacter->calculateMoveRange(
-                  walkableGrid, gridWidth, gridHeight, characters);
-            }
+          selectedCharacter = FindCharacterByCoord(cursor);
+          if (selectedCharacter != nullptr){
+            selectedCharacter->setIsCursorSelected(true);
+            //              std::cout << selectedCharacter->getNameId();
+            this->moveRange = selectedCharacter->calculateMoveRange(
+                walkableGrid, gridWidth, gridHeight, characters);
           }
-        } else {
+        }
+        else { // selectCharacter != null
+          if (cursor == selectedCharacter->getCoord()){
+            this->moveRange.clear();
+            this->attackRange = selectedCharacter->calculateAttackRange(gridWidth, gridHeight);
+          }
           if (selectedCharacter->isPlayer() && selectedCharacter == turnQueue.GetCurrentCharacter()){
-            if (std::find(this->moveRange.begin(), this->moveRange.end(), cursor) != this->moveRange.end()) {
+            if (std::ranges::contains(this->moveRange, cursor)) {
               this->moveRange.clear();
               this->moveCharacterTo(selectedCharacter->getNameId(),
               this->walkPath, sf::milliseconds(85));
@@ -278,17 +304,29 @@ GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInpu
               selectedCharacter->setIsCursorSelected(false);
               selectedCharacter = nullptr;          
             }
-//            else if (std::find(this->characters.begin(), this->characters.end(), cursor) != this->characters.end()){
-//            }
+            if (std::ranges::contains(this->attackRange, cursor) && FindCharacterByCoord(cursor)) {
+              this->attackRange.clear();
+              this->walkPath.clear();
+              selectedCharacter->setIsCursorSelected(false);
+              selectedCharacter->lungeAt(*FindCharacterByCoord(cursor));
+              selectedCharacter = nullptr;          
+            }
           }
         }
       }
-      if (inputs.find(Input::CANCEL) != inputs.end()) {
+      if (justPressedInputs.contains(Input::CANCEL)) {
         if (selectedCharacter != nullptr){
           this->walkPath.clear();
+          this->attackRange.clear();
           this->moveRange.clear();
           selectedCharacter->setIsCursorSelected(false);
           selectedCharacter = nullptr;
+        }
+      }
+      if ((justPressedInputs.contains(Input::MENU))) {
+        if (selectedCharacter != nullptr){
+          uimanager->LoadCharacterStatsMenu(selectedCharacter); // NOT WORKING T-T
+          return GameState::IN_MENU;
         }
       }
     } 
@@ -300,13 +338,7 @@ GameState Map::ProcessInputs(std::set<Input> inputs, std::set<Input> pressedInpu
         moveCharacterTo(getActiveCharacter()->getNameId(), movePath, sf::milliseconds(85));
       }
       if (action == Action::ATTACK){
-        Coord playertargetcoords = movePath[0];
-        Character* playertarget;
-        for (auto& charac : characters){
-          if (charac->getCoord() == playertargetcoords){
-            playertarget = charac.get();
-          }
-        }
+        Character* playertarget = FindCharacterByCoord(movePath[0]);
         getActiveCharacter()->lungeAt(*playertarget);
       }
     }
@@ -408,7 +440,7 @@ void Map::saveState(int slot) const {
   writeSave(slotSavePath(slot), slotJson);
 }
 
-std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
+std::unique_ptr<Map> Map::loadMap(UIManager* uim, int slot, const std::string &mapId) {
   CharacterFactory::registerBuiltins();
 
   const std::string mapPath = mapSavePath(slot, mapId);
@@ -430,25 +462,31 @@ std::unique_ptr<Map> Map::loadMap(int slot, const std::string &mapId) {
   }
 
   std::vector<std::pair<Character *, float>> queue = {};
-  for (const auto &characPtr : map->characters) {
-    std::cout << characPtr->getStats().speed;
-    //    queue.push_back({characPtr.get(),(BASE_DEFAULT_AV/(float)
-    //    characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
-    queue.push_back(
-        {characPtr.get(),
-         (BASE_DEFAULT_AV / 10.0f)}); // PB HERE : Speed set to 0 ????
+  if (false && std::filesystem::exists(slotSavePath(slot))) { // TBA : queue save
+//    queue = loadQueue(slot);
+  } else {
+    for (const auto &characPtr : map->characters) {
+      assert(characPtr->getStats().speed > 0);
+          queue.push_back({characPtr.get(), 
+          (BASE_DEFAULT_AV/(float) characPtr->getStats().speed)}); //PB HERE : Speed set to 0 ????
+    }
   }
+
+
+
+  assert(queue.size() == map->characters.size());
+
   map->turnQueue.SetQueue(queue);
   return map;
 }
 
-void Map::drawBlueTiles(sf::RenderTarget &target, sf::RenderStates states,
-                        const std::vector<Coord> &blueTiles) const {
+void Map::drawOverTiles(const sf::Texture& tile_tex, sf::RenderTarget &target, sf::RenderStates states,
+                        const std::vector<Coord> &tiles) const {
   sf::RenderStates tileStates = states;
   tileStates.transform.translate(activeCamera->getMapOffset());
 
-  for (const auto &coord : blueTiles) {
-    sf::Sprite sprite(blueTileTexture);
+  for (const auto &coord : tiles) {
+    sf::Sprite sprite(tile_tex);
     // 50% de transparence (alpha 128 sur 255).
     sprite.setColor(sf::Color(255, 255, 255, 128));
     sprite.setPosition(
