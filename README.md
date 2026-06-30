@@ -60,11 +60,9 @@ Tested on Linux and Windows
 
 # Credits
 
-Contributors :
+Code :
 - Ezloz
 - Kaou
-
-Code :
 - https://www.sfml-dev.org/fr/
 - https://tgui.eu/
 - https://github.com/fallahn/tmxlite
@@ -73,4 +71,5 @@ Code :
 Assets:
 - Fire emblem : The Sacred Stones
 - Fire emblem : The Binding Blade
+- Ezloz
 
