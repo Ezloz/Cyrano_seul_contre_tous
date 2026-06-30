@@ -173,7 +173,7 @@ void Map::removeDeadCharacters() {
 Character* Map::FindCharacterByCoord(const Coord& position){
 
   Character* playertarget = nullptr;
-  for (auto& charac : this->characters){
+  for (const auto& charac : this->characters){
     if (charac->getCoord() == position){
       playertarget = charac.get();
     }
