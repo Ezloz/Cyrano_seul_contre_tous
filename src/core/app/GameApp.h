@@ -7,6 +7,7 @@
 
 #include "ui/UIManager.h"
 #include "app/GameTypes.h"
+#include "io/Save.h"
 #include "world/Map.h"
 
 #include <map>
@@ -39,11 +40,14 @@ private:
   sf::Clock globalClock;
   sf::Time deltaTime;
   std::unique_ptr<Map> activeMap;
-  int currentSlot = 1;
+  inline static int currentSlot = 1;
   UIManager uimanager;
 
 public:
   explicit GameApp(sf::RenderWindow& window) : uimanager{window} { LoadOptions(); }
+
+  // Slot de sauvegarde courant, accessible sans instance (cf. Map::update).
+  static int getSlot() { return currentSlot; }
 
   sf::Time GetDeltaTime() const { return deltaTime; }
   GameState GetGameState() const { return state; }
@@ -94,6 +98,12 @@ public:
     justPressedInputs.clear();
     if (activeMap){
       activeMap->update(deltaTime);
+
+      // Party anéantie : efface la sauvegarde du slot et passe en GAME_OVER.
+      if (state != GameState::GAME_OVER && !activeMap->hasPlayerCharacters()) {
+        deleteSave(currentSlot);
+        state = GameState::GAME_OVER;
+      }
     }
 //    uimanager.update();
   }

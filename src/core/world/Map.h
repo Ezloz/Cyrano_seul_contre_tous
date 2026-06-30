@@ -3,8 +3,8 @@
 #include "entities/Character.h"
 #include "graphics/Camera.h"
 #include "graphics/MapLayer.h"
-#include "world/TurnQueue.h"
 #include "ui/UIManager.h"
+#include "world/TurnQueue.h"
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -33,7 +33,7 @@ class Map : public sf::Drawable {
 private:
   tmx::Map tmxMap;
   std::unique_ptr<Camera> activeCamera;
-  UIManager* uimanager;
+  UIManager *uimanager;
   std::vector<std::unique_ptr<MapLayer>> layers;
   std::unique_ptr<MapLayer> cursorLayer;
   tmx::Vector2u tileSize;
@@ -44,12 +44,12 @@ private:
   std::vector<Coord> attackRange = {};
   std::vector<Coord> moveRange = {};
   sf::Texture blueTileTexture; // loaded once from dataset["blueTile"]
-  sf::Texture redTileTexture; // loaded once from dataset["redTile"]
-  
+  sf::Texture redTileTexture;  // loaded once from dataset["redTile"]
+
   std::string mapId;
   std::vector<std::unique_ptr<Character>> characters;
   std::vector<MapExit> exits;
-  
+
   Character *selectedCharacter = nullptr;
   bool freshpress = true;
   int gridWidth = 0;
@@ -66,9 +66,9 @@ private:
   std::optional<PendingMove> pendingMove;
 
   void removeDeadCharacters();
-  
-  Character* FindCharacterByCoord(const Coord& position);
-  
+
+  Character *FindCharacterByCoord(const Coord &position);
+
   void computeWalkableGrid();
 
   void draw(sf::RenderTarget &target, sf::RenderStates states) const override {
@@ -81,9 +81,11 @@ private:
       character->draw(target, tileSize, characterStates);
     }
     if (selectedCharacter) {
-      this->drawOverTiles(this->blueTileTexture, target, states, this->moveRange);
-      this->drawOverTiles(this->redTileTexture, target, states, this->attackRange);
-//    this->drawPortraitAndStats();
+      this->drawOverTiles(this->blueTileTexture, target, states,
+                          this->moveRange);
+      this->drawOverTiles(this->redTileTexture, target, states,
+                          this->attackRange);
+      //    this->drawPortraitAndStats();
     }
     if (cursorLayer && activeCamera->isCursorVisible()) {
       target.draw(*cursorLayer, states);
@@ -100,6 +102,8 @@ public:
   Coord GetViewSize() const { return viewSize; };
 
   Character *getActiveCharacter() { return turnQueue.GetCurrentCharacter(); }
+
+  bool hasPlayerCharacters() const;
 
   bool isWalkable(Coord coord) const;
   void setWalkable(Coord coord, bool walkable);
@@ -136,14 +140,16 @@ public:
     pendingMove = PendingMove{nameId, std::move(path), tileRate};
   }
 
-  GameState ProcessInputs(std::set<Input> inputs, std::set<Input> justPressedInputs,
+  GameState ProcessInputs(std::set<Input> inputs,
+                          std::set<Input> justPressedInputs,
                           std::set<Input> inputsRelease, sf::Time deltaTime);
   void move();
   bool isCinematicActive() const;
 
   void update(sf::Time elapsed);
 
-  void drawOverTiles(const sf::Texture& tile_tex, sf::RenderTarget &target, sf::RenderStates states,
+  void drawOverTiles(const sf::Texture &tile_tex, sf::RenderTarget &target,
+                     sf::RenderStates states,
                      const std::vector<Coord> &tiles) const;
 
   // Persiste l'état de la map dans le slot donné
@@ -153,5 +159,6 @@ public:
   // Charge la map mapId du slot. Si aucune sauvegarde n'existe pour cette map
   // dans ce slot, génère l'état par défaut
   // (resources/Maps/{mapId}/defaultMap.json) et l'écrit dans le slot.
-  static std::unique_ptr<Map> loadMap(UIManager* uimanager, int slot, const std::string &mapId);
+  static std::unique_ptr<Map> loadMap(UIManager *uimanager, int slot,
+                                      const std::string &mapId);
 };

@@ -13,7 +13,8 @@ json openJson(const std::string &file) {
 
 // écriture atomique de la save (rename)
 void writeSave(const std::string &savePath, const json &content) {
-  const std::filesystem::path parent = std::filesystem::path(savePath).parent_path();
+  const std::filesystem::path parent =
+      std::filesystem::path(savePath).parent_path();
   if (!parent.empty()) {
     std::filesystem::create_directories(parent);
   }
@@ -25,6 +26,10 @@ void writeSave(const std::string &savePath, const json &content) {
     o << content;
   }
   std::filesystem::rename(tmpPath, savePath);
+}
+
+void deleteSave(int slot) {
+  std::filesystem::remove_all("saves/slot" + std::to_string(slot));
 }
 
 std::string slotSavePath(int slot) {

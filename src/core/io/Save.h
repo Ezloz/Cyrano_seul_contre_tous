@@ -11,6 +11,9 @@ inline constexpr const char *DEFAULT_SAVE = "resources/defaultSave.json";
 
 json openJson(const std::string &file);
 void writeSave(const std::string &savePath, const json &content);
+
+void deleteSave(int slot);
+
 std::string slotSavePath(int slot);
 
 // Utiliser lors du changement de map

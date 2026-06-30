@@ -7,13 +7,16 @@ struct Coord {
   int y = 0;
 };
 
-static bool operator==(const Coord& a, const Coord& b) {return a.x == b.x && a.y == b.y;}
-
-constexpr bool isInRange(Coord object, Coord target, int range){
-  return (std::abs(object.x - target.x) + std::abs(object.y - target.y) <= range);
+static bool operator==(const Coord &a, const Coord &b) {
+  return a.x == b.x && a.y == b.y;
 }
 
-constexpr int manhattanDistance(Coord object, Coord target){
+constexpr bool isInRange(Coord object, Coord target, int range) {
+  return (std::abs(object.x - target.x) + std::abs(object.y - target.y) <=
+          range);
+}
+
+constexpr int manhattanDistance(Coord object, Coord target) {
   return std::abs(object.x - target.x) + std::abs(object.y - target.y);
 }
 
@@ -27,5 +30,6 @@ enum class GameState {
   IN_MENU,
   IN_ANIMATION,
   IN_BATTLE_ANIMATION,
-  IN_CINEMATIC
+  IN_CINEMATIC,
+  GAME_OVER // Supprime la sauvegarde
 };
