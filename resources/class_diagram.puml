@@ -1,0 +1,151 @@
+@startuml
+title Cyrano, seul contre tous - Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class GameApp {
+  -state : GameState
+  -activeMap : Map
+  -currentSlot : int <<static>>
+  +Start()
+  +Update()
+  +ProcessInputs()
+  +LoadMap(slot, mapId)
+  +SaveGame() / LoadGame()
+  +getSlot() : int <<static>>
+}
+
+class UIManager {
+  +LoadGUI(path)
+  +ProcessInputs(...) : GameState
+  +LoadCharacterStatsMenu(c)
+  +draw()
+}
+
+class Map {
+  -characters : vector<Character>
+  -turnQueue : TurnQueue
+  -uimanager : UIManager
+  +loadMap(uimanager, slot, mapId) : Map
+  +update(dt)
+  +ProcessInputs(...) : GameState
+  +getActiveCharacter() : Character
+  +hasPlayerCharacters() : bool
+  +FindCharacterByCoord(coord) : Character
+  +moveCharacterTo(id, path, rate)
+  +saveState(slot)
+  -removeDeadCharacters()
+}
+
+class TurnQueue {
+  -currentCharacter : Character
+  +AddCharacter(c, av)
+  +RemoveCharacter(c)
+  +SetActionValue(c, av)
+  +EndCurrentCharacter()
+  +GetCurrentCharacter() : Character
+}
+
+class Camera {
+  +setCursor(c)
+  +startCinematic(from, to, dur)
+}
+
+class MapLayer {
+  +update(dt)
+  +setTile() / getTile()
+}
+
+abstract class Character {
+  #stats : Statistic
+  #coord : Coord
+  #usedAV : float
+  -turnEnded : bool
+  +{abstract} attack(other)
+  +{abstract} specialAttack(other)
+  +{abstract} isPlayer() : bool
+  +{abstract} workAI(...) : <Action, vector<Coord>>
+  +calculateMoveRange(...) : vector<Coord>
+  +calculateAttackRange(w, h) : vector<Coord>
+  +update(dt)
+  +moveTo(path, rate)
+  +lungeAt(other, dur)
+  +getTurnEnded() : bool
+}
+
+abstract class PlayerCharacter
+class NPC {
+  +move()
+}
+class Cyrano
+class Soldier {
+  +workAI(...) : <Action, vector<Coord>>
+}
+
+class CharacterFactory {
+  +create(json) : Character
+  +registerType(type, creator)
+}
+
+class Save <<(F,#FFAA00) functions>> {
+  +openJson(file) : json
+  +writeSave(path, content)
+  +deleteSave(slot)
+  +slotSavePath(slot) : string
+  +mapSavePath(slot, mapId) : string
+}
+
+struct Statistic {
+  +life / maxLife : int
+  +speed / charisma : int
+  +power / luck / range : int
+}
+
+struct Coord {
+  +x : int
+  +y : int
+}
+
+enum GameState {
+  IN_GAME
+  IN_GAMEMENU
+  IN_MENU
+  IN_ANIMATION
+  IN_BATTLE_ANIMATION
+  IN_CINEMATIC
+  GAME_OVER
+}
+
+enum Action {
+  NOTHING
+  ATTACK
+  MOVE
+  SPECIAL_ATTACK
+}
+
+GameApp *-- Map
+GameApp *-- UIManager
+GameApp ..> GameState
+
+Map *-- Camera
+Map *-- MapLayer
+Map *-- TurnQueue
+Map *-- Character
+Map o-- UIManager
+Map ..> Save : load / save
+
+TurnQueue o-- Character
+
+Character +-- Statistic
+Character ..> Coord
+Character ..> Action
+
+Character <|-- PlayerCharacter
+Character <|-- NPC
+PlayerCharacter <|-- Cyrano
+NPC <|-- Soldier
+
+CharacterFactory ..> Character : creates
+
+@enduml
