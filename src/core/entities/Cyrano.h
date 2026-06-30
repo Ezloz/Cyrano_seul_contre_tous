@@ -17,5 +17,5 @@ public:
   void specialAttack(Character &other) override;
 
   // Factory
-  static std::unique_ptr<Character> create(const json &j); //REWORK : Useless ?
+  static std::unique_ptr<Character> create(const json &j);
 };

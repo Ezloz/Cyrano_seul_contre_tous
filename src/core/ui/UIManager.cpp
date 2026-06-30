@@ -30,7 +30,7 @@ void UIManager::LoadCharacterStatsMenu(const Character* character){ // NOT WORKI
     panel->getRenderer()->setBackgroundColor(tgui::Color(20, 20, 20, 200));
 
     float y = 0.f;
-    const float step = 8.f;
+    const float step = 20.f;
 
     auto addLine = [&](const std::string& text)
     {
@@ -66,10 +66,9 @@ void UIManager::LoadCharacterStatsMenu(const Character* character){ // NOT WORKI
         for (const auto& e : character->getEquipementIds())
             addLine("  - " + e);
 
+    panel->setContentSize({0,0});
 
-    printf("Error here :");
     this->gui.add(panel, "StatsPanel");
-    printf("No error");
 }
 
 //taken and modified from TGUI website
@@ -102,8 +101,8 @@ GameState UIManager::move(std::set<Input> inputs, std::set<Input> justPressedInp
     auto button = this->gui.getFocusedLeaf();
 
     if (!button){
-        printf("no button");
         if (justPressedInputs.contains(Input::CANCEL)){
+            Unload();
             return GameState::IN_GAME;
         }        
         return DEFAULT_STATE;
@@ -113,6 +112,11 @@ GameState UIManager::move(std::set<Input> inputs, std::set<Input> justPressedInp
     if (justPressedInputs.contains(Input::CONFIRM)){
         if (button->getWidgetName() == "ButtonStart"){
             Unload();
+            this->current_name = "None";
+            return GameState::IN_GAME;
+        }
+        if (button->getWidgetName() == "ButtonQuit"){
+            gui.getWindow()->close(); // absolutely criminal. REWORK
             this->current_name = "None";
             return GameState::IN_GAME;
         }

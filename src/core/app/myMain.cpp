@@ -10,7 +10,7 @@
 
 int myMain() {
 
-  sf::RenderWindow window{sf::VideoMode({800, 600}), "SFML works!"};
+  sf::RenderWindow window{sf::VideoMode({800, 600}), "Cyrano - Seul contre tous"};
   window.setFramerateLimit(30);
 
   GameApp gameInstance{window};
@@ -56,38 +56,3 @@ int myMain() {
 }
 
 
-
-    //TO SUPPRESS/MOVE. TO REWORK
-  /*
-  const Coord originCorner = {0, 0};
-  const Coord introCorner = {5, 3};
-  const sf::Time cinematicDuration = sf::seconds(1.f);
-  int introPhase = 0;
-//  gameInstance->activeMap->startCinematic(originCorner, introCorner, cinematicDuration);
-
-  bool moveTestStarted = false;
-
-
-
-  if (introPhase >= 2) {
-    gameInstance->activeMap->move(gameInstance.GetInputs(), gameInstance.GetReleasedInputs(),
-    gameInstance.GetDeltaTime());
-  }
-  gameInstance->activeMap->update(gameInstance.GetDeltaTime());
-  
-  if (introPhase < 2 && !gameInstance->activeMap->isCinematicActive()) {
-    if (introPhase == 0) {
-      gameInstance->activeMap->startCinematic(introCorner, originCorner, cinematicDuration);
-      introPhase = 1;
-    } else {
-      introPhase = 2;
-    }
-  }
-  
-  if (introPhase >= 2 && !moveTestStarted) {
-    gameInstance->activeMap->moveCharacterTo("Cyrano", {{3, 3}, {6, 3}, {6, 5}},
-    sf::seconds(0.5f));
-    moveTestStarted = true;
-  }
-*/
-    //END TO SUPPRESS/MOVE
