@@ -60,6 +60,10 @@ Tested on Linux and Windows
 
 # Credits
 
+Contributors :
+- Ezloz
+- Kaou
+
 Code :
 - https://www.sfml-dev.org/fr/
 - https://tgui.eu/
