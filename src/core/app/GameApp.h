@@ -103,11 +103,11 @@ public:
 //      if (state != GameState::GAME_OVER && !activeMap->hasPlayerCharacters()) {
 //        deleteSave(currentSlot);
 //        state = GameState::GAME_OVER; Doesn't work ?
-      }
+//      }
 //      if (state != GameState::GAME_OVER && !activeMap->hasEnemyCharacters()) {
 //        deleteSave(currentSlot);
 //        state = GameState::GAME_OVER; Doesn't work ?
-      }
+//      }
 
     }
 //    uimanager.update();
